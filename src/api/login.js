@@ -5,6 +5,11 @@ export function loginByUsername(username, password) {
     username,
     password
   }
+  var ret = request({
+    url: '/account/login?tokenKey=get',
+    method: 'get'
+  })
+  console.log(ret)
   return request({
     url: '/login/login',
     method: 'post',
