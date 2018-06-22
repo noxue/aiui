@@ -57,8 +57,8 @@ export const asyncRouterMap = [
     children: [{
       path: 'app',
       component: () => import('@/views/app/index'),
-      name: 'dashboard',
-      meta: { title: 'app', icon: 'dashboard', noCache: true }
+      name: 'app',
+      meta: { title: 'app', icon: 'component', noCache: true }
     }]
   },
   { path: '*', redirect: '/404', hidden: true }
