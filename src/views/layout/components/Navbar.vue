@@ -5,7 +5,6 @@
     <breadcrumb class="breadcrumb-container"></breadcrumb>
 
     <div class="right-menu">
-      <error-log class="errLog-container right-menu-item"></error-log>
 
       <el-tooltip effect="dark" :content="$t('navbar.screenfull')" placement="bottom">
         <screenfull class="screenfull right-menu-item"></screenfull>
@@ -46,7 +45,6 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
@@ -55,7 +53,6 @@ export default {
   components: {
     Breadcrumb,
     Hamburger,
-    ErrorLog,
     Screenfull,
     LangSelect,
     ThemePicker
@@ -94,10 +91,7 @@ export default {
   .breadcrumb-container{
     float: left;
   }
-  .errLog-container {
-    display: inline-block;
-    vertical-align: top;
-  }
+
   .right-menu {
     float: right;
     height: 100%;
