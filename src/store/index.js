@@ -5,7 +5,7 @@ import permission from './modules/permission'
 import tagsView from './modules/tagsView'
 import user from './modules/user'
 import getters from './getters'
-import robot from './modules/robot'
+import rob from './modules/rob'
 
 Vue.use(Vuex)
 
@@ -15,7 +15,7 @@ const store = new Vuex.Store({
     permission,
     tagsView,
     user,
-    robot
+    rob
   },
   getters
 })
