@@ -41,6 +41,17 @@ export const constantRouterMap = [
     }]
   },
   {
+    path: '',
+    component: Layout,
+    redirect: 'app',
+    children: [{
+      path: 'app',
+      component: () => import('@/views/app/index'),
+      name: 'dashboard',
+      meta: { title: 'app', icon: 'dashboard', noCache: true }
+    }]
+  },
+  {
     path: '/documentation',
     component: Layout,
     redirect: '/documentation/index',

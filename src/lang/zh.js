@@ -1,5 +1,6 @@
 export default {
   route: {
+    app: '客户端管理',
     dashboard: '首页',
     introduction: '简述',
     documentation: '文档',

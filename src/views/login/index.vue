@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
       <div class="title-container">
-        <h3 class="title">{{$t('login.title')}}</h3>
+        <h3 class="title">{{$t('login.title')}}123123213</h3>
         <lang-select class="set-language"></lang-select>
       </div>
       <el-form-item prop="username">

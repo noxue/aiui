@@ -1,8 +1,8 @@
 {
-  "name": "vue-element-admin",
+  "name": "aiui",
   "version": "3.7.0",
-  "description": "A magical vue admin. Typical templates for enterprise applications. Newest development stack of vue. Lots of awesome features",
-  "author": "Pan <panfree23@gmail.com>",
+  "description": "希高智能科技机器人后台管理界面",
+  "author": "希高智能科技有限公司技术部",
   "license": "MIT",
   "scripts": {
     "dev": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PanJiaChen/vue-element-admin.git"
+    "url": "git@git.coding.net:noxue/aiui.git"
   },
   "bugs": {
     "url": "https://github.com/PanJiaChen/vue-element-admin/issues"
