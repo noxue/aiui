@@ -43,7 +43,7 @@ export const constantRouterMap = [
 ]
 
 export default new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
@@ -53,12 +53,12 @@ export const asyncRouterMap = [
   {
     path: '',
     component: Layout,
-    redirect: 'app',
+    redirect: 'robot',
     children: [{
-      path: 'app',
-      component: () => import('@/views/app/index'),
-      name: 'app',
-      meta: { title: 'app', icon: 'component', noCache: true }
+      path: 'robot',
+      component: () => import('@/views/robot/index'),
+      name: 'robot',
+      meta: { title: 'robot', icon: 'component', noCache: true }
     }]
   },
   { path: '*', redirect: '/404', hidden: true }
