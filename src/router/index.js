@@ -61,6 +61,18 @@ export const asyncRouterMap = [
     }]
   },
   {
+    path: '',
+    component: Layout,
+    redirect: 'userManage',
+    children: [{
+      path: 'userManage',
+      component: () => import('@/views/userManage/index'),
+      name: 'userManage',
+      meta: { title: 'userManage', icon: 'component', noCache: true }
+    }]
+  },
+  {
     path: '*', redirect: '/404', hidden: true
   }
 ]
+
