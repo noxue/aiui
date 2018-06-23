@@ -85,11 +85,11 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
-          this.loading = false
-          this.$router.push({ path: '/' })
-        }).catch(() => {
-          this.loading = false
-        })
+            this.loading = false
+            this.$router.push({ path: '/' })
+          }).catch(() => {
+            this.loading = false
+          })
         } else {
           console.log('error submit!!')
           return false

@@ -5,7 +5,6 @@ import permission from './modules/permission'
 import tagsView from './modules/tagsView'
 import user from './modules/user'
 import getters from './getters'
-import rob from './modules/rob'
 
 Vue.use(Vuex)
 
@@ -14,10 +13,8 @@ const store = new Vuex.Store({
     app,
     permission,
     tagsView,
-    user,
-    rob
+    user
   },
   getters
 })
-
 export default store
