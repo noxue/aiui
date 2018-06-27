@@ -2,7 +2,9 @@ export default {
   route: {
     dashboard: '首页',
     robot: '客户端',
-    userManage: '用户管理'
+    userManage: '用户管理',
+    template: '话术管理',
+    templateAdd: '添加话术'
   },
   navbar: {
     logOut: '退出登录',

@@ -71,6 +71,22 @@ export const asyncRouterMap = [
     }]
   },
   {
+    path: '',
+    component: Layout,
+    redirect: 'template/index',
+    alwaysShow: true,
+    meta: {
+      title: 'template',
+      icon: 'component'
+    },
+    children: [{
+      path: 'template/add',
+      component: () => import('@/views/template/index'),
+      name: 'templateAdd',
+      meta: { title: 'templateAdd', icon: 'component', noCache: true }
+    }]
+  },
+  {
     path: '*', redirect: '/404', hidden: true
   }
 ]
