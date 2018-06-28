@@ -67,7 +67,35 @@ export const asyncRouterMap = [
       path: 'userManage',
       component: () => import('@/views/userManage/index'),
       name: 'userManage',
-      meta: { title: 'userManage', icon: 'component', noCache: true }
+      meta: { title: 'userManage', icon: 'documentation', noCache: true }
+    }]
+  },
+  {
+    path: '*', redirect: '/404', hidden: true
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'gateway',
+    children: [{
+      path: 'gateway',
+      component: () => import('@/views/gateway/index'),
+      name: 'gateway',
+      meta: { title: 'gateway', icon: 'icon', noCache: true }
+    }]
+  },
+  {
+    path: '*', redirect: '/404', hidden: true
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'sim',
+    children: [{
+      path: 'sim',
+      component: () => import('@/views/sim/index'),
+      name: 'sim',
+      meta: { title: 'sim', icon: 'tab', noCache: true }
     }]
   },
   {
