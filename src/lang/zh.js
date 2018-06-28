@@ -2,7 +2,8 @@ export default {
   route: {
     dashboard: '首页',
     robot: '客户端',
-    userManage: '用户管理'
+    userManage: '用户管理',
+    gateway: '网关管理'
   },
   navbar: {
     logOut: '退出登录',

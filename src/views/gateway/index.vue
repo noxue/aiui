@@ -5,38 +5,37 @@
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
         <el-form :inline="true" :model="filters">
           <el-form-item>
-            <el-input v-model="filters.uid" placeholder="登录名"></el-input>
+            <el-input v-model="filters.name" placeholder="网关名称"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" v-on:click="getUsers">查询</el-button>
+            <el-input v-model="filters.username" placeholder="用户"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="addFormVisible = true">添加</el-button>
+            <el-button type="primary" v-on:click="getGateways">查询</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="addFormVisible = true">新增</el-button>
           </el-form-item>
         </el-form>
       </el-col>
       <!--列表-->
-      <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+      <el-table :data="gateways" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
         <!-- <el-table-column type="selection" width="55">
         </el-table-column> -->
         <el-table-column type="index" width="60">
         </el-table-column>
-        <el-table-column prop="uid" label="登录名" width="160" sortable>
+        <el-table-column prop="name" label="名称" width="120" sortable>
         </el-table-column>
-        <el-table-column prop="username" label="用户名" width="160" sortable>
-        </el-table-column>  
-        <el-table-column prop="realName" label="真实姓名" width="140" sortable>
+        <el-table-column prop="ip"   label="ip" width="120" sortable>
         </el-table-column>
-        <el-table-column prop="phone" label="电话" width="140" sortable>
+        <el-table-column prop="port" label="端口" width="120" sortable>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" width="180" sortable>
+        <el-table-column prop="userId" label="用户" width="120" sortable>
         </el-table-column>
-        <el-table-column prop="sex" label="性别" width="120" :formatter="formatSex" sortable>
+        <el-table-column prop="description" label="描述" min-width="180" sortable>
         </el-table-column>
-        <el-table-column prop="status" label="用户状态" width="120" :formatter="formatStatus" sortable>
-        </el-table-column>
-        <el-table-column label="操作" width="170">
-          <template slot-scope="scope">
+        <el-table-column label="操作" width="150">
+          <template scope="scope">
             <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
           </template>
@@ -51,30 +50,21 @@
       <!--编辑界面-->
       <el-dialog title="编辑"  :visible.sync="editFormVisible">
         <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-          <el-form-item label="登录名" prop="uid">
-            <el-input v-model="editForm.uid" :disabled="true" auto-complete="off"></el-input>
+          <el-form-item label="网关名" prop="name">
+            <el-input v-model="editForm.name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="editForm.username" auto-complete="off"></el-input>
+          <el-form-item label="ip" prop="ip">
+            <el-input v-model="editForm.ip" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="editForm.password" auto-complete="off"></el-input>
+          <el-form-item label="端口" prop="port">
+            <el-input v-model="editForm.port" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="真实姓名" prop="realName">
-            <el-input v-model="editForm.realName" auto-complete="off"></el-input>
+          <el-form-item label="用户" prop="userId">
+            <el-input v-model="editForm.userId" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="电话" prop="phone">
-            <el-input v-model="editForm.phone" auto-complete="off"></el-input>
+          <el-form-item label="描述" prop="description">
+           <el-input type="textarea" v-model="editForm.description"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="editForm.email" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="性别">
-						<el-radio-group v-model="editForm.sex">
-							<el-radio class="radio" :label="1">男</el-radio>
-							<el-radio class="radio" :label="0">女</el-radio>
-						</el-radio-group>
-					</el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -82,34 +72,19 @@
         </div>
       </el-dialog>
       <!--新增界面-->
-      <el-dialog title="添加用户" :visible.sync="addFormVisible">
+      <el-dialog title="新增" :visible.sync="addFormVisible">
         <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-          <el-form-item label="登录名" prop="uid">
-            <el-input v-model="addForm.uid" auto-complete="off"></el-input>
+          <el-form-item label="网关名" prop="name">
+            <el-input v-model="addForm.name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="addForm.username" auto-complete="off"></el-input>
+          <el-form-item label="ip" prop="ip">
+            <el-input v-model="addForm.ip" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="addForm.password" auto-complete="off"></el-input>
+          <el-form-item label="端口" prop="port">
+            <el-input v-model="addForm.port" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="真实姓名" prop="realName">
-            <el-input v-model="addForm.realName" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="电话" prop="phone">
-            <el-input v-model="addForm.phone" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="addForm.email" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="性别">
-						<el-radio-group v-model="addForm.sex">
-							<el-radio class="radio" :label="1">男</el-radio>
-							<el-radio class="radio" :label="0">女</el-radio>
-						</el-radio-group>
-					</el-form-item>
-          <el-form-item label="选择角色">
-            <el-select v-model="value" placeholder="请选择">
+          <el-form-item label="客户端">
+            <el-select v-model="value" placeholder="请选择客户端">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -118,6 +93,12 @@
               </el-option>
             </el-select>
 					</el-form-item>
+          <el-form-item label="用户" prop="userId">
+            <el-input v-model="addForm.userId" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="描述" prop="description">
+           <el-input type="textarea" v-model="addForm.description"></el-input>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click.native="addFormVisible = false">取消</el-button>
@@ -129,14 +110,15 @@
 </template>
 
 <script>
-  import { getUserList, addUser, deleteUser, editUser, roleList } from '@/api/userManage'
+  import { getGatewayList, addGateway, deleteGateway, editGateway, getAllApp } from '@/api/gateway'
 export default {
     data() {
       return {
         filters: {
-          uid: ''
+          name: '',
+          username: ''
         },
-        users: [],
+        gateways: [],
         total: 0,
         page: 1,
         listLoading: false,
@@ -146,75 +128,76 @@ export default {
         editFormVisible: false, // 编辑界面是否显示
         editLoading: false,
         editFormRules: {
-          username: [
-            { required: true, message: '请输入用户名', trigger: 'blur' }
+          name: [
+            { required: true, message: '请输入名称', trigger: 'blur' }
+          ],
+          ip: [
+            { required: true, message: '请输入ip', trigger: 'blur' }
+          ],
+          port: [
+            { required: true, message: '请输入端口号', trigger: 'blur' }
+          ],
+          userId: [
+            { required: true, message: '请输入用户登录名', trigger: 'blur' }
           ]
         },
         // 编辑界面数据
         editForm: {
-          uid: '',
-          username: '',
-          password: '',
-          realName: '',
-          phone: '',
-          email: '',
-          sex: ''
+          name: '',
+          ip: '',
+          port: '',
+          userId: '',
+          description: ''
         },
 
         addFormVisible: false, // 新增界面是否显示
         addLoading: false,
         addFormRules: {
-          uid: [
-            { required: true, message: '请输入登录名', trigger: 'blur' }
+          name: [
+            { required: true, message: '请输入名称', trigger: 'blur' }
           ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' }
+          ip: [
+            { required: true, message: '请输入ip', trigger: 'blur' }
           ],
-          username: [
-            { required: true, message: '请输入用户名', trigger: 'blur' }
+          port: [
+            { required: true, message: '请输入端口号', trigger: 'blur' }
+          ],
+          userId: [
+            { required: true, message: '请输入用户登录名', trigger: 'blur' }
           ]
         },
         // 新增界面数据
         addForm: {
-          uid: '',
-          username: '',
-          password: '',
-          realName: '',
-          phone: '',
-          email: '',
-          sex: '',
-          roleId: ''
+          name: '',
+          ip: '',
+          port: '',
+          app_id: '',
+          userId: '',
+          description: ''
         }
       }
     },
     methods: {
-      // 性别显示转换
-      formatSex: function(row, column) {
-        return row.sex === 1 ? '男' : row.sex === 0 ? '女' : '未知'
-      },
-      formatStatus: function(row, column) {
-        return row.status === 1 ? '正常' : row.status === 2 ? '锁定' : row.status === 3 ? '删除' : row.status === 4 ? '非法' : '未知'
-      },
       handleCurrentChange(val) {
         this.page = val
-        this.getUsers()
+        this.getGateways()
       },
-      // 获取用户列表
-      getUsers() {
-        const para = { start: this.page + '', uid: this.filters.uid }
+      // 获取网关列表
+      getGateways() {
+        const para = { page: this.page + '', name: this.filters.name, username: this.filters.username }
         this.listLoading = true
         // NProgress.start();
-        getUserList(para).then((response) => {
-          this.total = response.data.data.pageInfo.total
-          this.users = response.data.data.pageInfo.list
+        getGatewayList(para).then((response) => {
+          this.total = response.data.data.gatewayList.total
+          this.gateways = response.data.data.gatewayList.list
           this.listLoading = false
         // NProgress.done();
         })
       },
-      getRoleList() {
+      getAllApps() {
         // NProgress.start();
-        roleList().then((response) => {
-          this.options = response.data.data.roleList
+        getAllApp().then((response) => {
+          this.options = response.data.data.appList.list
         })
       },
       // 删除
@@ -224,8 +207,8 @@ export default {
         }).then(() => {
           this.listLoading = true
           // NProgress.start();
-          const para = { uid: '' + row.uid + '' }
-          deleteUser(para).then((response) => {
+          const para = { id: '' + row.id + '' }
+          deleteGateway(para).then((response) => {
             this.listLoading = false
             // NProgress.done();
             if (response.data.meta.success === false) {
@@ -239,7 +222,7 @@ export default {
                 type: 'success'
               })
             }
-            this.getUsers()
+            this.getGateways()
           })
         }).catch(() => {
 
@@ -267,15 +250,14 @@ export default {
               // NProgress.start();
               const para = Object.assign({}, this.editForm)
               const reqData = {
-                uid: para.uid,
-                username: para.username,
-                password: para.password,
-                realName: para.realName,
-                phone: para.phone,
-                email: para.email,
-                sex: para.sex + ''
+                id: para.id + '',
+                name: para.name,
+                ip: para.ip,
+                port: para.port + '',
+                userId: para.userId,
+                description: para.description
               }
-              editUser(reqData).then((response) => {
+              editGateway(reqData).then((response) => {
                 this.editLoading = false
                 // NProgress.done();
   
@@ -292,7 +274,7 @@ export default {
                 }
                 this.$refs['editForm'].resetFields()
                 this.editFormVisible = false
-                this.getUsers()
+                this.getGateways()
               })
             })
           }
@@ -305,19 +287,16 @@ export default {
             this.$confirm('确认提交吗？', '提示', {}).then(() => {
               this.addLoading = true
               // NProgress.start();
-              const para1 = Object.assign({}, this.addForm)
-              const para = {
-                uid: para1.uid,
-                username: para1.username,
-                password: para1.password,
-                realName: para1.realName,
-                phone: para1.phone,
-                email: para1.email,
-                sex: para1.sex + '',
-                roleId: para1.value + ''
+              const para = Object.assign({}, this.addForm)
+              const reqData = {
+                name: para.name,
+                ip: para.ip,
+                port: para.port + '',
+                app_id: this.value + '',
+                userId: para.userId,
+                description: para.description
               }
-
-              addUser(para).then((response) => {
+              addGateway(reqData).then((response) => {
                 this.addLoading = false
                 // NProgress.done();
                 if (response.data.meta.success === false) {
@@ -333,7 +312,7 @@ export default {
                 }
                 this.$refs['addForm'].resetFields()
                 this.addFormVisible = false
-                this.getUsers()
+                this.getGateways()
               })
             })
           }
@@ -358,7 +337,7 @@ export default {
           //     message: '删除成功',
           //     type: 'success'
           //   })
-          //   this.getUsers()
+          //   this.getGateways()
           // })
         }).catch(() => {
 
@@ -366,8 +345,8 @@ export default {
       }
     },
     mounted() {
-      this.getUsers()
-      this.getRoleList()
+      this.getGateways()
+      this.getAllApps()
     }
   }
 
