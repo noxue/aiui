@@ -7,3 +7,11 @@ export function getTemplateList(para) {
     data: para
   })
 }
+
+export function deleteTemplate(para) {
+  return request({
+    url: '/template/del',
+    method: 'post',
+    data: para
+  })
+}
