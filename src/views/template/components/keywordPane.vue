@@ -74,13 +74,13 @@
             <el-input 
             style="margin-top:10px;"
             placeholder="请输入左边声音文件对应的文本信息"
-            v-model="voiceList[vk]['text']"
-            v-for="(v,vk) in voiceList"
+            v-model="voiceList[v]['text']"
+            v-for="(v,vk) in keyword.voice"
             :key='vk'
             >
-              <template slot="prepend">{{v.filename}}</template>
-              <el-button slot="append" icon="el-icon-caret-right" @click="playSound(vk)" >播放</el-button>
-              <el-button slot="append" type="danger" style="border-left:1px solid #ccc;" icon="el-icon-close" @click="uploadFileRemove(vk)" >删除</el-button>
+              <template slot="prepend">{{voiceList[v]['filename']}}</template>
+              <el-button slot="append" icon="el-icon-caret-right" @click="playSound(v)" >播放</el-button>
+              <el-button slot="append" type="danger" style="border-left:1px solid #ccc;" icon="el-icon-close" @click="uploadFileRemove(v)" >删除</el-button>
             </el-input>
           </div>
         </div>     
@@ -208,6 +208,9 @@ export default {
     deleteKeyword() {
       this.$confirm('确认删除？')
         .then(_ => {
+          for (var i in this.keywords[this.whitchKey].voice) {
+            this.$delete(this.voiceList, this.keywords[this.whitchKey].voice[i])
+          }
           this.$delete(this.keywords, this.whitchKey)
         })
         .catch(_ => {})
@@ -254,7 +257,6 @@ export default {
           }
           this.keywords[this.whitchKey].voice.splice(this.keywords[this.whitchKey].voice.indexOf(hash), 1)
           this.$delete(this.voiceList, hash)
-          // this.$emit('submit-voice-delete', hash)
         })
         .catch(_ => {})
     },

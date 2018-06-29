@@ -1,39 +1,88 @@
 <template>
     <div>
-        <el-tabs tab-position='right' @tab-remove="removeFlow">
+      {{initTemplate}}
+        <el-tabs tab-position='right' @tab-remove="removeFlow" @tab-click="tabClick"> 
             <el-tab-pane 
             :name="k" 
             v-for="(flow,k) in flows" 
             :key="k"
-            type="card" 
-            closable 
+            :k='k'
+            type="card"
+            closable
             >
-               <span slot="label">
+                <span slot="label">
                    <i class="el-icon-caret-right" v-if="flow.section.type=='start'"></i>
                    <i class="el-icon-share" v-else-if="flow.section.type=='condition'"></i>
                    <i class="el-icon-circle-close-outline" v-else-if="flow.section.type=='end'"></i>
                  {{k|desc}}
                 </span>
-
-                {{flow}}
                 <el-card class="box-card" shadow="hover">
                     <div slot="header" class="clearfix">
                         <span>{{k|desc}}</span>
-                        
                     </div>
                     <div class="text item">
                         <span>下一步流程：</span>
-                        <el-select v-model="flow.section.next" placeholder="请选择下一步流程">
-                            <el-option label="区域一" value="shanghai"></el-option>
-                            <el-option label="区域二" value="beijing"></el-option>
+                        <el-select v-model="flow.next" placeholder="请选择下一步流程">
+                            <el-option v-for="(flow1,k1) in flows" :key="k1" :label="k1|desc" :value="k1"></el-option>
                         </el-select>
-                        
                         <span style="margin-left:20px;">关联客户类型：</span>
-                        <el-select v-model="flow.type" placeholder="请选择下一步流程">
-                            <el-option label="区域一" value="shanghai"></el-option>
-                            <el-option label="区域二" value="beijing"></el-option>
+                        <el-select v-model='flow.type' placeholder="请选择客户类型">
+                            <el-option v-for="(t,k1) in types" :key='k1' :label="t.name" :value="k1"></el-option>
                         </el-select>
+                        <span style="margin-left:20px;">是否允许匹配全局关键词：</span>
+                        <el-radio-group v-model="flow.hook" size="medium">
+                          <el-radio  :label="true">是</el-radio>
+                          <el-radio  :label="false">否</el-radio>
+                        </el-radio-group>
                     </div>
+                    
+
+                    <div class="item voice">
+                      <el-upload
+                        multiple
+                        class="upload-sound"
+                        name="voice"
+                        accept='audio/*'
+                        :action="action"
+                        :on-success="uploadSuccess"
+                        :show-file-list="false"
+                        :before-upload="beforeUpload"
+                        ref="upload"
+                        id="upload"
+                        :dataKey="k"
+                        >
+                        <el-button size="small" type="primary"><i class="el-icon-bell"></i>添加声音文件</el-button>
+                        <div slot="tip" class="el-upload__tip" >只能上传wav,mp3文件</div>
+                      </el-upload>  
+                      
+                      <div style="padding:10px auto;">
+                      <span>选择声音文件</span>
+                      <el-select v-model="flow.section.choice" placeholder="请选择">
+                        <el-option label="随机" value="random" selected="selected"></el-option>
+                        
+                        <el-option v-for="(voice) in flow.section.voice" v-if="voiceList[voice]"
+                          :key="voice"
+                          :label="voiceList[voice].filename"
+                          :value="voice">
+                        </el-option>
+                      </el-select>
+                      <el-button icon="el-icon-caret-right" @click="playSound(flow.section.choice)" >播放</el-button>
+                      </div>
+                    <div class="text item">
+                        <el-input 
+                        style="margin-top:10px;"
+                        placeholder="请输入左边声音文件对应的文本信息"
+                        v-model="voiceList[v]['text']"
+                        v-for="(v,vk) in flows[k].section.voice"
+                        :key='vk'
+                        >
+                          <template slot="prepend">{{voiceList[v].filename}}</template>
+                          <el-button slot="append" icon="el-icon-caret-right" @click="playSound(v)" >播放</el-button>
+                          <el-button slot="append" type="danger" style="border-left:1px solid #ccc;" icon="el-icon-close" @click="uploadFileRemove(v)" >删除</el-button>
+                        </el-input>
+                      </div>
+                    </div>    
+
                 </el-card>
             </el-tab-pane>
         </el-tabs>
@@ -71,21 +120,25 @@ import voiceUpload from './voiceUpload'
 export default {
   componects: [voiceUpload],
   props: {
-    flows: {
+    initTemplate: {
       type: Object,
       required: true,
       default: {}
-    },
-    types: {
-      type: Array,
-      required: true,
-      default: []
     }
+  },
+  created() {
+    this.$emit('submit-flow-update', this.flows)
+    this.$emit('submit-voice-update', this.voiceList)
   },
   data() {
     return {
+      flows: this.initTemplate['flow'],
+      types: this.initTemplate['type'],
+      voiceList: this.initTemplate['voice'],
+      action: process.env.BASE_API + 'voice/upload',
       main: '', // 指定第一个流程
-      whitchKey: '', // 记录在操作哪个节点
+      whitchKey: '', // 记录在操作哪个录音
+      whitchFlow: '', // 记录在编辑哪个流程
       // 记录添加流程的时候的名字
       sectionName: '',
       sectionType: '',
@@ -97,10 +150,10 @@ export default {
       return window.decodeURI(window.atob(val))
     }
   },
-  created() {
-    console.log('created')
-  },
   methods: {
+    tabClick(key) {
+      this.whitchFlow = key.$attrs.k
+    },
     add() {
       if (this.sectionName === '') {
         this.$message.error('请先输入流程名称')
@@ -132,7 +185,7 @@ export default {
           },
           next: '',
           hook: false,
-          type: 3
+          type: 0
         }
       } else if (this.sectionType === 'end') {
         section = {
@@ -146,7 +199,7 @@ export default {
           },
           next: '',
           hook: false,
-          type: 3
+          type: 0
         }
       } else if (this.sectionType === 'condition') {
         section = {
@@ -158,7 +211,7 @@ export default {
           },
           next: '',
           hook: true,
-          type: 3
+          type: 0
         }
       }
 
@@ -169,6 +222,9 @@ export default {
     removeFlow(name) {
       this.$confirm('确认删除流程:[ ' + window.decodeURI(window.atob(name)) + ' ]？')
         .then(_ => {
+          for (var v in this.flows[name].section.voice) {
+            this.$delete(this.voiceList, this.flows[name].section.voice[v])
+          }
           this.$delete(this.flows, name)
         })
         .catch(_ => {})
@@ -180,6 +236,49 @@ export default {
           this.sectionName = ''
         })
         .catch(_ => {})
+    },
+    beforeUpload(file, fileList) {
+    },
+    uploadSuccess(response, file, fileList) {
+      if (!response.meta.success) {
+        this.$message.error('上传错误，错误码：' + response.meta.code + '。错误信息：' + response.meta.msg)
+        return
+      }
+
+      var key = this.whitchFlow
+
+      if (this.flows[key].section.voice.indexOf(response.data.voice.hash) !== -1) {
+        this.$message.error('文件已存在')
+        return
+      }
+
+      var voice = response.data.voice
+      voice['text'] = ''
+      this.$set(this.voiceList, response.data.voice.hash, voice)
+      this.flows[key].section.voice.push(response.data.voice.hash)
+    },
+    uploadFileRemove(hash) {
+      this.$confirm('确认删除？')
+        .then(_ => {
+          if (hash === this.flows[this.whitchFlow].section.choice) {
+            this.flows[this.whitchFlow].section.choice = 'random'
+          }
+          this.flows[this.whitchFlow].section.voice.splice(this.flows[this.whitchFlow].section.voice.indexOf(hash), 1)
+          this.$delete(this.voiceList, hash)
+        })
+        .catch(_ => {})
+    },
+    playSound(voice) {
+      var audio = document.getElementById('snd')
+      audio.pause()
+      audio.currentTime = 0
+      if (voice !== '' && typeof voice !== undefined && this.flows[this.whitchFlow].section.voice.length > 0) {
+        if (voice === 'random') {
+          voice = this.flows[this.whitchFlow].section.voice[Math.floor(Math.random() * this.flows[this.whitchFlow].section.voice.length)]
+        }
+        audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
+        audio.play()
+      }
     }
 
   }
