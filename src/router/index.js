@@ -121,6 +121,17 @@ export const asyncRouterMap = [
     }]
   },
   {
+    path: '',
+    component: Layout,
+    redirect: 'task',
+    children: [{
+      path: 'task',
+      component: () => import('@/views/task/index'),
+      name: 'task',
+      meta: { title: 'task', icon: 'tab', noCache: true }
+    }]
+  },
+  {
     path: '*', redirect: '/404', hidden: true
   }
 ]
