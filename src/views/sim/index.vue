@@ -48,7 +48,8 @@
             <el-input v-model="editForm.userId" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="选择网关">
-            <el-select v-model="editForm.gate" placeholder="请选择">
+            <!-- <el-select v-model="editForm.gate" placeholder="请选择"> -->
+            <el-select v-model="newGatewayId" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -214,7 +215,7 @@ export default {
         this.editFormVisible = true
         this.editForm = Object.assign({}, row)
         this.userId = row.userId
-        this.value = row.gatewayId
+        this.newGatewayId = row.gatewayId
       },
       // 显示新增界面
       handleAdd: function() {
@@ -237,7 +238,7 @@ export default {
                 id: this.editForm.id + '',
                 number: this.editForm.number + '',
                 userId: this.editForm.userId,
-                gatewayId: this.editForm.gate + '',
+                gatewayId: this.newGatewayId + '',
                 description: this.editForm.description
               }
               editSim(reqData).then((response) => {
