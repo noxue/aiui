@@ -246,8 +246,6 @@ export default {
       voice['text'] = ''
       this.$set(this.voiceList, response.data.voice.hash, voice)
       this.keywords[key].voice.push(response.data.voice.hash)
-
-      // this.$emit('submit-voice-update', this.voiceList)
     },
     uploadFileRemove(hash) {
       this.$confirm('确认删除？')
