@@ -20,11 +20,9 @@
         </el-table-column>
         <el-table-column prop="name" label="名称" width="130" sortable>
         </el-table-column>
-        <el-table-column prop="content" label="模板内容" min-width="240" sortable>
-        </el-table-column>
         <el-table-column prop="status" label="模板状态" min-width="120" :formatter="formatStatus" sortable>
         </el-table-column>
-         <el-table-column prop="createdAt" label="创建时间" min-width="130" sortable>
+         <el-table-column prop="createdAt" label="创建时间" min-width="130"  :formatter="formatTime" sortable>
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -67,6 +65,14 @@ export default {
     },
     formatStatus: function(row, column) {
       return row.status === 0 ? '已上线' : row.status === 1 ? '制作中' : row.status === 2 ? '测试中' : row.status === 3 ? '审核中' : '未知'
+    },
+
+    formatTime: function(row, column) {
+      if (row.createdAt !== null) {
+        return row.createdAt.substring(0, 10)
+      } else {
+        return row.createdAt
+      }
     },
 
     // 获取用户列表
