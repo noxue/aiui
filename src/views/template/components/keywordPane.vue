@@ -4,7 +4,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.6)">
     <div  v-for='(keyword, key) in keywords' :key='key'  @mouseover="changeUploadKey(key)">
-      <el-card class="box-card">
+      <el-card class="box-card" shadow="hover">
         <div slot="header" class="clearfix">
           <span>{{key|desc}}</span>
           <span style="padding-left:20px;">
@@ -49,15 +49,14 @@
             name="voice"
             accept='audio/*'
             :action="action"
-            :before-remove="beforeUploadRemove"
-            :on-remove="uploadFileRemove"
             :on-success="uploadSuccess"
-            :show-file-list="true"
+            :show-file-list="false"
             :before-upload="beforeUpload"
             >
             <el-button size="small" type="primary"><i class="el-icon-bell"></i>添加声音文件</el-button>
             <div slot="tip" class="el-upload__tip" >只能上传wav,mp3文件</div>
           </el-upload>  
+          
           <div style="padding:10px auto;">
           <span>选择声音文件</span>
           <el-select v-model="keyword.choice" placeholder="请选择">
@@ -71,7 +70,19 @@
           </el-select>
           <el-button icon="el-icon-caret-right" @click="playSound(keyword.choice)" >播放</el-button>
           </div>
-        
+        <div class="text item">
+            <el-input 
+            style="margin-top:10px;"
+            placeholder="请输入左边声音文件对应的文本信息"
+            v-model="voiceList[vk]['text']"
+            v-for="(v,vk) in voiceList"
+            :key='vk'
+            >
+              <template slot="prepend">{{v.filename}}</template>
+              <el-button slot="append" icon="el-icon-caret-right" @click="playSound(vk)" >播放</el-button>
+              <el-button slot="append" type="danger" style="border-left:1px solid #ccc;" icon="el-icon-close" @click="uploadFileRemove(vk)" >删除</el-button>
+            </el-input>
+          </div>
         </div>     
       </el-card>
     </div>
@@ -100,25 +111,22 @@
 
 export default {
   props: {
-    keywords: {
+    initTemplate: {
       type: Object,
       required: true,
       default: {}
-    },
-    types: {
-      type: Array,
-      required: true,
-      default: []
     }
   },
   data() {
     return {
+      keywords: this.initTemplate['keyword'],
+      types: this.initTemplate['type'],
       action: process.env.BASE_API + 'voice/upload',
       dialogVisible: false,
       keywordDesc: '', // 创建关键字列表的时候，记录名称用
       inputValue: {},
       whitchKey: '', // 记录目前在操作那一组关键词，保存关键词的key
-      voiceList: {},
+      voiceList: this.initTemplate['voice'],
       // 正在上传的文件个数，如果大于0，就用加载窗口挡住界面，防止鼠标移动到其他的关键词上面，改变whitchKey,会导致错误
       uploadCount: 0
     }
@@ -127,6 +135,10 @@ export default {
     desc(val) {
       return window.decodeURI(window.atob(val))
     }
+  },
+  created() {
+    this.$emit('submit-keyword-update', this.keywords)
+    this.$emit('submit-voice-update', this.voiceList)
   },
   methods: {
     handleClose(tag) {
@@ -165,7 +177,7 @@ export default {
         }
         if (this.keywords[this.whitchKey].keyword.indexOf(v) === -1) {
           this.keywords[this.whitchKey].keyword.push(v)
-          this.$emit('submit-keyword-update', this.keywords)
+          // this.$emit('submit-keyword-update', this.keywords)
         }
       }
       this.inputValue[this.whitchKey] = ''
@@ -175,18 +187,19 @@ export default {
         this.$message.error('请先输入关键词列表描述信息')
         return
       }
+
+      // 是否已经存在
+      if (this.keywords[btoa(encodeURI(this.keywordDesc))]) {
+        this.$message.error('该关键词列表已存在，请换一个名字')
+        return
+      }
+
       this.dialogVisible = false
       this.$set(this.keywords, btoa(encodeURI(this.keywordDesc)), {
         type: 0,
         keyword: [],
         voice: [],
         multi_voice: [],
-        max: 3,
-        max_to: {
-          // 流程名称
-          flow: '',
-          id: 0
-        },
         choice: 'random',
         multi_choice: 'random'
       })
@@ -208,8 +221,6 @@ export default {
         .catch(_ => {})
     },
     changeType(index) {
-      console.log(this.whitchKey)
-      console.log(index)
       this.keywords[this.whitchKey].type = index
     },
     beforeUpload(file, fileList) {
@@ -228,22 +239,24 @@ export default {
         this.$message.error('文件已存在')
         return
       }
-
-      this.$set(this.voiceList, response.data.voice.hash, response.data.voice)
+      var voice = response.data.voice
+      voice['text'] = ''
+      this.$set(this.voiceList, response.data.voice.hash, voice)
       this.keywords[key].voice.push(response.data.voice.hash)
 
-      this.$emit('submit-voice-update', this.voiceList)
+      // this.$emit('submit-voice-update', this.voiceList)
     },
-    beforeUploadRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`)
-    },
-    uploadFileRemove(file, fileList) {
-      if (file.response.data.voice.hash === this.keywords[this.whitchKey].choice) {
-        this.keywords[this.whitchKey].choice = 'random'
-      }
-      this.keywords[this.whitchKey].voice.splice(this.keywords[this.whitchKey].voice.indexOf(file.response.data.voice.hash), 1)
-      this.$delete(this.voiceList, file.response.data.voice.hash)
-      this.$emit('submit-voice-delete', file.response.data.voice.hash)
+    uploadFileRemove(hash) {
+      this.$confirm('确认删除？')
+        .then(_ => {
+          if (hash === this.keywords[this.whitchKey].choice) {
+            this.keywords[this.whitchKey].choice = 'random'
+          }
+          this.keywords[this.whitchKey].voice.splice(this.keywords[this.whitchKey].voice.indexOf(hash), 1)
+          this.$delete(this.voiceList, hash)
+          // this.$emit('submit-voice-delete', hash)
+        })
+        .catch(_ => {})
     },
     changeUploadKey(key) {
       this.whitchKey = key

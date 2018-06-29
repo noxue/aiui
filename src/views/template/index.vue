@@ -4,8 +4,8 @@
         <el-tabs v-model="activeName">
             <el-tab-pane v-for="item in tabMap" :label="item.label" :key="item.key" :name="item.key">
                 <keep-alive>
-                    <keyword-pane v-if='activeName=="keyword"' @submit-keyword-update="updateKeyword" @submit-voice-delete="voiceDelete" @submit-voice-update="updateVoice"  v-bind:keywords='template["keyword"]' v-bind:types='template["type"]'></keyword-pane>
-                    <flow-pane v-else-if='activeName=="flow"'></flow-pane>
+                    <keyword-pane v-if='activeName=="keyword"' @submit-keyword-update="updateKeyword" @submit-voice-delete="voiceDelete" @submit-voice-update="updateVoice"   v-bind:initTemplate='template'  v-bind:initKeywords='template["keyword"]' v-bind:initTypes='template["type"]'></keyword-pane>
+                    <flow-pane v-else-if='activeName=="flow"' v-bind:flows='template["flow"]'  v-bind:types='template["type"]' @submit-voice-update="updateVoice" ></flow-pane>
                 </keep-alive>
             </el-tab-pane>
         </el-tabs>
@@ -28,7 +28,7 @@ export default {
         { label: '客户分类', key: 'type' }
       ],
       template: {
-        main_flow: 'flow1',
+        main: '', // 入口，第一个流程
         flow: {},
         keyword: {},
         voice: {},

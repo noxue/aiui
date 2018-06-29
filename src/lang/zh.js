@@ -4,6 +4,7 @@ export default {
     robot: '客户端',
     userManage: '用户管理',
     template: '话术管理',
+    templateList: '话术列表',
     templateAdd: '添加话术',
     gateway: '网关管理'
   },

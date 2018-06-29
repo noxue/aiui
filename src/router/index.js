@@ -112,6 +112,12 @@ export const asyncRouterMap = [
       component: () => import('@/views/template/index'),
       name: 'templateAdd',
       meta: { title: 'templateAdd', icon: 'component', noCache: true }
+    },
+    {
+      path: 'template/index',
+      component: () => import('@/views/template/list'),
+      name: 'templateList',
+      meta: { title: 'templateList', icon: 'component', noCache: true }
     }]
   },
   {
