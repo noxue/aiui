@@ -5,7 +5,7 @@
             <el-tab-pane v-for="item in tabMap" :label="item.label" :key="item.key" :name="item.key">
                 <keep-alive>
                     <keyword-pane v-if='activeName=="keyword"' @submit-keyword-update="updateKeyword" @submit-voice-delete="voiceDelete" @submit-voice-update="updateVoice"   v-bind:initTemplate='template'  v-bind:initKeywords='template["keyword"]' v-bind:initTypes='template["type"]'></keyword-pane>
-                    <flow-pane v-else-if='activeName=="flow"' v-bind:flows='template["flow"]'  v-bind:types='template["type"]' @submit-voice-update="updateVoice" ></flow-pane>
+                    <flow-pane v-else-if='activeName=="flow"' v-bind:initTemplate='template' @submit-flow-update="updateFlow" @submit-voice-update="updateVoice" ></flow-pane>
                 </keep-alive>
             </el-tab-pane>
         </el-tabs>
@@ -52,6 +52,9 @@ export default {
     },
     updateKeyword(keywords) {
       this.template.keyword = keywords
+    },
+    updateFlow(flows) {
+      this.template.flow = flows
     },
     updateVoice(voiceList) {
       for (var k in voiceList) {
