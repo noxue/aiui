@@ -6,7 +6,9 @@ export default {
     template: '话术管理',
     templateList: '话术列表',
     templateAdd: '添加话术',
-    gateway: '网关管理'
+    gateway: '网关管理',
+    sim: '手机卡管理',
+    task: '任务管理'
   },
   navbar: {
     logOut: '退出登录',

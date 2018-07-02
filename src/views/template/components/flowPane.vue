@@ -83,6 +83,44 @@
                       </div>
                     </div>    
 
+                    <div class="text item">
+                      <el-card class="box-card" v-if="flow.section.conds && flow.section.conds.length>0">
+                         <div slot="header" class="clearfix">
+                            <span>分支列表</span>
+                        </div>
+                        <el-card class="box-card" shadow="hover" v-for="(ks,i) in flow.section.conds" :key="i" style="margin:10px auto;"> 
+                          <div class="text item"
+                          :key="tag"
+                          v-for="tag in ks.keyword">
+                            <el-tag
+                              class="keyword-tag"
+                              - 
+                              closable
+                              :disable-transitions="false"
+                              @close="handleClose(tag)">
+                              {{tag}}
+                            </el-tag>
+                          </div>
+                          <div class="text item">
+                            <el-input 
+                            placeholder="支持中文和英文关键词,多个关键词用逗号隔开。例如：你好#25,哪位#66，hello"
+                            v-model="inputValue[i]"
+                            @keyup.enter.native="addKeyword(i)"
+                            >
+                              <template slot="prepend">输入关键词:</template>
+                              <el-button slot="append" icon="el-icon-plus" @click="addKeyword(i)">添加</el-button>
+                            </el-input>
+                          </div>
+                          <span>下一步流程：</span>
+                            <el-select v-model="flow.next" placeholder="请选择下一步流程">
+                                <el-option v-for="(flow1,k2) in flows" :key="k2" :label="k2|desc" :value="k2"></el-option>
+                            </el-select>
+                        </el-card>
+                        <el-button  @click="addCond()" style="margin:10px;">添加分支</el-button>
+                      </el-card>
+                      
+                    </div>
+
                 </el-card>
             </el-tab-pane>
         </el-tabs>
@@ -142,7 +180,8 @@ export default {
       // 记录添加流程的时候的名字
       sectionName: '',
       sectionType: '',
-      dialogVisible: false
+      dialogVisible: false,
+      inputValue: []
     }
   },
   filters: {
@@ -279,6 +318,49 @@ export default {
         audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
         audio.play()
       }
+    },
+    addCond() {
+      this.flows[this.whitchFlow].section.conds.push({
+        keyword: [],
+        to: ''
+      })
+    },
+    addKeyword(index) {
+      // 获取内容，并去除空格
+      const text = this.inputValue[index].replace(/([\s\n\t\r]+)/g, '')
+      if (text === '') {
+        this.inputValue[index] = '' // 考虑到如果输入了空格，点击一直没反应，所以空格的情况下清空
+        return
+      }
+
+      // 分割成多个关键字，支持中英文逗号
+      var arrs = text.split(/[,，]/)
+
+      // 把检测和添加放到两个循环，这样可以保证全都成功或失败
+      for (var k in arrs) {
+        var v = arrs[k]
+        if (v === '') {
+          this.$message.error('请检查您输入的关键词是否有两个连续的逗号')
+          return
+        }
+        // 不满足关键字规则就返回
+        if (!/^[\u4e00-\u9fa5a-zA-Z]+?(#\d+){0,1}$/.test(v)) {
+          this.$message.error('关键词格式错误：[' + v + ']')
+          return
+        }
+      }
+
+      for (k in arrs) {
+        v = arrs[k]
+        // 如果没有带优先级，就增加默认的优先级
+        if (v.indexOf('#') === -1) {
+          v = v + '#25'
+        }
+        if (this.flows[this.whitchFlow].section.conds[index].keyword.indexOf(v) === -1) {
+          this.flows[this.whitchFlow].section.conds[index].keyword.push(v)
+        }
+      }
+      this.inputValue[index] = ''
     }
 
   }
