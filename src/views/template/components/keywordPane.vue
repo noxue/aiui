@@ -145,6 +145,10 @@ export default {
       this.keywords[this.whitchKey].keyword.splice(this.keywords[this.whitchKey].keyword.indexOf(tag), 1)
     },
     addKeyword() {
+      if (!this.inputValue[this.whitchKey]) {
+        this.$message.error('请输入关键词')
+        return
+      }
       // 获取内容，并去除空格
       const text = this.inputValue[this.whitchKey].replace(/([\s\n\t\r]+)/g, '')
       if (text === '') {
@@ -159,7 +163,7 @@ export default {
       for (var k in arrs) {
         var v = arrs[k]
         if (v === '') {
-          this.$message.error('请检查您输入的关键词是否有两个连续的逗号')
+          this.$message.error('请检查您输入的关键词是否有两个连续的逗号，或者用了逗号结尾')
           return
         }
         // 不满足关键字规则就返回
@@ -281,22 +285,7 @@ export default {
   .box-card{
     margin:10px auto;
   }
- .el-tag + .el-tag {
-    margin-left: 10px;
-    margin-bottom: 10px;
-  }
-  .button-new-tag {
-    margin-left: 10px;
-    height: 32px;
-    line-height: 30px;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .input-new-tag {
-    width: 90px;
-    margin-left: 10px;
-    vertical-align: bottom;
-  }
+
   
   .voice{
     margin:10px auto;
@@ -306,5 +295,9 @@ export default {
 
   .upload-sound{
     margin-top:10px;
+  }
+
+  .keyword-tag{
+    margin:0 5px 5px 0;
   }
 </style>

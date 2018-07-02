@@ -1,6 +1,5 @@
 <template>
     <div>
-      {{initTemplate}}
         <el-tabs tab-position='right' @tab-remove="removeFlow" @tab-click="tabClick"> 
             <el-tab-pane 
             :name="k" 
@@ -21,21 +20,39 @@
                         <span>{{k|desc}}</span>
                     </div>
                     <div class="text item">
-                        <span>下一步流程：</span>
-                        <el-select v-model="flow.next" placeholder="请选择下一步流程">
+                      <el-row>
+                        <el-col :span="4"><div style="text-align:right; padding-top: 5px; padding-right:10px;">主流程</div></el-col>
+                        <el-col :span="8">
+                          <el-select v-model="initTemplate.main" placeholder="请选择主流程">
                             <el-option v-for="(flow1,k1) in flows" :key="k1" :label="k1|desc" :value="k1"></el-option>
-                        </el-select>
-                        <span style="margin-left:20px;">关联客户类型：</span>
-                        <el-select v-model='flow.type' placeholder="请选择客户类型">
-                            <el-option v-for="(t,k1) in types" :key='k1' :label="t.name" :value="k1"></el-option>
-                        </el-select>
-                        <span style="margin-left:20px;">是否允许匹配全局关键词：</span>
-                        <el-radio-group v-model="flow.hook" size="medium">
-                          <el-radio  :label="true">是</el-radio>
-                          <el-radio  :label="false">否</el-radio>
-                        </el-radio-group>
+                          </el-select>
+                        </el-col>
+                        <el-col :span="4" style="text-align:right"><div style="text-align:right; padding-top: 5px; padding-right:10px;">下一步流程</div></el-col>
+                        <el-col :span="8">
+                          <el-select v-model="flow.next" placeholder="请选择下一步流程">
+                            <el-option v-for="(flow1,k1) in flows" :key="k1" :label="k1|desc" :value="k1"></el-option>
+                          </el-select>
+                        </el-col>
+                      </el-row>
                     </div>
-                    
+
+                    <div class="text item line">
+                      <el-row>
+                        <el-col :span="4"><div style="text-align:right; padding-top: 5px; padding-right:10px;">关联客户类型</div></el-col>
+                        <el-col :span="8">
+                          <el-select v-model='flow.type' placeholder="请选择客户类型">
+                            <el-option v-for="(t,k1) in types" :key='k1' :label="t.name" :value="k1"></el-option>
+                          </el-select>
+                        </el-col>
+                        <el-col :span="4" style="text-align:right"><div style="text-align:right; padding-top: 5px; padding-right:10px;">是否匹配全局关键词</div></el-col>
+                        <el-col :span="8">
+                          <el-radio-group v-model="flow.hook" size="medium">
+                            <el-radio-button  :label="true">是</el-radio-button>
+                            <el-radio-button  :label="false">否</el-radio-button>
+                          </el-radio-group>
+                        </el-col>
+                      </el-row>
+                    </div>
 
                     <div class="item voice">
                       <el-upload
@@ -88,39 +105,36 @@
                          <div slot="header" class="clearfix">
                             <span>分支列表</span>
                         </div>
-                        <el-card class="box-card" shadow="hover" v-for="(ks,i) in flow.section.conds" :key="i" style="margin:10px auto;"> 
-                          <div class="text item"
-                          :key="tag"
-                          v-for="tag in ks.keyword">
-                            <el-tag
+                        <el-card class="box-card" shadow="never" v-for="(ks,i) in flow.section.conds" :key="i" style="margin:10px auto;position:relative;"> 
+                          <div class="el-icon-circle-close btn-close" @click="delCond(i)"></div>
+                          <el-tag
                               class="keyword-tag"
-                              - 
                               closable
                               :disable-transitions="false"
-                              @close="handleClose(tag)">
+                              :key="tag"
+                              v-for="tag in ks.keyword"
+                              @close="handleClose(i,tag)">
                               {{tag}}
-                            </el-tag>
-                          </div>
+                          </el-tag>
                           <div class="text item">
                             <el-input 
                             placeholder="支持中文和英文关键词,多个关键词用逗号隔开。例如：你好#25,哪位#66，hello"
                             v-model="inputValue[i]"
-                            @keyup.enter.native="addKeyword(i)"
-                            >
+                            @keyup.enter.native="addKeyword(i)">
                               <template slot="prepend">输入关键词:</template>
                               <el-button slot="append" icon="el-icon-plus" @click="addKeyword(i)">添加</el-button>
                             </el-input>
                           </div>
-                          <span>下一步流程：</span>
-                            <el-select v-model="flow.next" placeholder="请选择下一步流程">
+                          <div class="text item">
+                            <span>下一步流程：</span>
+                            <el-select v-model="ks.to" placeholder="请选择下一步流程">
                                 <el-option v-for="(flow1,k2) in flows" :key="k2" :label="k2|desc" :value="k2"></el-option>
                             </el-select>
+                          </div>
                         </el-card>
-                        <el-button  @click="addCond()" style="margin:10px;">添加分支</el-button>
                       </el-card>
-                      
+                      <el-button v-if="flow.section.type=='condition'" @click="addCond()" style="margin-top:10px;">添加分支</el-button>
                     </div>
-
                 </el-card>
             </el-tab-pane>
         </el-tabs>
@@ -264,6 +278,9 @@ export default {
           for (var v in this.flows[name].section.voice) {
             this.$delete(this.voiceList, this.flows[name].section.voice[v])
           }
+          if (this.initTemplate.main === name) {
+            this.initTemplate.main = ''
+          }
           this.$delete(this.flows, name)
         })
         .catch(_ => {})
@@ -325,7 +342,18 @@ export default {
         to: ''
       })
     },
+    delCond(index) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          this.flows[this.whitchFlow].section.conds.splice(index, 1)
+        })
+        .catch(_ => {})
+    },
     addKeyword(index) {
+      if (!this.inputValue[index]) {
+        this.$message.error('请输入关键词')
+        return
+      }
       // 获取内容，并去除空格
       const text = this.inputValue[index].replace(/([\s\n\t\r]+)/g, '')
       if (text === '') {
@@ -340,7 +368,7 @@ export default {
       for (var k in arrs) {
         var v = arrs[k]
         if (v === '') {
-          this.$message.error('请检查您输入的关键词是否有两个连续的逗号')
+          this.$message.error('请检查您输入的关键词是否有两个连续的逗号，或者用了逗号结尾')
           return
         }
         // 不满足关键字规则就返回
@@ -361,8 +389,10 @@ export default {
         }
       }
       this.inputValue[index] = ''
+    },
+    handleClose(index, tag) {
+      this.flows[this.whitchFlow].section.conds[index].keyword.splice(this.flows[this.whitchFlow].section.conds[index].keyword.indexOf(tag), 1)
     }
-
   }
 }
 </script>
@@ -375,5 +405,23 @@ export default {
 }
 .item{
     margin-bottom:10px;
+    
+}
+
+.item.line{
+  border-bottom:1px solid #eee; padding-bottom:10px;
+}
+
+.keyword-tag{
+  margin:0 5px 5px 0;
+}
+
+.btn-close{
+  position: absolute;
+  right:0; 
+  top:0;
+  z-index: 1000;
+  font-size:20px;
+  cursor: pointer;
 }
 </style>
