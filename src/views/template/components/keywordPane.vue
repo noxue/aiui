@@ -246,7 +246,10 @@ export default {
         this.$message.error('文件已存在')
         return
       }
-      var voice = response.data.voice
+      var voice = {}
+      voice['pcm'] = response.data.voice.pcm
+      voice['path'] = response.data.voice.path
+      voice['filename'] = response.data.voice.filename
       voice['text'] = ''
       this.$set(this.voiceList, response.data.voice.hash, voice)
       this.keywords[key].voice.push(response.data.voice.hash)
@@ -283,7 +286,7 @@ export default {
 
 <style scoped>
   .box-card{
-    margin:10px auto;
+    margin:20px auto;
   }
 
   
