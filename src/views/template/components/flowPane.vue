@@ -339,7 +339,10 @@ export default {
         return
       }
 
-      var voice = response.data.voice
+      var voice = {}
+      voice['pcm'] = response.data.voice.pcm
+      voice['path'] = response.data.voice.path
+      voice['filename'] = response.data.voice.filename
       voice['text'] = ''
       this.$set(this.voiceList, response.data.voice.hash, voice)
       this.flows[key].section.voice.push(response.data.voice.hash)
@@ -374,7 +377,7 @@ export default {
       })
     },
     delCond(index) {
-      this.$confirm('确认关闭？')
+      this.$confirm('确认删除分支吗？')
         .then(_ => {
           this.flows[this.activeFlow].section.conds.splice(index, 1)
         })
@@ -429,30 +432,34 @@ export default {
 </script>
 
 <style scoped>
-.flow-title{
-    overflow: hidden;
-    text-overflow:ellipsis;
-    white-space: nowrap;
-}
-.item{
-    margin-bottom:10px;
+  .box-card{
+    margin:20px auto;
+  }
     
-}
+  .flow-title{
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+  }
+  .item{
+      margin-bottom:10px;
+      
+  }
 
-.item.line{
-  border-bottom:1px solid #eee; padding-bottom:10px;
-}
+  .item.line{
+    border-bottom:1px solid #eee; padding-bottom:10px;
+  }
 
-.keyword-tag{
-  margin:0 5px 5px 0;
-}
+  .keyword-tag{
+    margin:0 5px 5px 0;
+  }
 
-.btn-close{
-  position: absolute;
-  right:0; 
-  top:0;
-  z-index: 1000;
-  font-size:20px;
-  cursor: pointer;
-}
+  .btn-close{
+    position: absolute;
+    right:0; 
+    top:0;
+    z-index: 1000;
+    font-size:20px;
+    cursor: pointer;
+  }
 </style>
