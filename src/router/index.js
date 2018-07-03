@@ -121,15 +121,27 @@ export const asyncRouterMap = [
     }]
   },
   {
-    path: '',
+    path: '/task',
     component: Layout,
-    redirect: 'task',
-    children: [{
-      path: 'task',
-      component: () => import('@/views/task/index'),
-      name: 'task',
-      meta: { title: 'task', icon: 'tab', noCache: true }
-    }]
+    redirect: '/task/index',
+    meta: {
+      title: 'task',
+      icon: 'component'
+    },
+    children: [
+      {
+        path: 'task/index',
+        component: () => import('@/views/task/index'),
+        name: 'taskList',
+        meta: { title: 'taskList', icon: 'tab', noCache: true }
+      },
+      {
+        path: 'task/addTask',
+        component: () => import('@/views/task/addTask'),
+        name: 'addTask',
+        meta: { title: 'addTask', icon: 'component', noCache: true }
+      }
+    ]
   },
   {
     path: '*', redirect: '/404', hidden: true

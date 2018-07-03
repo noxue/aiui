@@ -39,3 +39,35 @@ export function getTaskUserList(para) {
     data: para
   })
 }
+
+export function getTemplateListById(para) {
+  return request({
+    url: '/template/listById',
+    method: 'post',
+    data: para
+  })
+}
+
+export function getSimListById(para) {
+  return request({
+    url: '/sim/listById',
+    method: 'post',
+    data: para
+  })
+}
+
+export function expExcel(para) {
+  return request({
+    url: '/excel/exp',
+    method: 'post',
+    data: para
+  })
+}
+
+export function impExcel(para) {
+  return request({
+    url: '/excel/imp',
+    method: 'post',
+    data: para
+  })
+}

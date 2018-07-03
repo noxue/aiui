@@ -8,7 +8,9 @@ export default {
     templateAdd: '添加话术',
     gateway: '网关管理',
     sim: '手机卡管理',
-    task: '任务管理'
+    task: '任务管理',
+    taskList: '任务列表',
+    addTask: '添加任务'
   },
   navbar: {
     logOut: '退出登录',
