@@ -91,7 +91,7 @@
             </el-table-column>
             <el-table-column label="操作" width="220">
               <template slot-scope="scope">
-                <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                <el-button type="danger" size="small" @click="handleDelSimUser(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column> 
           </el-table>  
@@ -135,7 +135,7 @@
 </template>
 
 <script>
-  import { getSimList, addSim, deleteSim, editSim, getGatewaysListByUid, getSimUserList } from '@/api/sim'
+  import { getSimList, addSim, deleteSim, editSim, getGatewaysListByUid, getSimUserList, addSimUser, deleteSimUser } from '@/api/sim'
 export default {
     data() {
       return {
@@ -144,6 +144,7 @@ export default {
           userId: ''
         },
         options: [],
+        assignSimId: '',
         value: '',
         newGatewayId: '',
         sims: [],
@@ -155,7 +156,9 @@ export default {
         sels: [], // 列表选中列
         assignFormVisible: false, // 号码分配界面是否显示
         assignLoading: false,
-  
+        assignForm: {
+          userId: ''
+        },
         editFormVisible: false, // 编辑界面是否显示
         editLoading: false,
         editFormRules: {
@@ -216,9 +219,9 @@ export default {
         // NProgress.done();
         })
       },
-      // 获取用户列表
-      getSimUsers(row) {
-        const para = { page: this.page + '', simId: row.id + '' }
+      // 获取电话分配用户列表
+      getSimUsers(simId) {
+        const para = { page: this.page + '', simId: simId + '' }
         this.listLoading = true
         // NProgress.start();
         getSimUserList(para).then((response) => {
@@ -263,6 +266,34 @@ export default {
 
         })
       },
+      // 删除
+      handleDelSimUser: function(index, row) {
+        this.$confirm('确认删除该记录吗?', '提示', {
+          type: 'warning'
+        }).then(() => {
+          this.listLoading = true
+          // NProgress.start();
+          const para = { id: '' + row.id + '' }
+          deleteSimUser(para).then((response) => {
+            this.listLoading = false
+            // NProgress.done();
+            if (response.data.meta.success === false) {
+              this.$message({
+                message: response.data.meta.msg,
+                type: 'fail'
+              })
+            } else {
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+            }
+            this.getSimUsers(this.assignSimId)
+          })
+        }).catch(() => {
+
+        })
+      },
       // 显示编辑界面
       handleEdit: function(index, row) {
         this.editFormVisible = true
@@ -273,7 +304,8 @@ export default {
       handleAssign: function(index, row) {
         this.assignFormVisible = true
         this.assignForm = Object.assign({}, row)
-        this.getSimUsers(row)
+        this.assignSimId = row.id
+        this.getSimUsers(this.assignSimId)
       },
       // 显示新增界面
       handleAdd: function() {
@@ -358,8 +390,28 @@ export default {
           }
         })
       },
-      assignSimUser: {
-
+      // 分配号码
+      assignSimUser: function() {
+        const reqData = {
+          simId: this.assignSimId + '',
+          userId: this.filters.userId
+        }
+        addSimUser(reqData).then((response) => {
+          this.addLoading = false
+          // NProgress.done();
+          if (response.data.meta.success === false) {
+            this.$message({
+              message: response.data.meta.msg,
+              type: 'fail'
+            })
+          } else {
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            })
+          }
+          this.getSimUsers(this.assignSimId)
+        })
       },
       selsChange: function(sels) {
         this.sels = sels

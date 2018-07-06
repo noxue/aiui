@@ -24,9 +24,25 @@ export function addSim(para) {
   })
 }
 
+export function addSimUser(para) {
+  return request({
+    url: '/sim/user/add',
+    method: 'post',
+    data: para
+  })
+}
+
 export function deleteSim(params) {
   return request({
     url: '/sim/del',
+    method: 'post',
+    data: params
+  })
+}
+
+export function deleteSimUser(params) {
+  return request({
+    url: '/sim/user/del',
     method: 'post',
     data: params
   })

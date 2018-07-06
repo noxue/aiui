@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <el-form ref="form"  label-position="top" :model="form" label-width="80px">
+      <el-form-item label="任务名称" ><el-input v-model="form.taskName"></el-input></el-form-item>
       <el-form-item label="模板信息" >
         <el-select v-model="form.region" placeholder="请选择">
           <el-option
@@ -39,9 +40,9 @@
         </el-radio-group>
       </el-form-item>
       <!--测试任务选中时触发-->
-        <el-form-item label="测试姓名" v-if="!form.test" label-position="left"><el-input v-model="form.name"></el-input>
+        <el-form-item label="测试姓名" v-if="!form.test" label-position="left"><el-input v-model="form.teatName"></el-input>
         </el-form-item>
-        <el-form-item label="测试号码" v-if="!form.test" label-position="left"><el-input v-model="form.phone"></el-input>
+        <el-form-item label="测试号码" v-if="!form.test" label-position="left"><el-input v-model="form.teatPhone"></el-input>
         </el-form-item>
         <el-form-item label="备注" v-if="!form.test" label-position="left"><el-input v-model="form.remark"></el-input>
         </el-form-item>
@@ -60,6 +61,7 @@ export default {
     data() {
       return {
         form: {
+          taskName: '',
           num: '',
           total: '',
           date1: '',
@@ -67,8 +69,8 @@ export default {
           test: 1,
           options: [],
           simOptions: [],
-          name: '',
-          phone: '',
+          testName: '',
+          testPhone: '',
           remark: '',
           visible: 'false'
         }
@@ -78,6 +80,7 @@ export default {
     methods: {
       onSubmit(form) {
         const reqData = {
+          taskName: this.form.taskName,
           template: this.form.region + '',
           sim: this.form.sim + '',
           num: this.form.num + '',
@@ -85,8 +88,8 @@ export default {
           date1: this.form.date1,
           date2: this.form.date2,
           test: this.form.test + '',
-          name: this.form.name,
-          phone: this.form.phone + '',
+          testName: this.form.testName,
+          testPhone: this.form.testPhone + '',
           remark: this.form.remark
         }
         addTask(reqData).then((response) => {
