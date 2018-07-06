@@ -191,7 +191,7 @@ export default {
   
                 if (response.data.meta.success === false) {
                   this.$message({
-                    message: '编辑失败',
+                    message: response.data.meta.msg,
                     type: 'fail'
                   })
                 } else {
@@ -218,11 +218,12 @@ export default {
               const para = Object.assign({}, this.addForm)
               // alert(this.$refs.addForm)
               addApp(para).then((response) => {
+                console.log(response)
                 this.addLoading = false
                 // NProgress.done();
                 if (response.data.meta.success === false) {
                   this.$message({
-                    message: '提交失败',
+                    message: response.data.meta.msg,
                     type: 'fail'
                   })
                 } else {

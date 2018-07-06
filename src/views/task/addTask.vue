@@ -55,7 +55,8 @@
 </template>
 <script>
   import { addTask, getTemplateListById, getSimListById } from '@/api/task'
-  export default {
+  // const Base64 = require('js-base64').Base64
+export default {
     data() {
       return {
         form: {
@@ -92,7 +93,7 @@
           // NProgress.done();
           if (response.data.meta.success === false) {
             this.$message({
-              message: '提交失败',
+              message: response.data.meta.msg,
               type: 'fail'
             })
           } else {

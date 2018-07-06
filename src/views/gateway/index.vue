@@ -26,9 +26,9 @@
         </el-table-column>
         <el-table-column prop="name" label="名称" width="120" sortable>
         </el-table-column>
-        <el-table-column prop="ip"   label="ip" width="120" sortable>
+        <el-table-column prop="ip"   label="ip" width="130" sortable>
         </el-table-column>
-        <el-table-column prop="port" label="端口" width="120" sortable>
+        <el-table-column prop="port" label="端口" width="80" sortable>
         </el-table-column>
         <el-table-column prop="userId" label="用户" width="120" sortable>
         </el-table-column>
@@ -213,7 +213,7 @@ export default {
             // NProgress.done();
             if (response.data.meta.success === false) {
               this.$message({
-                message: '删除失败',
+                message: response.data.meta.msg,
                 type: 'fail'
               })
             } else {
@@ -263,7 +263,7 @@ export default {
   
                 if (response.data.meta.success === false) {
                   this.$message({
-                    message: '编辑失败',
+                    message: response.data.meta.msg,
                     type: 'fail'
                   })
                 } else {
@@ -301,7 +301,7 @@ export default {
                 // NProgress.done();
                 if (response.data.meta.success === false) {
                   this.$message({
-                    message: '提交失败',
+                    message: response.data.meta.msg,
                     type: 'fail'
                   })
                 } else {

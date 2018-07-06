@@ -109,7 +109,7 @@
 						</el-radio-group>
 					</el-form-item>
           <el-form-item label="选择角色">
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="addForm.roleId" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -168,7 +168,7 @@ export default {
             { required: true, message: '请输入登录名', trigger: 'blur' }
           ],
           password: [
-            { required: true, message: '请输入密码', trigger: 'blur' }
+            { required: true, message: '请输入密码(长度在5~30)', trigger: 'blur' }
           ],
           username: [
             { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -230,7 +230,7 @@ export default {
             // NProgress.done();
             if (response.data.meta.success === false) {
               this.$message({
-                message: '删除失败',
+                message: response.data.meta.msg,
                 type: 'fail'
               })
             } else {
@@ -281,7 +281,7 @@ export default {
   
                 if (response.data.meta.success === false) {
                   this.$message({
-                    message: '编辑失败',
+                    message: response.data.meta.msg,
                     type: 'fail'
                   })
                 } else {
@@ -302,39 +302,38 @@ export default {
       addSubmit: function() {
         this.$refs.addForm.validate((valid) => {
           if (valid) {
-            this.$confirm('确认提交吗？', '提示', {}).then(() => {
-              this.addLoading = true
-              // NProgress.start();
-              const para1 = Object.assign({}, this.addForm)
-              const para = {
-                uid: para1.uid,
-                username: para1.username,
-                password: para1.password,
-                realName: para1.realName,
-                phone: para1.phone,
-                email: para1.email,
-                sex: para1.sex + '',
-                roleId: para1.value + ''
-              }
+            this.addLoading = true
+            // NProgress.start();
+            const para1 = Object.assign({}, this.addForm)
+            console.log(para1)
+            const para = {
+              uid: para1.uid,
+              username: para1.username,
+              password: para1.password,
+              realName: para1.realName,
+              phone: para1.phone,
+              email: para1.email,
+              sex: para1.sex + '',
+              roleId: para1.roleId + ''
+            }
 
-              addUser(para).then((response) => {
-                this.addLoading = false
-                // NProgress.done();
-                if (response.data.meta.success === false) {
-                  this.$message({
-                    message: '提交失败',
-                    type: 'fail'
-                  })
-                } else {
-                  this.$message({
-                    message: '提交成功',
-                    type: 'success'
-                  })
-                }
-                this.$refs['addForm'].resetFields()
-                this.addFormVisible = false
-                this.getUsers()
-              })
+            addUser(para).then((response) => {
+              this.addLoading = false
+              // NProgress.done();
+              if (response.data.meta.success === false) {
+                this.$message({
+                  message: response.data.meta.msg,
+                  type: 'fail'
+                })
+              } else {
+                this.$message({
+                  message: '提交成功',
+                  type: 'success'
+                })
+              }
+              this.$refs['addForm'].resetFields()
+              this.addFormVisible = false
+              this.getUsers()
             })
           }
         })

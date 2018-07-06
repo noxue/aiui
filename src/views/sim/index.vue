@@ -25,8 +25,9 @@
         </el-table-column>
         <el-table-column prop="description" label="描述" min-width="180" sortable>
         </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="220">
           <template slot-scope="scope">
+            <el-button size="small" @click="handleAssign(scope.$index, scope.row)">分配</el-button>
             <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
           </template>
@@ -67,6 +68,40 @@
           <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
         </div>
       </el-dialog>
+
+      <!--分配号码界面-->
+      <el-dialog title="号码分配" :visible.sync="assignFormVisible">
+        <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+          <el-form :inline="true" :model="filters">
+            <el-form-item>
+              <el-input v-model="filters.userId" placeholder="用户名"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary"  @click.native="assignSimUser">新增</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-form :model="assignForm" label-width="50px" ref="assignForm">
+          <el-table :data="simUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+          <!-- <el-table-column type="selection" width="55">
+          </el-table-column> -->
+            <el-table-column type="index" width="60">
+            </el-table-column>
+            <el-table-column prop="userId" label="用户名" width="350" sortable>
+            </el-table-column>
+            <el-table-column label="操作" width="220">
+              <template slot-scope="scope">
+                <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+              </template>
+            </el-table-column> 
+          </el-table>  
+        </el-form>
+        <!-- <div slot="footer" class="dialog-footer">
+          <el-button @click.native="assignFormVisible = false">取消</el-button>
+          <el-button type="primary" @click.native="assignSubmit" :loading="addLoading">提交</el-button>
+        </div> -->
+      </el-dialog>
+
       <!--新增界面-->
       <el-dialog title="新增" :visible.sync="addFormVisible">
         <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
@@ -100,27 +135,32 @@
 </template>
 
 <script>
-  import { getSimList, addSim, deleteSim, editSim, getGatewaysListByUid } from '@/api/sim'
+  import { getSimList, addSim, deleteSim, editSim, getGatewaysListByUid, getSimUserList } from '@/api/sim'
 export default {
     data() {
       return {
         filters: {
-          number: ''
+          number: '',
+          userId: ''
         },
         options: [],
         value: '',
         newGatewayId: '',
         sims: [],
+        simUsers: [],
         total: 0,
+        userTotal: 0,
         page: 1,
         listLoading: false,
         sels: [], // 列表选中列
-
+        assignFormVisible: false, // 号码分配界面是否显示
+        assignLoading: false,
+  
         editFormVisible: false, // 编辑界面是否显示
         editLoading: false,
         editFormRules: {
           number: [
-            { required: true, message: '请输入名称', trigger: 'blur' }
+            { required: true, message: '请输入号码', trigger: 'blur' }
           ],
           userId: [
             { required: true, message: '请输入用户', trigger: 'blur' }
@@ -141,7 +181,7 @@ export default {
         addLoading: false,
         addFormRules: {
           number: [
-            { required: true, message: '请输入名称', trigger: 'blur' }
+            { required: true, message: '请输入号码', trigger: 'blur' }
           ],
           userId: [
             { required: true, message: '请输入用户', trigger: 'blur' }
@@ -176,6 +216,19 @@ export default {
         // NProgress.done();
         })
       },
+      // 获取用户列表
+      getSimUsers(row) {
+        const para = { page: this.page + '', simId: row.id + '' }
+        this.listLoading = true
+        // NProgress.start();
+        getSimUserList(para).then((response) => {
+          console.log(response)
+          this.userTotal = response.data.data.simpUserList.total
+          this.simUsers = response.data.data.simpUserList.list
+          this.listLoading = false
+        // NProgress.done();
+        })
+      },
       getGatewayList() {
         // NProgress.start();
         getGatewaysListByUid(Request).then((response) => {
@@ -195,7 +248,7 @@ export default {
             // NProgress.done();
             if (response.data.meta.success === false) {
               this.$message({
-                message: '删除失败',
+                message: response.data.meta.msg,
                 type: 'fail'
               })
             } else {
@@ -216,6 +269,11 @@ export default {
         this.editForm = Object.assign({}, row)
         this.userId = row.userId
         this.newGatewayId = row.gatewayId
+      },
+      handleAssign: function(index, row) {
+        this.assignFormVisible = true
+        this.assignForm = Object.assign({}, row)
+        this.getSimUsers(row)
       },
       // 显示新增界面
       handleAdd: function() {
@@ -246,7 +304,7 @@ export default {
                 // NProgress.done();
                 if (response.data.meta.success === false) {
                   this.$message({
-                    message: '编辑失败',
+                    message: response.data.meta.msg,
                     type: 'fail'
                   })
                 } else {
@@ -283,7 +341,7 @@ export default {
                 // NProgress.done();
                 if (response.data.meta.success === false) {
                   this.$message({
-                    message: '提交失败',
+                    message: response.data.meta.msg,
                     type: 'fail'
                   })
                 } else {
@@ -299,6 +357,9 @@ export default {
             })
           }
         })
+      },
+      assignSimUser: {
+
       },
       selsChange: function(sels) {
         this.sels = sels

@@ -8,6 +8,14 @@ export function getSimList(para) {
   })
 }
 
+export function getSimUserList(para) {
+  return request({
+    url: '/sim/listBySimId',
+    method: 'post',
+    data: para
+  })
+}
+
 export function addSim(para) {
   return request({
     url: '/sim/add',
