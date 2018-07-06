@@ -61,18 +61,27 @@
           </el-upload>  
           
           <div style="margin:10px auto;">
-          <span>选择声音文件</span>
-          <el-select v-model="keyword.choice" placeholder="请选择">
-            <el-option label="随机" value="random" selected="selected"></el-option>
-            
-            <el-option v-for="(voice) in keyword.voice" v-if="voiceList[voice]"
-              :key="voice"
-              :label="voiceList[voice].filename"
-              :value="voice">
-            </el-option>
-          </el-select>
-          <el-button icon="el-icon-caret-right" @click="playSound(keyword.choice)" >播放</el-button>
+            <span>选择声音文件</span>
+            <el-select v-model="keyword.choice" placeholder="请选择">
+              <el-option label="随机" value="random" selected="selected"></el-option>
+              
+              <el-option v-for="(voice) in keyword.voice" v-if="voiceList[voice]"
+                :key="voice"
+                :label="voiceList[voice].filename"
+                :value="voice">
+              </el-option>
+            </el-select>
+            <el-button icon="el-icon-caret-right" @click="playSound(keyword.choice)" >播放</el-button>
+
+            <span style="margin-left:20px;">返回流程</span>
+            <el-select v-model="keyword.next" placeholder="请选择下一步流程">
+                <el-option label="原流程" value="return"></el-option>
+                <el-option label="等待用户说话" value="wait"></el-option>
+                <el-option label="下一步流程" value=""></el-option>
+                <el-option v-for="(flow1,k1) in initTemplate['flow']" :key="k1" :label="k1|desc" :value="k1"></el-option>
+            </el-select>
           </div>
+        
         <div class="text item">
             <el-input 
             style="margin-top:10px;"
@@ -86,7 +95,6 @@
               <el-button slot="append" type="danger" style="border-left:1px solid #ccc;" icon="el-icon-close" @click="uploadFileRemove(v)" >删除</el-button>
             </el-input>
           </div>
-
 
           <div class="text item">
             <el-card class="box-card" v-if="keyword.conds && keyword.conds.length>0">
@@ -116,7 +124,7 @@
                 </div>
                 <div class="text item">
                   <span>
-                    下一步流程：
+                    跳转流程：
                   </span>
                   <el-select v-model="ks.to" placeholder="请选择下一步流程">
                     <el-option v-for="(flow1,k2) in initTemplate['flow']" :key="k2" :label="k2|desc" :value="k2">
@@ -270,7 +278,8 @@ export default {
         keyword: [],
         voice: [],
         choice: 'random',
-        conds: []
+        conds: [],
+        next: ''
       })
       this.keywordDesc = ''
     },
