@@ -38,6 +38,7 @@
               </el-col>
               <el-col :span="8">
                 <el-select v-model="flow.next" placeholder="请选择下一步流程">
+                  <el-option label="空流程" value=""></el-option>
                   <el-option v-for="(flow1,k1) in flows" :key="k1" :label="k1|desc" :value="k1">
                   </el-option>
                 </el-select>
@@ -146,7 +147,7 @@
                 </div>
                 <div class="text item">
                   <span>
-                    下一步流程：
+                    跳转流程：
                   </span>
                   <el-select v-model="ks.to" placeholder="请选择下一步流程">
                     <el-option v-for="(flow1,k2) in flows" :key="k2" :label="k2|desc" :value="k2">
@@ -223,7 +224,7 @@ export default {
       voiceList: this.initTemplate['voice'],
       action: process.env.BASE_API + 'voice/upload',
       main: '', // 指定第一个流程
-      activeFlow: '', // 记录在编辑哪个流程
+      activeFlow: this.initTemplate['main'], // 记录在编辑哪个流程
       // 记录添加流程的时候的名字
       sectionName: '',
       sectionType: '',

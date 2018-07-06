@@ -18,29 +18,32 @@
               </el-dropdown-menu>
             </el-dropdown>
           </span>
-          <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-close" @click="deleteKeyword">删除</el-button>
+          <el-button v-if="keyword.keyword" style="float: right; padding: 3px 0" type="text" icon="el-icon-close" @click="deleteKeyword">删除</el-button>
         </div>
-        <div class="text item">
-          <el-tag
-            class="keyword-tag"
-            :key="tag"
-            v-for="tag in keyword.keyword"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)">
-            {{tag}}
-          </el-tag>
-        </div>
-        <div class="text item">
+        
+        <div v-if="keyword.keyword"> 
+          <div class="text item">
+            <el-tag
+              class="keyword-tag"
+              :key="tag"
+              v-for="tag in keyword.keyword"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(tag)">
+              {{tag}}
+            </el-tag>
+          </div>
+          <div class="text item">
             <el-input 
-            placeholder="支持中文和英文关键词,多个关键词用逗号隔开。例如：你好#25,哪位#66，hello"
-            v-model="inputValue[key]"
-            @keyup.enter.native="addKeyword()"
-            >
+              placeholder="支持中文和英文关键词,多个关键词用逗号隔开。例如：你好#25,哪位#66，hello"
+              v-model="inputValue[key]"
+              @keyup.enter.native="addKeyword()"
+              >
               <template slot="prepend">输入关键词:</template>
               <el-button slot="append" icon="el-icon-plus" @click="addKeyword()">添加</el-button>
             </el-input>
           </div>
+        </div>
 
         <div class="item voice">
           <el-upload
@@ -57,19 +60,28 @@
             <div slot="tip" class="el-upload__tip" >只能上传wav,mp3文件</div>
           </el-upload>  
           
-          <div style="padding:10px auto;">
-          <span>选择声音文件</span>
-          <el-select v-model="keyword.choice" placeholder="请选择">
-            <el-option label="随机" value="random" selected="selected"></el-option>
-            
-            <el-option v-for="(voice) in keyword.voice" v-if="voiceList[voice]"
-              :key="voice"
-              :label="voiceList[voice].filename"
-              :value="voice">
-            </el-option>
-          </el-select>
-          <el-button icon="el-icon-caret-right" @click="playSound(keyword.choice)" >播放</el-button>
+          <div style="margin:10px auto;">
+            <span>选择声音文件</span>
+            <el-select v-model="keyword.choice" placeholder="请选择">
+              <el-option label="随机" value="random" selected="selected"></el-option>
+              
+              <el-option v-for="(voice) in keyword.voice" v-if="voiceList[voice]"
+                :key="voice"
+                :label="voiceList[voice].filename"
+                :value="voice">
+              </el-option>
+            </el-select>
+            <el-button icon="el-icon-caret-right" @click="playSound(keyword.choice)" >播放</el-button>
+
+            <span style="margin-left:20px;">返回流程</span>
+            <el-select v-model="keyword.next" placeholder="请选择下一步流程">
+                <el-option label="原流程" value="return"></el-option>
+                <el-option label="等待用户说话" value="wait"></el-option>
+                <el-option label="下一步流程" value=""></el-option>
+                <el-option v-for="(flow1,k1) in initTemplate['flow']" :key="k1" :label="k1|desc" :value="k1"></el-option>
+            </el-select>
           </div>
+        
         <div class="text item">
             <el-input 
             style="margin-top:10px;"
@@ -83,6 +95,49 @@
               <el-button slot="append" type="danger" style="border-left:1px solid #ccc;" icon="el-icon-close" @click="uploadFileRemove(v)" >删除</el-button>
             </el-input>
           </div>
+
+          <div class="text item">
+            <el-card class="box-card" v-if="keyword.conds && keyword.conds.length>0">
+              <div slot="header" class="clearfix">
+                <span>
+                  分支列表
+                </span>
+              </div>
+              <el-card class="box-card" shadow="never" v-for="(ks,i) in keyword.conds"
+              :key="i" style="margin:10px auto;position:relative;">
+                <div class="el-icon-circle-close btn-close" @click="delCond(i)">
+                </div>
+                <el-tag class="keyword-tag" closable :disable-transitions="false" :key="tag"
+                v-for="tag in ks.keyword" @close="handleClose(i,tag)">
+                  {{tag}}
+                </el-tag>
+                <div class="text item">
+                  <el-input placeholder="支持中文和英文关键词,多个关键词用逗号隔开。例如：你好#25,哪位#66，hello" v-model="inputValue[key+i]"
+                  @keyup.enter.native="addKeyword(i)">
+                    <template slot="prepend">
+                      输入关键词:
+                    </template>
+                    <el-button slot="append" icon="el-icon-plus" @click="addKeyword(i)">
+                      添加
+                    </el-button>
+                  </el-input>
+                </div>
+                <div class="text item">
+                  <span>
+                    跳转流程：
+                  </span>
+                  <el-select v-model="ks.to" placeholder="请选择下一步流程">
+                    <el-option v-for="(flow1,k2) in initTemplate['flow']" :key="k2" :label="k2|desc" :value="k2">
+                    </el-option>
+                  </el-select>
+                </div>
+              </el-card>
+            </el-card>
+            <el-button v-if="keyword.conds" @click="addCond()" style="margin-top:10px;">
+              添加分支
+            </el-button>
+          </div>
+
         </div>     
       </el-card>
     </div>
@@ -133,6 +188,15 @@ export default {
   },
   filters: {
     desc(val) {
+      if (val === 'quiet') {
+        return '用户超过6秒不说话'
+      } else if (val === 'noword1') {
+        return '第1次没匹配到任何内容'
+      } else if (val === 'noword2') {
+        return '第2次没匹配到任何内容'
+      } else if (val === 'noword3') {
+        return '第3次没匹配到任何内容'
+      }
       return window.decodeURI(window.atob(val))
     }
   },
@@ -144,15 +208,20 @@ export default {
     handleClose(tag) {
       this.keywords[this.whitchKey].keyword.splice(this.keywords[this.whitchKey].keyword.indexOf(tag), 1)
     },
-    addKeyword() {
-      if (!this.inputValue[this.whitchKey]) {
+    addKeyword(i) {
+      var key = this.whitchKey
+      if (i !== undefined) {
+        key += i
+      }
+
+      if (!this.inputValue[key]) {
         this.$message.error('请输入关键词')
         return
       }
       // 获取内容，并去除空格
-      const text = this.inputValue[this.whitchKey].replace(/([\s\n\t\r]+)/g, '')
+      const text = this.inputValue[key].replace(/([\s\n\t\r]+)/g, '')
       if (text === '') {
-        this.inputValue[this.whitchKey] = '' // 考虑到如果输入了空格，点击一直没反应，所以空格的情况下清空
+        this.inputValue[key] = '' // 考虑到如果输入了空格，点击一直没反应，所以空格的情况下清空
         return
       }
 
@@ -179,12 +248,17 @@ export default {
         if (v.indexOf('#') === -1) {
           v = v + '#25'
         }
-        if (this.keywords[this.whitchKey].keyword.indexOf(v) === -1) {
-          this.keywords[this.whitchKey].keyword.push(v)
-          // this.$emit('submit-keyword-update', this.keywords)
+        if (i !== undefined) {
+          if (this.keywords[this.whitchKey].conds[i].keyword.indexOf(v) === -1) {
+            this.keywords[this.whitchKey].conds[i].keyword.push(v)
+          }
+        } else {
+          if (this.keywords[this.whitchKey].keyword.indexOf(v) === -1) {
+            this.keywords[this.whitchKey].keyword.push(v)
+          }
         }
       }
-      this.inputValue[this.whitchKey] = ''
+      this.inputValue[key] = ''
     },
     add() {
       if (this.keywordDesc === '') {
@@ -203,11 +277,24 @@ export default {
         type: 0,
         keyword: [],
         voice: [],
-        multi_voice: [],
         choice: 'random',
-        multi_choice: 'random'
+        conds: [],
+        next: ''
       })
       this.keywordDesc = ''
+    },
+    addCond() {
+      this.keywords[this.whitchKey].conds.push({
+        keyword: [],
+        to: ''
+      })
+    },
+    delCond(index) {
+      this.$confirm('确认删除分支吗？')
+        .then(_ => {
+          this.keywords[this.whitchKey].conds.splice(index, 1)
+        })
+        .catch(_ => {})
     },
     deleteKeyword() {
       this.$confirm('确认删除？')
@@ -289,18 +376,24 @@ export default {
     margin:20px auto;
   }
 
-  
-  .voice{
-    margin:10px auto;
-    padding:10px 0 10px 0;
-    border-top:1px solid #eee;
-  }
-
   .upload-sound{
     margin-top:10px;
   }
 
   .keyword-tag{
     margin:0 5px 5px 0;
+  }
+
+  .btn-close{
+    position: absolute;
+    right:0; 
+    top:0;
+    z-index: 1000;
+    font-size:20px;
+    cursor: pointer;
+  }
+  .item{
+      margin-bottom:10px;
+      
   }
 </style>
