@@ -75,9 +75,9 @@
 
             <span style="margin-left:20px;">返回流程</span>
             <el-select v-model="keyword.next" placeholder="请选择下一步流程">
-                <el-option label="原流程" value="return"></el-option>
+                <el-option label="重新执行原流程" value="return"></el-option>
                 <el-option label="等待用户说话" value="wait"></el-option>
-                <el-option label="下一步流程" value=""></el-option>
+                <el-option label="执行下一步流程" value="next"></el-option>
                 <el-option v-for="(flow1,k1) in initTemplate['flow']" :key="k1" :label="k1|desc" :value="k1"></el-option>
             </el-select>
           </div>
@@ -188,8 +188,10 @@ export default {
   },
   filters: {
     desc(val) {
-      if (val === 'quiet') {
+      if (val === 'quiet1') {
         return '用户超过6秒不说话'
+      } else if (val === 'quiet2') {
+        return '用户超过12秒不说话'
       } else if (val === 'noword1') {
         return '第1次没匹配到任何内容'
       } else if (val === 'noword2') {
