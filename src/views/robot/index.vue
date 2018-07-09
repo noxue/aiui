@@ -21,9 +21,11 @@
         </el-table-column> -->
         <el-table-column type="index" width="60">
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="120" sortable>
+        <el-table-column prop="name" label="名称" width="220" sortable>
         </el-table-column>
-        <el-table-column prop="description" label="描述" min-width="180" sortable>
+        <el-table-column prop="key" label="key" width="180" sortable>
+        </el-table-column>
+        <el-table-column prop="description" label="描述" min-width="400" sortable>
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -43,6 +45,9 @@
         <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
           <el-form-item label="名称" prop="name">
             <el-input v-model="editForm.name" auto-complete="off"></el-input>
+          </el-form-item>
+           <el-form-item label="key" prop="key">
+            <el-input v-model="editForm.key" ></el-input>
           </el-form-item>
           <el-form-item label="描述">
             <el-input type="textarea" v-model="editForm.description"></el-input>
@@ -96,6 +101,7 @@ export default {
         // 编辑界面数据
         editForm: {
           name: '',
+          key: '',
           description: ''
         },
 
@@ -109,6 +115,7 @@ export default {
         // 新增界面数据
         addForm: {
           name: '',
+          key: '',
           description: ''
         }
       }
@@ -188,7 +195,6 @@ export default {
               editApp(reqData).then((response) => {
                 this.editLoading = false
                 // NProgress.done();
-  
                 if (response.data.meta.success === false) {
                   this.$message({
                     message: response.data.meta.msg,

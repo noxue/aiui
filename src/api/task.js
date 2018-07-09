@@ -24,9 +24,17 @@ export function deleteTask(params) {
   })
 }
 
-export function editTask(para) {
+export function editTaskStatus(para) {
   return request({
-    url: '/task/edit',
+    url: '/task/status',
+    method: 'post',
+    data: para
+  })
+}
+
+export function editTaskUser(para) {
+  return request({
+    url: '/task/user/edit',
     method: 'post',
     data: para
   })

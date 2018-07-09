@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <el-form ref="form"  label-position="top" :model="form" label-width="80px">
+      <el-form-item label="任务名称" ><el-input v-model="form.taskName"></el-input></el-form-item>
       <el-form-item label="模板信息" >
         <el-select v-model="form.region" placeholder="请选择">
           <el-option
@@ -11,7 +12,7 @@
               </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="sim卡信息" >
+      <!-- <el-form-item label="sim卡信息" >
         <el-select v-model="form.sim" placeholder="请选择">
           <el-option
               v-for="item in form.simOptions"
@@ -20,18 +21,8 @@
               :value="item.id">
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item>
-      <el-form-item label="该任务的号码总数"  ><el-input v-model="form.total"></el-input></el-form-item>
-      <el-form-item label="任务开始时间"  >
-        <el-col :span="11">
-          <el-date-picker type="date" value-format="yyyy-MM-dd" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
-        </el-col>
-        <el-col class="line" :span="2">-</el-col>
-        <el-col :span="11">
-          <el-time-picker type="fixed-time" value-format="hh:mm:ss" placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
-        </el-col>
-      </el-form-item>
+      </el-form-item> -->
+      <!-- <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item> -->
       <el-form-item >
         <el-radio-group v-model="form.test" >
           <el-radio-button :label="1">正式任务</el-radio-button>
@@ -39,9 +30,9 @@
         </el-radio-group>
       </el-form-item>
       <!--测试任务选中时触发-->
-        <el-form-item label="测试姓名" v-if="!form.test" label-position="left"><el-input v-model="form.name"></el-input>
+        <el-form-item label="测试姓名" v-if="!form.test" label-position="left"><el-input v-model="form.teatName"></el-input>
         </el-form-item>
-        <el-form-item label="测试号码" v-if="!form.test" label-position="left"><el-input v-model="form.phone"></el-input>
+        <el-form-item label="测试号码" v-if="!form.test" label-position="left"><el-input v-model="form.teatPhone"></el-input>
         </el-form-item>
         <el-form-item label="备注" v-if="!form.test" label-position="left"><el-input v-model="form.remark"></el-input>
         </el-form-item>
@@ -60,6 +51,7 @@ export default {
     data() {
       return {
         form: {
+          taskName: '',
           num: '',
           total: '',
           date1: '',
@@ -67,8 +59,8 @@ export default {
           test: 1,
           options: [],
           simOptions: [],
-          name: '',
-          phone: '',
+          testName: '',
+          testPhone: '',
           remark: '',
           visible: 'false'
         }
@@ -78,6 +70,7 @@ export default {
     methods: {
       onSubmit(form) {
         const reqData = {
+          taskName: this.form.taskName,
           template: this.form.region + '',
           sim: this.form.sim + '',
           num: this.form.num + '',
@@ -85,8 +78,8 @@ export default {
           date1: this.form.date1,
           date2: this.form.date2,
           test: this.form.test + '',
-          name: this.form.name,
-          phone: this.form.phone + '',
+          testName: this.form.testName,
+          testPhone: this.form.testPhone + '',
           remark: this.form.remark
         }
         addTask(reqData).then((response) => {
