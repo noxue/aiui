@@ -19,7 +19,7 @@
         <ul class="task-list">
           <li v-for="(item,k) in tasks" :key='k' @click="getTaskUsersList(item)">
             <div>{{item.name}}</div>
-            <span>{{item.status}}</span>
+            <span>{{filters.desc(item.status)}}</span>
           </li>
         </ul>
         <!--工具条-->
@@ -128,7 +128,6 @@
                 <el-col :span="8"><div class="grid-content bg-purple">号码总数：{{this.task.total}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple">已拨打：{{this.task.called}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple">并发数：{{this.task.thread}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">任务状态：{{this.formatTaskStatus(this.task.status)}}</div></el-col>
               </el-row>
             </el-tab-pane>
         </el-tabs>
@@ -138,7 +137,7 @@
         <el-upload
           class="upload-demo"
           drag
-          :action="tables.action"
+          :action="action"
           :on-success="uploadSuccess"
           :multiple="false">
           <i class="el-icon-upload"></i>
@@ -184,7 +183,23 @@ export default {
   data() {
     return {
       filters: {
-        name: ''
+        name: '',
+        desc(val) {
+          if (val === 0) {
+            return '已结束'
+          } else if (val === 1) {
+            return '未开始'
+          } else if (val === 2) {
+            return '待开始'
+          } else if (val === 3) {
+            return '执行中'
+          } else if (val === 4) {
+            return '暂停中'
+          } else if (val === 5) {
+            return '卡壳中'
+          }
+          return '未知'
+        }
       },
       tables: {
         name: '',
@@ -226,8 +241,7 @@ export default {
         }, {
           value: '0',
           label: '否'
-        }],
-        action: process.env.BASE_API + 'task/imp'
+        }]
       },
       task: {
         userId: '',
@@ -248,6 +262,7 @@ export default {
       currentPage: 1,
       tasks: [],
       itemId: '',
+      action: '',
       taskUsers: [],
       listLoading: false,
       activeName: 'first',
@@ -338,11 +353,6 @@ export default {
     formatType: function(row, column) {
       return row.type === 0 ? 'A类' : row.type === 1 ? 'B类' : row.type === 2 ? 'C类' : row.type === 3 ? 'D类' : row.type === 4 ? 'E类' : row.type === 5 ? 'F类' : '未知'
     },
-    formatTaskStatus: function(status) {
-      return status === 0 ? '一结束' : status === 1 ? '未开始' : status === 2
-        ? '待开始' : status === 3 ? '执行中' : status === 4 ? '暂停中' : status === 5
-          ? '卡壳中' : '未知'
-    },
     handleCurrentChange(val) {
       this.page = val
       this.getTasks()
@@ -365,6 +375,7 @@ export default {
         // NProgress.done();
         if (this.tasks.length > 0) {
           this.itemId = this.tasks[0].id
+          this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
           this.task.userId = this.tasks[0].userId
           this.task.name = this.tasks[0].name
           this.task.tempateId = this.tasks[0].templateId
@@ -392,22 +403,23 @@ export default {
       this.impFormVisible = true
     },
     uploadSuccess(response) {
-      console.log(response)
       if (!response.meta.success) {
         this.$message.error('导入错误,' + '错误信息：' + response.meta.msg)
         return
       } else {
+        this.impFormVisible = false
         this.$message({
           message: response.meta.msg,
           type: 'success'
         })
-        this.getTaskUsersList()
+        this.getTasks()
       }
     },
     getTaskUsersList(item) {
       if (item.id !== undefined) {
         this.itemId = item.id
       }
+      this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
       const rePara = {
         page: this.currentPage + '',
         taskId: this.itemId + '',
