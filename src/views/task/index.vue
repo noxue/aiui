@@ -1,9 +1,9 @@
 <template>
-  <div class="task-container">
+  <div class="app-container">
     <el-container>
       <el-aside width="300px">
         <!--工具条-->
-        <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+        <div class="toolbar" style="margin-top:30px;">
           <el-form :inline="true" :model="filters">
 
             <el-form-item>
@@ -14,12 +14,12 @@
               <el-button type="primary" v-on:click="getTasks">查询</el-button>
             </el-form-item>
           </el-form>
-        </el-col>
+        </div>
          <!--task部分-->
-        <br>
-        <ul>
+        <ul class="task-list">
           <li v-for="(item,k) in tasks" :key='k' @click="getTaskUsersList(item)">
-            {{item.name}}
+            <div>{{item.name}}</div>
+            <span>{{item.status}}</span>
           </li>
         </ul>
         <!--工具条-->
@@ -71,7 +71,7 @@
                     <el-button type="primary" v-on:click="importExcel">导入Excel</el-button>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary" v-on:click="startTask" :disabled="status=2" >开始</el-button>
+                    <el-button type="primary" v-on:click="startTask" >开始</el-button>
                   </el-form-item>
                 </el-form>
               </el-col>
@@ -149,14 +149,14 @@
 
       <!--编辑界面-->
       <el-dialog title="编辑"  :visible.sync="editFormVisible">
-        <el-form :model="editForm" label-width="80px" ref="editForm">
+        <el-form :model="editForm" label-width="80px" ref="editForm" >
           <el-form-item label="号码" prop="mobile" >
             <el-input v-model="editForm.mobile"  :disabled="true" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="客户类型" prop="type" >
-            <el-select v-model="editForm.type"  placeholder="客户类型">
+          <el-form-item label="客户类型" style="text-align: left;" >
+            <el-select v-model="editType" placeholder="请选择">
               <el-option
-                v-for="item in this.tables.taskTypes"
+                v-for="item in this.option"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -261,7 +261,27 @@ export default {
         mobile: '',
         type: '',
         remark: ''
-      }
+      },
+      option: [{
+        value: '0',
+        label: 'A类'
+      }, {
+        value: '1',
+        label: 'B类'
+      }, {
+        value: '2',
+        label: 'C类'
+      }, {
+        value: '3',
+        label: 'D类'
+      }, {
+        value: '4',
+        label: 'E类'
+      }, {
+        value: '5',
+        label: 'F类'
+      }],
+      editType: ''
     }
   },
   methods: {
@@ -271,7 +291,7 @@ export default {
       this.editForm = Object.assign({}, row)
       this.editForm.mobile = row.mobile
       this.editForm.remark = row.remark
-      this.editForm.type = row.type
+      this.editType = row.type + ''
     },
     // 编辑
     editSubmit: function() {
@@ -281,8 +301,6 @@ export default {
             this.editLoading = true
             // NProgress.start();
             const para = Object.assign({}, this.editForm)
-            alert('asda')
-            console.log(para)
             const reqData = {
               id: para.id + '',
               mobile: para.mobile + '',
@@ -318,9 +336,7 @@ export default {
       return row.status === 0 ? '通话完毕' : row.status === 1 ? '任务未执行' : row.status === 2 ? '客户端获取任务' : '未知'
     },
     formatType: function(row, column) {
-      return row.type === 0 ? 'A类' : row.status === 1 ? 'B类' : row.status === 2
-        ? 'C类' : row.status === 3 ? 'D类' : row.status === 4 ? 'E类' : row.status === 5
-          ? 'F类' : '未知'
+      return row.type === 0 ? 'A类' : row.type === 1 ? 'B类' : row.type === 2 ? 'C类' : row.type === 3 ? 'D类' : row.type === 4 ? 'E类' : row.type === 5 ? 'F类' : '未知'
     },
     formatTaskStatus: function(status) {
       return status === 0 ? '一结束' : status === 1 ? '未开始' : status === 2
@@ -365,7 +381,10 @@ export default {
       })
     },
     exportExcel: function(event) {
-      expExcel(Request).then((response) => {
+      const reqData = {
+        taskId: this.itemId
+      }
+      expExcel(reqData).then((response) => {
         window.open('data:application/vnd.ms-excel;base64,' + response.data.data.task)
       })
     },
@@ -481,18 +500,7 @@ export default {
     line-height: 700px
   }
 
-  ul {
-    list-style:none;margin:30px auto;
-  } 
-  ul li{
-    margin:20px 0px;
-    border: 2px bottom #999; 
-    z-index: 0;
-    position: relative; 
-  }
-  li:hover {
-    cursor: pointer;
-  }
+  
   .el-row {
     margin-bottom: 20px;
     &:last-child {
@@ -519,5 +527,37 @@ export default {
   .row-bg {
     padding: 10px 0;
     background-color: #f9fafc;
+  }
+
+  .task-list{
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+
+  .task-list>li:hover{
+    background: #eef;
+   
+    
+  }
+
+  .task-list>li{
+    height:50px;
+    line-height: 50px;
+    text-align: left;
+    border-bottom:1px solid #eee;
+    cursor: pointer;
+    padding:0 5px 0 5px;
+     transition:hover 1s, background 1s;
+  }
+  .task-list>li>div{
+    float:left;
+    width:70%;
+  }
+  .task-list>li>span{
+    width:30%;
+    float:right;
+    font-size:14px;
+    color:#888;
   }
 </style>

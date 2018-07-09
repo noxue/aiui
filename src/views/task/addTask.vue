@@ -12,7 +12,7 @@
               </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="sim卡信息" >
+      <!-- <el-form-item label="sim卡信息" >
         <el-select v-model="form.sim" placeholder="请选择">
           <el-option
               v-for="item in form.simOptions"
@@ -21,18 +21,8 @@
               :value="item.id">
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item>
-      <el-form-item label="该任务的号码总数"  ><el-input v-model="form.total"></el-input></el-form-item>
-      <el-form-item label="任务开始时间"  >
-        <el-col :span="11">
-          <el-date-picker type="date" value-format="yyyy-MM-dd" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
-        </el-col>
-        <el-col class="line" :span="2">-</el-col>
-        <el-col :span="11">
-          <el-time-picker type="fixed-time" value-format="hh:mm:ss" placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
-        </el-col>
-      </el-form-item>
+      </el-form-item> -->
+      <!-- <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item> -->
       <el-form-item >
         <el-radio-group v-model="form.test" >
           <el-radio-button :label="1">正式任务</el-radio-button>
