@@ -4,10 +4,10 @@
       <el-aside width="300px">
         <!--工具条-->
         <div class="toolbar" style="margin-top:30px;">
-          <el-form :inline="true" :model="filters">
+          <el-form :inline="true" :model="filters"  onsubmit="return false">
 
             <el-form-item>
-              <el-input v-model="filters.name" placeholder="请输入任务名"></el-input>
+              <el-input v-model="filters.name" @keyup.enter.native="getTasks" placeholder="请输入任务名"></el-input>
             </el-form-item>
             
             <el-form-item>
@@ -35,7 +35,7 @@
               <el-col :span="24" class="toolbar" style="padding: 0px;">
                 <el-form :inline="true" :model="tables">
                   <el-form-item>
-                    <el-input v-model="tables.name" style="width:160px;" placeholder="姓名"></el-input>
+                    <el-input v-model="tables.name" style="width:160px;" @keyup.enter.native="getTaskUsersList" placeholder="姓名"></el-input>
                   </el-form-item>
                   <el-select v-model="tables.type" style="width:160px;" placeholder="客户类型">
                     <el-option
