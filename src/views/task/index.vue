@@ -393,7 +393,7 @@ export default {
     },
     exportExcel: function(event) {
       const reqData = {
-        taskId: this.itemId
+        taskId: this.itemId + ''
       }
       expExcel(reqData).then((response) => {
         window.open('data:application/vnd.ms-excel;base64,' + response.data.data.task)
