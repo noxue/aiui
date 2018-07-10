@@ -90,13 +90,14 @@
                 </el-table-column>
                 <el-table-column prop="name" label="姓名" width="120" sortable>
                 </el-table-column>
-                <el-table-column prop="remark" label="备注" width="120"  sortable>
-                </el-table-column>
-                <el-table-column prop="calledAt" label="呼叫时间" width="120" sortable>
-                </el-table-column>
+                <!-- <el-table-column prop="remark" label="备注" width="120"  sortable>
+                </el-table-column> -->
+                <!-- <el-table-column prop="calledAt" label="呼叫时间" width="120" :formatter="formatDate" sortable>
+                </el-table-column> -->
                 <el-table-column label="操作" width="170">
                   <template slot-scope="scope">
-                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button size="small" type="primary" plain @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button size="small" type="info" plain @click="handleCalled(scope.$index, scope.row)">通话详情</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -171,14 +172,40 @@
           <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
         </div>
       </el-dialog>
+
+        <!--通话详情界面-->
+        <el-dialog title="通话详情" :fullscreen="true" width=80%  :visible.sync="calledFormVisible">
+         <div class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+            <div class="portrait ">
+              <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
+            </div>
+          <div class="app-msg">
+            <span> hellosdlkjaskldajsioxcvlnfweropitasikldajsioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhshellosdlkjaskldajsioxcvlnfweropitasikldajsihellosdlkjaskldajsioxcvlnfweropitasikldajsioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkoxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslklk</span>
+         </div>
+        </div>
+        <!-- Right -->
+        <div class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+            <div class="portrait">
+               <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
+            </div>
+         <div class="app-msg" style="color:#ffffff">
+              <span> hellodlkjaskldajsioxcvlnfwerophellodlkjaskldajshellodlkjaskldajsioxcvlnfweropiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkioxcvlnfweropiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslk </span>
+         </div>
+        </div>  
+        </el-dialog>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script>
-import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus } from '@/api/task'
-//, impExcel
+import {
+  getTaskList,
+  getTaskUserList,
+  expExcel,
+  editTaskUser,
+  editTaskStatus
+} from '@/api/task'
 export default {
   data() {
     return {
@@ -206,42 +233,56 @@ export default {
         type: '',
         share: '',
         status: '',
-        taskTypes: [{
-          value: '0',
-          label: 'A类'
-        }, {
-          value: '1',
-          label: 'B类'
-        }, {
-          value: '2',
-          label: 'C类'
-        }, {
-          value: '3',
-          label: 'D类'
-        }, {
-          value: '4',
-          label: 'E类'
-        }, {
-          value: '5',
-          label: 'F类'
-        }],
-        taskStatus: [{
-          value: '0',
-          label: '通话完毕'
-        }, {
-          value: '1',
-          label: '任务未执行'
-        }, {
-          value: '2',
-          label: '任务被获取'
-        }],
-        isShare: [{
-          value: '1',
-          label: '是'
-        }, {
-          value: '0',
-          label: '否'
-        }]
+        taskTypes: [
+          {
+            value: '0',
+            label: 'A类'
+          },
+          {
+            value: '1',
+            label: 'B类'
+          },
+          {
+            value: '2',
+            label: 'C类'
+          },
+          {
+            value: '3',
+            label: 'D类'
+          },
+          {
+            value: '4',
+            label: 'E类'
+          },
+          {
+            value: '5',
+            label: 'F类'
+          }
+        ],
+        taskStatus: [
+          {
+            value: '0',
+            label: '通话完毕'
+          },
+          {
+            value: '1',
+            label: '任务未执行'
+          },
+          {
+            value: '2',
+            label: '任务被获取'
+          }
+        ],
+        isShare: [
+          {
+            value: '1',
+            label: '是'
+          },
+          {
+            value: '0',
+            label: '否'
+          }
+        ]
       },
       task: {
         userId: '',
@@ -277,25 +318,39 @@ export default {
         type: '',
         remark: ''
       },
-      option: [{
-        value: '0',
-        label: 'A类'
-      }, {
-        value: '1',
-        label: 'B类'
-      }, {
-        value: '2',
-        label: 'C类'
-      }, {
-        value: '3',
-        label: 'D类'
-      }, {
-        value: '4',
-        label: 'E类'
-      }, {
-        value: '5',
-        label: 'F类'
-      }],
+
+      // 通话详情界面是否显示
+      calledFormVisible: false,
+      calledLoading: false,
+      // 通话详情界面数据
+      calledForm: {},
+
+      option: [
+        {
+          value: '0',
+          label: 'A类'
+        },
+        {
+          value: '1',
+          label: 'B类'
+        },
+        {
+          value: '2',
+          label: 'C类'
+        },
+        {
+          value: '3',
+          label: 'D类'
+        },
+        {
+          value: '4',
+          label: 'E类'
+        },
+        {
+          value: '5',
+          label: 'F类'
+        }
+      ],
       editType: ''
     }
   },
@@ -308,9 +363,17 @@ export default {
       this.editForm.remark = row.remark
       this.editType = row.type + ''
     },
+    handleCalled: function(index, row) {
+      this.calledFormVisible = true
+      this.editForm = Object.assign({}, row)
+    },
+    // formatDate(row) {
+    //   var d = new Date(row.calledAt)
+    //   return d.getMonth() + '-' + d.getDay() + '  ' + d.getHours() + ':' + d.getMinutes()
+    // },
     // 编辑
     editSubmit: function() {
-      this.$refs.editForm.validate((valid) => {
+      this.$refs.editForm.validate(valid => {
         if (valid) {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             this.editLoading = true
@@ -322,7 +385,7 @@ export default {
               type: para.type + '',
               remark: para.remark
             }
-            editTaskUser(reqData).then((response) => {
+            editTaskUser(reqData).then(response => {
               this.editLoading = false
               // NProgress.done();
               if (response.data.meta.success === false) {
@@ -348,10 +411,22 @@ export default {
       return row.share === false ? '否' : row.sex === true ? '是' : '未知'
     },
     formatStatus: function(row, column) {
-      return row.status === 0 ? '通话完毕' : row.status === 1 ? '任务未执行' : row.status === 2 ? '客户端获取任务' : '未知'
+      return row.status === 0
+        ? '通话完毕'
+        : row.status === 1
+          ? '任务未执行'
+          : row.status === 2 ? '客户端获取任务' : '未知'
     },
     formatType: function(row, column) {
-      return row.type === 0 ? 'A类' : row.type === 1 ? 'B类' : row.type === 2 ? 'C类' : row.type === 3 ? 'D类' : row.type === 4 ? 'E类' : row.type === 5 ? 'F类' : '未知'
+      return row.type === 0
+        ? 'A类'
+        : row.type === 1
+          ? 'B类'
+          : row.type === 2
+            ? 'C类'
+            : row.type === 3
+              ? 'D类'
+              : row.type === 4 ? 'E类' : row.type === 5 ? 'F类' : '未知'
     },
     handleCurrentChange(val) {
       this.page = val
@@ -369,7 +444,7 @@ export default {
       }
       this.listLoading = true
       // NProgress.start();
-      getTaskList(para).then((response) => {
+      getTaskList(para).then(response => {
         this.total = response.data.data.taskList.total
         this.tasks = response.data.data.taskList.list
         // NProgress.done();
@@ -395,8 +470,10 @@ export default {
       const reqData = {
         taskId: this.itemId + ''
       }
-      expExcel(reqData).then((response) => {
-        window.open('data:application/vnd.ms-excel;base64,' + response.data.data.task)
+      expExcel(reqData).then(response => {
+        window.open(
+          'data:application/vnd.ms-excel;base64,' + response.data.data.task
+        )
       })
     },
     importExcel: function(event) {
@@ -441,7 +518,7 @@ export default {
 
       this.listLoading = true
       // NProgress.start();
-      getTaskUserList(rePara).then((response) => {
+      getTaskUserList(rePara).then(response => {
         this.taskUserTotal = response.data.data.taskUserList.total
         this.taskUsers = response.data.data.taskUserList.list
         this.listLoading = false
@@ -457,9 +534,11 @@ export default {
         status: 2 + ''
       }
       this.listLoading = true
-      editTaskStatus(rePara).then((response) => {
+      editTaskStatus(rePara).then(response => {
         if (!response.data.meta.success) {
-          this.$message.error('准备失败,' + '错误信息：' + response.data.meta.msg)
+          this.$message.error(
+            '准备失败,' + '错误信息：' + response.data.meta.msg
+          )
           return this.getTasks()
         } else {
           this.$message({
@@ -470,8 +549,7 @@ export default {
         this.getTasks()
       })
     },
-    handleClick(tab, event) {
-    },
+    handleClick(tab, event) {},
     selsChange(sels) {
       this.sels = sels
     }
@@ -479,97 +557,168 @@ export default {
   mounted() {
     this.getTasks()
   }
-
 }
 </script>
 
  <style lang="scss" scoped>
-  
-  .el-aside {
-    //background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 100%
-  }
-  
-  .el-main {
-    //background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 100%
-  }
-  
-  body > .el-container {
-    margin-bottom: 0px;
-  }
-  
-  .el-container:nth-child(5) .el-aside,
-  .el-container:nth-child(6) .el-aside {
-    line-height: 100%
-  }
-  
-  .el-container:nth-child(7) .el-aside {
-    line-height: 700px
-  }
+.el-aside {
+  //background-color: #D3DCE6;
+  color: #333;
+  text-align: center;
+  line-height: 100%;
+}
 
-  
-  .el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    text-align: left;
-    //background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
+.el-main {
+  //background-color: #E9EEF3;
+  color: #333;
+  text-align: center;
+  line-height: 100%;
+}
 
-  .task-list{
-    list-style:none;
-    padding:0;
-    margin:0;
-  }
+body > .el-container {
+  margin-bottom: 0px;
+}
 
-  .task-list>li:hover{
-    background: #eef;
-   
-    
-  }
+.el-container:nth-child(5) .el-aside,
+.el-container:nth-child(6) .el-aside {
+  line-height: 100%;
+}
 
-  .task-list>li{
-    height:50px;
-    line-height: 50px;
-    text-align: left;
-    border-bottom:1px solid #eee;
-    cursor: pointer;
-    padding:0 5px 0 5px;
-     transition:hover 1s, background 1s;
+.el-container:nth-child(7) .el-aside {
+  line-height: 700px;
+}
+
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
   }
-  .task-list>li>div{
-    float:left;
-    width:70%;
-  }
-  .task-list>li>span{
-    width:30%;
-    float:right;
-    font-size:14px;
-    color:#888;
-  }
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  text-align: left;
+  //background: #d3dce6;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-list > li:hover {
+  background: #eef;
+}
+
+.task-list > li {
+  height: 50px;
+  line-height: 50px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  padding: 0 5px 0 5px;
+  transition: hover 1s, background 1s;
+}
+.task-list > li > div {
+  float: left;
+  width: 70%;
+}
+.task-list > li > span {
+  width: 30%;
+  float: right;
+  font-size: 14px;
+  color: #888;
+}
+
+/* bubble style */
+.sender {
+  clear: both;
+  //max-width: 80%;
+}
+.sender div:nth-of-type(1) {
+  float: left;
+}
+.sender div:nth-of-type(2) {
+  background-color: #f5f5f5;
+  float: left;
+  margin: 0 20px 10px 15px;
+  border-radius: 7px;
+}
+
+.receiver div:first-child img,
+.sender div:first-child img {
+  width: 50px;
+  height: 50px;
+}
+
+.receiver {
+  clear: both;
+  //max-width: 80%;
+}
+.receiver div:nth-child(1) {
+  float: right;
+}
+.receiver div:nth-of-type(2) {
+  float: right;
+  background-color:#00B2EE;
+  margin: 0 10px 10px 20px;
+  border-radius: 7px;
+}
+
+// .left_triangle {
+//   height: 0px;
+//   width: 0px;
+//   border-width: 8px;
+//   border-style: solid;
+//   border-color: transparent aquamarine transparent transparent;
+//   position: relative;
+//   left: -16px;
+//   top: 3px;
+// }
+
+// .right_triangle {
+//   height: 0px;
+//   width: 0px;
+//   border-width: 8px;
+//   border-style: solid;
+//   border-color: transparent transparent transparent gold;
+//   position: relative;
+//   right: -16px;
+//   top: 3px;
+// }
+span{
+  display:inline-block;
+}
+
+.app-msg{
+  max-width:600px;
+  padding:5px 10px 10px 10px;
+  box-shadow: 2px 2px 5px rgb(111, 128, 148);
+}
+// .portrait{
+//   text-align: center;
+//   width:90px;
+//   height:90px;
+//   border-radius:50%;
+//   background-color:#000000
+// }
+// .portrait>i{
+//   color:#fff;
+// }
 </style>
