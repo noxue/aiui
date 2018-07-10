@@ -3,12 +3,12 @@
     <section>
       <!--工具条-->
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-form :inline="true" :model="filters">
+        <el-form :inline="true" :model="filters" onsubmit="return false">
           <el-form-item>
-            <el-input v-model="filters.name" placeholder="网关名称"></el-input>
+            <el-input v-model="filters.name" @keyup.enter.native="getGateways" placeholder="网关名称"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="filters.username" placeholder="用户"></el-input>
+            <el-input v-model="filters.username" @keyup.enter.native="getGateways" placeholder="用户"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" v-on:click="getGateways">查询</el-button>

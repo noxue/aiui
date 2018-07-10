@@ -67,7 +67,7 @@ export function getSimListById(para) {
 export function expExcel(para) {
   return request({
     url: '/task/exp',
-    method: 'get',
+    method: 'post',
     data: para
   })
 }
