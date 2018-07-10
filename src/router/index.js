@@ -108,14 +108,14 @@ export const asyncRouterMap = [
       icon: 'component'
     },
     children: [{
-      path: 'template/add',
-      component: () => import('@/views/template/index'),
-      name: 'templateAdd',
-      meta: { title: 'templateAdd', icon: 'component', noCache: true }
+      path: 'template/edit',
+      component: () => import('@/views/template/edit'),
+      name: 'templateEdit',
+      meta: { title: 'templateEdit', icon: 'component', noCache: true }
     },
     {
       path: 'template/index',
-      component: () => import('@/views/template/list'),
+      component: () => import('@/views/template/index'),
       name: 'templateList',
       meta: { title: 'templateList', icon: 'component', noCache: true }
     }]

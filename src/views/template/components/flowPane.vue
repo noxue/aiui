@@ -202,10 +202,8 @@
 </template>
 
 <script>
-import voiceUpload from './voiceUpload'
-
 export default {
-  componects: [voiceUpload],
+  componects: [],
   props: {
     initTemplate: {
       type: Object,
