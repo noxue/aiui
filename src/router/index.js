@@ -144,6 +144,17 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '',
+    component: Layout,
+    redirect: 'userConfig',
+    children: [{
+      path: 'userConfig',
+      component: () => import('@/views/userConfig/index'),
+      name: 'userConfig',
+      meta: { title: 'userConfig', icon: 'component', noCache: true }
+    }]
+  },
+  {
     path: '*', redirect: '/404', hidden: true
   }
 ]
