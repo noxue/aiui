@@ -96,6 +96,9 @@ export default {
         editFormRules: {
           name: [
             { required: true, message: '请输入名称', trigger: 'blur' }
+          ],
+          key: [
+            { required: true, message: 'key不可以为空', trigger: 'blur' }
           ]
         },
         // 编辑界面数据

@@ -11,7 +11,8 @@ export default {
     sim: '手机卡管理',
     task: '任务管理',
     taskList: '任务列表',
-    addTask: '添加任务'
+    addTask: '添加任务',
+    userConfig: '用户配置'
   },
   navbar: {
     logOut: '退出登录',
