@@ -180,8 +180,15 @@
               <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
             </div>
           <div class="app-msg">
-            <span> hellosdlkjaskldajsioxcvlnfweropitasikldajsioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhshellosdlkjaskldajsioxcvlnfweropitasikldajsihellosdlkjaskldajsioxcvlnfweropitasikldajsioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkoxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslklk</span>
-         </div>
+            <span> 喂，您好</span>
+          </div>
+          <div class="app-msg-voice">
+            <el-button slot="append" icon="el-icon-caret-right" @click="playSound()">
+              播放
+            </el-button>
+            <audio id="snd" src="D:\3.0.1.wav">
+            </audio>
+          </div>
         </div>
         <!-- Right -->
         <div class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
@@ -552,6 +559,21 @@ export default {
     handleClick(tab, event) {},
     selsChange(sels) {
       this.sels = sels
+    },
+    playSound(voice) {
+      var audio = document.getElementById('snd')
+      audio.pause()
+      audio.currentTime = 0
+      // if (voice !== '' && typeof voice !== undefined && this.flows[this.activeFlow].section.voice.length > 0) {
+      //   if (voice === 'random') {
+      //     voice = this.flows[this.activeFlow].section.voice[Math.floor(Math.random() * this.flows[this.activeFlow].section.voice.length)]
+      //   }
+
+      //   audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
+
+      // }
+      audio.src = 'http://127.0.0.1:9527/3.0.1.wav'
+      audio.play()
     }
   },
   mounted() {
