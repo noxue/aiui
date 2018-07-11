@@ -117,7 +117,7 @@ export default {
     },
     // 修改
     handleEdit: function(index, row) {
-      this.$router.push({ name: 'templateAdd', params: { id: row.id }})
+      this.$router.push({ name: 'templateEdit', params: { id: row.id }})
     },
     selsChange: function(sels) {
       this.sels = sels

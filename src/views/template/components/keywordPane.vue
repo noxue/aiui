@@ -350,7 +350,7 @@ export default {
             this.keywords[this.whitchKey].choice = 'random'
           }
           this.keywords[this.whitchKey].voice.splice(this.keywords[this.whitchKey].voice.indexOf(hash), 1)
-          this.$delete(this.voiceList, hash)
+          // this.$delete(this.voiceList, hash)
         })
         .catch(_ => {})
     },

@@ -15,3 +15,26 @@ export function deleteTemplate(para) {
     data: para
   })
 }
+
+export function updateTemplate(id, data) {
+  return request({
+    url: '/template/' + id,
+    method: 'put',
+    data: data
+  })
+}
+
+export function addTemplate(data) {
+  return request({
+    url: '/template',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getTemplate(id) {
+  return request({
+    url: '/template/' + id,
+    method: 'get'
+  })
+}

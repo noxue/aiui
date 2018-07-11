@@ -221,13 +221,22 @@ export default {
       types: this.initTemplate['type'],
       voiceList: this.initTemplate['voice'],
       action: process.env.BASE_API + 'voice/upload',
-      main: '', // 指定第一个流程
+      main: this.initTemplate['main'], // 指定第一个流程
       activeFlow: this.initTemplate['main'], // 记录在编辑哪个流程
       // 记录添加流程的时候的名字
       sectionName: '',
       sectionType: '',
       dialogVisible: false,
       inputValue: []
+    }
+  },
+  watch: {
+    initTemplate() {
+      this.flows = this.initTemplate['flow']
+      this.types = this.initTemplate['type']
+      this.voiceList = this.initTemplate['voice']
+      this.main = this.initTemplate['main']
+      this.activeFlow = this.main
     }
   },
   filters: {
@@ -353,7 +362,7 @@ export default {
             this.flows[this.activeFlow].section.choice = 'random'
           }
           this.flows[this.activeFlow].section.voice.splice(this.flows[this.activeFlow].section.voice.indexOf(hash), 1)
-          this.$delete(this.voiceList, hash)
+          // this.$delete(this.voiceList, hash)
         })
         .catch(_ => {})
     },
