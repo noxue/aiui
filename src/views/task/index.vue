@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="task-container">
     <el-container>
       <el-aside width="300px">
         <!--工具条-->
@@ -17,7 +17,7 @@
         </div>
          <!--task部分-->
         <ul class="task-list">
-          <li v-for="(item,k) in tasks" :key='k' @click="getTaskUsersList(item)">
+          <li v-for="(item,k) in tasks" :key='k'  v-bind:class="{active:item.id===itemId}"  @click="getTaskUsersList(item)">
             <div>{{item.name}}</div>
             <span>{{filters.desc(item.status)}}</span>
           </li>
@@ -33,7 +33,7 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="详细结果" key="first" name="first">
               <el-col :span="24" class="toolbar" style="padding: 0px;">
-                <el-form :inline="true" :model="tables">
+                <el-form :inline="true" :model="tables" style="text-align:right;">
                   <el-form-item>
                     <el-input v-model="tables.name" style="width:160px;" @keyup.enter.native="getTaskUsersList" placeholder="姓名"></el-input>
                   </el-form-item>
@@ -53,14 +53,14 @@
                       :value="item.value">
                     </el-option>
                   </el-select>
-                  <el-select v-model="tables.share" style="width:160px;" placeholder="是否公开">
+                  <!-- <el-select v-model="tables.share" style="width:160px;" placeholder="是否公开">
                     <el-option
                       v-for="item in this.tables.isShare"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value">
                     </el-option>
-                  </el-select>
+                  </el-select> -->
                   <el-form-item>
                     <el-button type="primary" v-on:click="getTaskUsersList">查询</el-button>
                   </el-form-item>
@@ -241,54 +241,21 @@ export default {
         share: '',
         status: '',
         taskTypes: [
-          {
-            value: '0',
-            label: 'A类'
-          },
-          {
-            value: '1',
-            label: 'B类'
-          },
-          {
-            value: '2',
-            label: 'C类'
-          },
-          {
-            value: '3',
-            label: 'D类'
-          },
-          {
-            value: '4',
-            label: 'E类'
-          },
-          {
-            value: '5',
-            label: 'F类'
-          }
+          { value: '1', label: 'A类' },
+          { value: '2', label: 'B类' },
+          { value: '3', label: 'C类' },
+          { value: '4', label: 'D类' },
+          { value: '5', label: 'E类' },
+          { value: '6', label: 'F类' }
         ],
         taskStatus: [
-          {
-            value: '0',
-            label: '通话完毕'
-          },
-          {
-            value: '1',
-            label: '任务未执行'
-          },
-          {
-            value: '2',
-            label: '任务被获取'
-          }
+          { value: '0', label: '通话完毕' },
+          { value: '1', label: '任务未执行' },
+          { value: '2', label: '任务被获取' }
         ],
         isShare: [
-          {
-            value: '1',
-            label: '是'
-          },
-          {
-            value: '0',
-            label: '否'
-          }
+          { value: '1', label: '是' },
+          { value: '0', label: '否' }
         ]
       },
       task: {
@@ -331,32 +298,13 @@ export default {
       calledLoading: false,
       // 通话详情界面数据
       calledForm: {},
-
       option: [
-        {
-          value: '0',
-          label: 'A类'
-        },
-        {
-          value: '1',
-          label: 'B类'
-        },
-        {
-          value: '2',
-          label: 'C类'
-        },
-        {
-          value: '3',
-          label: 'D类'
-        },
-        {
-          value: '4',
-          label: 'E类'
-        },
-        {
-          value: '5',
-          label: 'F类'
-        }
+        { value: '1', label: 'A类' },
+        { value: '2', label: 'B类' },
+        { value: '3', label: 'C类' },
+        { value: '4', label: 'D类' },
+        { value: '5', label: 'E类' },
+        { value: '6', label: 'F类' }
       ],
       editType: ''
     }
@@ -425,15 +373,9 @@ export default {
           : row.status === 2 ? '客户端获取任务' : '未知'
     },
     formatType: function(row, column) {
-      return row.type === 0
-        ? 'A类'
-        : row.type === 1
-          ? 'B类'
-          : row.type === 2
-            ? 'C类'
-            : row.type === 3
-              ? 'D类'
-              : row.type === 4 ? 'E类' : row.type === 5 ? 'F类' : '未知'
+      return row.type === 1 ? 'A类' : row.type === 2 ? 'B类' : row.type === 3
+        ? 'C类' : row.type === 4 ? 'D类' : row.type === 5 ? 'E类'
+          : row.type === 6 ? 'F类' : '未知'
     },
     handleCurrentChange(val) {
       this.page = val
@@ -456,7 +398,9 @@ export default {
         this.tasks = response.data.data.taskList.list
         // NProgress.done();
         if (this.tasks.length > 0) {
-          this.itemId = this.tasks[0].id
+          if (!this.itemId >= 0) {
+            this.itemId = this.tasks[0].id
+          }
           this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
           this.task.userId = this.tasks[0].userId
           this.task.name = this.tasks[0].name
@@ -540,20 +484,19 @@ export default {
         id: this.itemId + '',
         status: 2 + ''
       }
-      this.listLoading = true
+      // this.listLoading = true
       editTaskStatus(rePara).then(response => {
         if (!response.data.meta.success) {
           this.$message.error(
             '准备失败,' + '错误信息：' + response.data.meta.msg
           )
-          return this.getTasks()
         } else {
           this.$message({
             message: response.data.meta.msg,
             type: 'success'
           })
+          this.getTasks()
         }
-        this.getTasks()
       })
     },
     handleClick(tab, event) {},
@@ -588,6 +531,8 @@ export default {
   color: #333;
   text-align: center;
   line-height: 100%;
+  background-color: #F7F7F7;
+  padding:5px;
 }
 
 .el-main {
@@ -701,6 +646,9 @@ body > .el-container {
   background-color:#00B2EE;
   margin: 0 10px 10px 20px;
   border-radius: 7px;
+}
+.active{
+  background: #DDD;
 }
 
 // .left_triangle {

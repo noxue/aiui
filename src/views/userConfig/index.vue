@@ -117,7 +117,7 @@ export default {
     },
     getConfig() {
       getUserConfig(Request).then((response) => {
-        if (response.data.meta.success === false) {
+        if (response.data.meta.success === false && response.data.meta.code !== 7002) {
           this.$message({
             message: response.data.meta.msg,
             type: 'fail'
