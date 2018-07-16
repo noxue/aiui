@@ -79,3 +79,10 @@ export function impExcel(para) {
     data: para
   })
 }
+
+export function getTemplate(id) {
+  return request({
+    url: '/template/' + id,
+    method: 'get'
+  })
+}

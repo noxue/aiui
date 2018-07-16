@@ -1,5 +1,4 @@
 <template>
-  <div class="task-container">
     <el-container>
       <el-aside width="300px">
         <!--工具条-->
@@ -7,14 +6,13 @@
           <el-form :inline="true" :model="filters"  onsubmit="return false">
 
             <el-form-item>
-              <el-input v-model="filters.name" @keyup.enter.native="getTasks" placeholder="请输入任务名"></el-input>
+              <el-input v-model="filters.name" style="width:120px;" @keyup.enter.native="getTasks" placeholder="请输入任务名"></el-input>
             </el-form-item>
             
             <el-form-item>
               <el-button type="primary" v-on:click="getTasks">查询</el-button>
             </el-form-item>
           </el-form>
-        </div>
          <!--task部分-->
         <ul class="task-list">
           <li v-for="(item,k) in tasks" :key='k'  v-bind:class="{active:item.id===itemId}"  @click="getTaskUsersList(item)">
@@ -25,9 +23,10 @@
         <!--工具条-->
         <el-col :span="24" class="toolbar">
           <!-- <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button> -->
-          <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="15" :total="total" style="float:right;">
+          <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
           </el-pagination>
-        </el-col> 
+        </el-col>
+        </div>
       </el-aside>
       <el-main>
         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -107,12 +106,11 @@
                 <el-pagination layout="prev, pager, next"
                  :current-page=currentPage 
                  @current-change="handleCurrentTaskUserChange" 
-                 :page-size="15" 
+                 :page-size="16" 
                  :total="taskUserTotal" 
                  style="float:right;">
                 </el-pagination>
               </el-col>
-
             </el-tab-pane>
             <el-tab-pane label="任务信息" name="second">
               <el-row :gutter="20">
@@ -121,9 +119,9 @@
                 <el-col :span="8"><div class="grid-content bg-purple">任务模板：{{this.task.templateId}}</div></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="8"><div class="grid-content bg-purple">创建时间：{{this.task.createdAt}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">开始时间：{{this.task.startAt}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">完成时间：{{this.task.finishAt}}</div></el-col>
+                <el-col :span="8"><div class="grid-content bg-purple">创建时间：{{formatDate(this.task.createdAt)}}</div></el-col>
+                <el-col :span="8"><div class="grid-content bg-purple">开始时间：{{formatDate(this.task.startAt)}}</div></el-col>
+                <el-col :span="8"><div class="grid-content bg-purple">完成时间：{{formatDate(this.task.finishAt)}}</div></el-col>
               </el-row>
               <el-row :gutter="20">
                 <el-col :span="8"><div class="grid-content bg-purple">号码总数：{{this.task.total}}</div></el-col>
@@ -202,17 +200,10 @@
         </el-dialog>
       </el-main>
     </el-container>
-  </div>
 </template>
 
 <script>
-import {
-  getTaskList,
-  getTaskUserList,
-  expExcel,
-  editTaskUser,
-  editTaskStatus
-} from '@/api/task'
+import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate } from '@/api/task'
 export default {
   data() {
     return {
@@ -322,10 +313,27 @@ export default {
       this.calledFormVisible = true
       this.editForm = Object.assign({}, row)
     },
-    // formatDate(row) {
-    //   var d = new Date(row.calledAt)
-    //   return d.getMonth() + '-' + d.getDay() + '  ' + d.getHours() + ':' + d.getMinutes()
-    // },
+    formatDate: function(para) {
+      if (para === '' || para === null || para === undefined) {
+        return ''
+      }
+      var d = new Date(para)
+      return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDay() + '  ' + d.getHours() + ':' + d.getMinutes()
+    },
+
+    formatTemplateName: function(para) {
+      if (para === '' || para === null || para === undefined) {
+        return ''
+      }
+      getTemplate(para).then(response => {
+        if (response.data.meta.msg === false) {
+          return ''
+        } else {
+          this.task.templateId = response.data.data.template.name
+        }
+      })
+    },
+
     // 编辑
     editSubmit: function() {
       this.$refs.editForm.validate(valid => {
@@ -384,6 +392,7 @@ export default {
     handleCurrentTaskUserChange(val) {
       this.currentPage = val
       this.getTaskUsersList(this.itemId)
+      this.getTasks()
     },
     // 获取任务列表
     getTasks() {
@@ -404,7 +413,7 @@ export default {
           this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
           this.task.userId = this.tasks[0].userId
           this.task.name = this.tasks[0].name
-          this.task.tempateId = this.tasks[0].templateId
+          this.task.tempateId = this.formatTemplateName(this.tasks[0].templateId)
           this.task.thread = this.tasks[0].thread
           this.task.total = this.tasks[0].total
           this.task.called = this.tasks[0].called
@@ -458,7 +467,7 @@ export default {
       }
       this.task.name = item.name
       this.task.userId = item.userId
-      this.task.templateId = item.templateId
+      this.task.templateId = this.formatTemplateName(item.templateId)
       this.task.thread = item.thread
       this.task.total = item.total
       this.task.called = item.called
@@ -525,7 +534,14 @@ export default {
 }
 </script>
 
+
+
  <style lang="scss" scoped>
+ body{
+  height:100%;
+  overflow: hidden;
+ }
+
 .el-aside {
   //background-color: #D3DCE6;
   color: #333;
@@ -538,8 +554,8 @@ export default {
 .el-main {
   //background-color: #E9EEF3;
   color: #333;
-  text-align: center;
-  line-height: 100%;
+  // text-align: center;
+  // line-height: 100%;
 }
 
 body > .el-container {
@@ -587,6 +603,11 @@ body > .el-container {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+.task-aside{
+  height: 50%;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .task-list > li:hover {
