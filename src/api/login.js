@@ -18,7 +18,6 @@ export function loginByUsername(username, password) {
   // AES CBC加密模式
   password = CryptoJS.AES.encrypt(password, tokenKey, { iv: tokenKey, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString()
   var reqData = { appId: username, password: password, methodName: 'login', userKey: data.userKey, timestamp: new Date() }
-  console.log(reqData)
   return request({
     url: '/account/login',
     method: 'post',
