@@ -94,7 +94,7 @@ export default {
               message: '提交成功',
               type: 'success'
             })
-            this.$refs['form'].resetFields()
+            this.$router.push({ name: 'taskList' })
           }
         }
         )

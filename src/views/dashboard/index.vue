@@ -3,56 +3,56 @@
   <el-row :gutter="10">
     <!--logo-->
     <el-col :span="9"><div class="grid-content bg-purple-first">
-        <span style="font-size:28px">logo</span>
+        <img src="/static/logo.png">
     </div></el-col>
     <!--今日业绩-->
     <el-col :span="9"><div class="grid-content bg-purple-second">
-        <el-col :span="24"><div>
-           <span style="font-size:28px">今日呼叫</span>
+        <el-col :span="24"><div class="title">
+           <span>今日呼叫</span>
         </div></el-col>
-        <el-col :span="8"><div style="margin-top:20px;">
-            <span style="font-size:20px;">呼叫量: 55</span>
+        <el-col :span="8"><div class="second-details">
+            <span class="second-details-content">呼叫量: 55</span>
         </div></el-col>
-        <el-col :span="8"><div style="margin-top:20px;">
-            <span style="font-size:20px;">接通数: 55</span>
+        <el-col :span="8"><div class="second-details">
+            <span class="second-details-content">接通数: 55</span>
         </div></el-col>
-        <el-col :span="8"><div style="margin-top:20px;">
-            <span style="font-size:20px;">接通率: 100%</span>
+        <el-col :span="8"><div class="second-details">
+            <span class="second-details-content">接通率: 100%</span>
         </div></el-col>
-        <el-col :span="12"><div style="margin-top:10px;">
-            <span style="font-size:20px;">通话时长: 55s</span>
+        <el-col :span="12"><div class="second-details-bottom">
+            <span class="second-details-content">通话时长: 55s</span>
         </div></el-col>
-        <el-col :span="12"><div style="margin-top:10px;">
-            <span style="font-size:20px;">平均通话: 55s</span>
+        <el-col :span="12"><div class="second-details-bottom">
+            <span class="second-details-content">平均通话: 55s</span>
         </div></el-col>
 
     </div></el-col>
     <!--待处理区域-->
     <el-col :span="6"><div class="grid-content bg-purple-third">
-        <el-col :span="24"><div>
-          <span style="font-size:28px">待处理信息</span>
+        <el-col :span="24"><div class="title">
+          <span>待处理信息</span>
         </div></el-col>
         <el-col :span="24"><div style="margin-top:20px;margin-left:30px;">
-          <span style="font-size:20px;text-align:center;">待执行任务: 5</span>
+          <span class="second-details-content" style="text-align:center;">待执行任务: 5</span>
         </div></el-col>
         <el-col :span="24"><div style="margin-top:10px;margin-left:30px;">
-          <span style="font-size:20px;">待呼叫数量: 55</span>
+          <span class="second-details-content">待呼叫数量: 55</span>
         </div></el-col>
     </div></el-col>
     <!--echart-->
     <el-col :span="18"><div class="grid-content-bottom bg-purple">
         <el-col :span="24"><div class="bg-purple-echart-top">
-            <el-col :span="6"><div>
-              <span style="font-size:28px">呼叫结果</span>
+            <el-col :span="6"><div class="title">
+              <span>呼叫结果</span>
             </div></el-col>
-            <el-col :span="5"><div style="text-align:right;">
+            <el-col :span="5"><div class="echart-top">
               <el-select value="请选择卡号">
                 <el-option :value="1">1</el-option>
                 <el-option :value="2">2</el-option>
                 <el-option :value="3">3</el-option>
               </el-select>
             </div></el-col>
-            <el-col :span="13"><div style="text-align:right;">
+            <el-col :span="13"><div class="echart-top">
               <el-date-picker
                 v-model="timeSlot"
                 type="daterange"
@@ -65,10 +65,10 @@
             </div></el-col>
         </div></el-col>
         <el-col :span="24"><div class="bg-purple-echart-bottom">
-            <el-col :span="16"><div id="homeChart" style="height:344px">
+            <el-col :span="16"><div id="homeChart">
 
             </div></el-col>
-            <el-col :span="8"><div id="pieChart" style="height:344px">
+            <el-col :span="8"><div id="pieChart">
 
             </div></el-col>
         </div></el-col>
@@ -77,15 +77,15 @@
     <el-col :span="6"><div class="grid-content-bottom bg-purple-light">
       <!--为出现的关键词-->
       <el-col :span="24"><div class="grid bg-purple-light-top">
-          <span style="font-size:28px">异常信息</span>
-          <el-col :span="24"><div style="margin-top:10px;margin-left:30px;">
+          <span>异常信息</span>
+          <el-col :span="24"><div class="lower-right-corner">
               暂无异常信息
           </div></el-col>
       </div></el-col>  
       <!--错误报告-->
       <el-col :span="24"><div class="grid bg-purple-light-bottom">
-          <span style="font-size:28px">关键字</span>
-          <el-col :span="24"><div style="margin-top:10px;margin-left:30px;">
+          <span>关键字</span>
+          <el-col :span="24"><div class="lower-right-corner">
               暂无不匹配现象
           </div></el-col>
       </div></el-col>
@@ -113,7 +113,7 @@ export default {
       var time = 7 * 24 * 60 * 60 * 1000
       if (this.timeSlot[0].length > 0 && this.timeSlot[0].length > 0) {
         if (datadiff < 0 || datadiff > time) {
-          alert('开始时间应小于结束时间并且间隔小于7天，请检查!')
+          alert('开始时间应小于结束时间并且间隔小于或等于7天，请检查!')
           return false
         }
       }
@@ -240,12 +240,28 @@ export default {
 
 .bg-purple-first {
   color: #444;
-  /* background: #8d93a0; */
 }
-
+img{
+  height: 90%;
+  max-width: 95%;
+}
+.title{
+  font-size:28px
+}
 .bg-purple-second {
   /* background: #061330; */
   color: #444;
+}
+.second-details{
+  margin-top:20px;
+}
+second-details-content{
+  font-size:20px;
+}
+
+
+.second-details-bottom{
+  margin-top:10px;
 }
 .bg-purple-third {
   color: #444;
@@ -275,6 +291,10 @@ export default {
   padding-left:10px;
   /* border:1px solid red; */
 }
+.grid span{
+  font-size:28px
+}
+
 
 .bg-purple-light-top {
   /* background: #a11313; */
@@ -295,5 +315,19 @@ export default {
 .bg-purple-echart-bottom {
   /* background: #d8dce6; */
   height: 344px;
+}
+.lower-right-corner{
+  margin-top:10px;margin-left:30px;
+}
+.echart-top{
+  text-align: right;
+}
+#homeChart{
+  height:344px;
+  margin-top:10px;
+}
+#pieChart{
+  height:344px;
+  margin-top:30px;
 }
 </style>
