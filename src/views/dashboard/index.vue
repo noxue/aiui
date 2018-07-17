@@ -106,7 +106,22 @@ export default {
     }
   },
   methods: {
+    dateFammte: function() {
+      var data1 = Date.parse(this.timeSlot[0].replace(/-/g, '/'))
+      var data2 = Date.parse(this.timeSlot[1].replace(/-/g, '/'))
+      var datadiff = data2 - data1
+      var time = 7 * 24 * 60 * 60 * 1000
+      if (this.timeSlot[0].length > 0 && this.timeSlot[0].length > 0) {
+        if (datadiff < 0 || datadiff > time) {
+          alert('开始时间应小于结束时间并且间隔小于7天，请检查!')
+          return false
+        }
+      }
+    },
     toCount: function() {
+      if (this.timeSlot[0] !== undefined) {
+        this.dateFammte()
+      }
       this.lineCount()
       this.pieCount()
     },
