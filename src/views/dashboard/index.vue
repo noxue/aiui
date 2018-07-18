@@ -96,15 +96,34 @@
 
 <script>
 var echarts = require('echarts')
+// import vSidebar from './Sidebar.vue'
+import { mapGetters } from 'vuex'
+import adminDashboard from './admin'
+import editorDashboard from './editor'
+import store from '@/store'
 
 export default {
   name: 'dashboard',
+  components: { adminDashboard, editorDashboard },
   data() {
     return {
       currentRole: 'adminDashboard',
       timeSlot: []
     }
   },
+  computed: {
+    ...mapGetters([
+      'roles'
+    ]),
+    routes() {
+      return store.getter.routes
+    }
+  },
+  // created() {
+  //   if (!this.roles.includes('role_admin')) {
+  //     this.currentRole = 'editorDashboard'
+  //   }
+  // },
   methods: {
     dateFammte: function() {
       var data1 = Date.parse(this.timeSlot[0].replace(/-/g, '/'))
@@ -242,14 +261,13 @@ export default {
   color: #444;
 }
 img{
-  height: 90%;
-  max-width: 95%;
+  height: 45%;
+  max-width: 45%;
 }
 .title{
   font-size:28px
 }
 .bg-purple-second {
-  /* background: #061330; */
   color: #444;
 }
 .second-details{
@@ -258,23 +276,17 @@ img{
 second-details-content{
   font-size:20px;
 }
-
-
 .second-details-bottom{
   margin-top:10px;
 }
 .bg-purple-third {
   color: #444;
-  /* background: #072877; */
 }
-
 .bg-purple {
   color: #444
-  /* background: #d3dce6; */
 }
 .bg-purple-light {
   color: #444
-  /* background: #e5e9f2; */
 }
 .grid-content {
   border-radius: 4px;
@@ -282,29 +294,21 @@ second-details-content{
   margin-bottom: 10px;
   padding-top: 10px;
   padding-left:10px;
-  /* border:1px solid red; */
 }
 .grid-content-bottom {
   border-radius: 4px;
   height: 380px;
   padding-top: 10px;
   padding-left:10px;
-  /* border:1px solid red; */
 }
 .grid span{
   font-size:28px
 }
-
-
 .bg-purple-light-top {
-  /* background: #a11313; */
   height: 80px;
-  /* border:1px solid red; */
 }
 
 .bg-purple-light-bottom {
-  /* background: #0751f1;
-  border:1px solid red; */
   padding-top: 10px;
   height: 290px;
   
@@ -313,7 +317,6 @@ second-details-content{
   height: 36px;
 }
 .bg-purple-echart-bottom {
-  /* background: #d8dce6; */
   height: 344px;
 }
 .lower-right-corner{
