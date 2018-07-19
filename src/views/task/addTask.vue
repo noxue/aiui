@@ -25,16 +25,16 @@
       <!-- <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item> -->
       <el-form-item >
         <el-radio-group v-model="form.test" >
-          <el-radio-button :label="1">正式任务</el-radio-button>
-          <el-radio-button :label="0">测试任务</el-radio-button>
+          <el-radio-button :label=0>正式任务</el-radio-button>
+          <el-radio-button :label=1>测试任务</el-radio-button>
         </el-radio-group>
       </el-form-item>
       <!--测试任务选中时触发-->
-        <el-form-item label="测试姓名" v-if="!form.test" label-position="left"><el-input v-model="form.teatName"></el-input>
+        <el-form-item label="测试姓名" v-if="form.test" label-position="left"><el-input v-model="form.testName"></el-input>
         </el-form-item>
-        <el-form-item label="测试号码" v-if="!form.test" label-position="left"><el-input v-model="form.teatPhone"></el-input>
+        <el-form-item label="测试号码" v-if="form.test" label-position="left"><el-input v-model="form.testPhone"></el-input>
         </el-form-item>
-        <el-form-item label="备注" v-if="!form.test" label-position="left"><el-input v-model="form.remark"></el-input>
+        <el-form-item label="备注" v-if="form.test" label-position="left"><el-input v-model="form.remark"></el-input>
         </el-form-item>
 
       <el-form-item>
@@ -56,7 +56,7 @@ export default {
           total: '',
           date1: '',
           date2: '',
-          test: 1,
+          test: 0,
           options: [],
           simOptions: [],
           testName: '',
