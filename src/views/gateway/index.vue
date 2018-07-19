@@ -83,8 +83,8 @@
           <el-form-item label="端口" prop="port">
             <el-input v-model="addForm.port" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="客户端">
-            <el-select v-model="value" placeholder="请选择客户端">
+          <el-form-item label="客户端" prop="app_id">
+            <el-select v-model="addForm.app_id" placeholder="请选择客户端">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -124,7 +124,7 @@ export default {
         listLoading: false,
         sels: [], // 列表选中列
         options: [],
-        value: '',
+        app_id: '',
         editFormVisible: false, // 编辑界面是否显示
         editLoading: false,
         editFormRules: {
@@ -161,6 +161,9 @@ export default {
           ],
           port: [
             { required: true, message: '请输入端口号', trigger: 'blur' }
+          ],
+          app_id: [
+            { required: true, message: '请选择客户端', trigger: 'blur' }
           ],
           userId: [
             { required: true, message: '请输入用户登录名', trigger: 'blur' }
@@ -236,10 +239,6 @@ export default {
       // 显示新增界面
       handleAdd: function() {
         this.addFormVisible = true
-        this.addForm = {
-          name: '',
-          description: ''
-        }
       },
       // 编辑
       editSubmit: function() {
@@ -288,11 +287,12 @@ export default {
               this.addLoading = true
               // NProgress.start();
               const para = Object.assign({}, this.addForm)
+              console.log(para)
               const reqData = {
                 name: para.name,
                 ip: para.ip,
                 port: para.port + '',
-                app_id: this.value + '',
+                app_id: para.app_id + '',
                 userId: para.userId,
                 description: para.description
               }

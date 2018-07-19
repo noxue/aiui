@@ -48,7 +48,7 @@
           <el-form-item label="用户" prop="userId">
             <el-input v-model="editForm.userId" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="选择网关">
+          <el-form-item label="选择网关" prop="gateway">
             <!-- <el-select v-model="editForm.gate" placeholder="请选择"> -->
             <el-select v-model="newGatewayId" placeholder="请选择">
             <el-option
@@ -59,7 +59,7 @@
               </el-option>
             </el-select>
 					</el-form-item>
-          <el-form-item label="描述">
+          <el-form-item label="描述" prop="description">
             <el-input type="textarea" v-model="editForm.description"></el-input>
           </el-form-item>
         </el-form>
@@ -111,8 +111,8 @@
            <el-form-item label="用户" prop="userId">
             <el-input v-model="addForm.userId" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="选择网关">
-            <el-select v-model="value" placeholder="请选择">
+          <el-form-item label="选择网关" prop="gateway">
+            <el-select v-model="addForm.gateway" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -145,7 +145,7 @@ export default {
         },
         options: [],
         assignSimId: '',
-        value: '',
+        gateway: '',
         newGatewayId: '',
         sims: [],
         simUsers: [],
@@ -176,7 +176,7 @@ export default {
         editForm: {
           userId: '',
           number: '',
-          gatewayId: '',
+          gateway: this.gateway,
           description: ''
         },
 
@@ -188,6 +188,9 @@ export default {
           ],
           userId: [
             { required: true, message: '请输入用户', trigger: 'blur' }
+          ],
+          gateway: [
+            { required: true, message: '请选择网关', trigger: 'blur' }
           ],
           description: [
             { required: true, message: '请填写备注', trigger: 'blur' }
@@ -310,12 +313,12 @@ export default {
       // 显示新增界面
       handleAdd: function() {
         this.addFormVisible = true
-        this.addForm = {
-          number: '',
-          userId: '',
-          gatewayId: '',
-          description: ''
-        }
+        // this.addForm = {
+        //   number: '',
+        //   userId: '',
+        //   gatewayId: '',
+        //   description: ''
+        // }
       },
       // 编辑
       editSubmit: function() {
@@ -364,7 +367,7 @@ export default {
               const reqData = {
                 number: para.number + '',
                 userId: para.userId,
-                gatewayId: this.value + '',
+                gatewayId: para.gateway + '',
                 description: para.description
               }
               // alert(this.$refs.addForm)

@@ -23,7 +23,11 @@
         <!--工具条-->
         <el-col :span="24" class="toolbar">
           <!-- <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button> -->
-          <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
+          <el-pagination ref="pagination" layout="prev, pager, next" 
+          @current-change="handleCurrentChange" 
+          :current-page.sync = "page"
+          :page-size="20" :total="total" 
+          style="float:right;">
           </el-pagination>
         </el-col>
         </div>
@@ -71,6 +75,9 @@
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" v-on:click="startTask" >开始</el-button>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" v-on:click="stopTask" >暂停</el-button>
                   </el-form-item>
                 </el-form>
               </el-col>
@@ -132,7 +139,7 @@
         </el-tabs>
 
         <!--导入界面-->
-      <el-dialog title="导入用户" :visible.sync="impFormVisible">
+      <el-dialog title="导入用户" width="400px" :visible.sync="impFormVisible">
         <el-upload
           class="upload-demo"
           drag
@@ -141,7 +148,8 @@
           :multiple="false">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div class="el-upload__tip" slot="tip">只能上传Excel文件，且不超过50M</div>
+          <div class="el-upload__tip" slot="tip">只能上传Excel文件，且不超过10M</div>
+          <div class="el-upload__down" slot="tip"><a href="/static/导入模板.xls" target="view_window">下载模板</a></div>
         </el-upload>
       </el-dialog>
 
@@ -449,7 +457,9 @@ export default {
           message: response.meta.msg,
           type: 'success'
         })
-        this.getTasks()
+        // const val = 1
+        // this.handleCurrentChange(val)
+        location.reload()
       }
     },
     getTaskUsersList(item) {
@@ -504,7 +514,33 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          this.getTasks()
+          // const val = 1
+          // this.handleCurrentChange(val)
+          location.reload()
+        }
+      })
+    },
+    stopTask(item) {
+      if (item.id !== undefined) {
+        this.itemId = item.id
+      }
+      const rePara = {
+        id: this.itemId + '',
+        status: 4 + ''
+      }
+      editTaskStatus(rePara).then(response => {
+        if (!response.data.meta.success) {
+          this.$message.error(
+            '准备失败,' + '错误信息：' + response.data.meta.msg
+          )
+        } else {
+          this.$message({
+            message: response.data.meta.msg,
+            type: 'success'
+          })
+          // const val = 1
+          // this.handleCurrentChange(val)
+          location.reload()
         }
       })
     },
@@ -695,6 +731,9 @@ body > .el-container {
 // }
 span{
   display:inline-block;
+}
+.el-upload__down{
+  color: rgb(81,166,255);
 }
 
 .app-msg{

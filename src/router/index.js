@@ -67,7 +67,7 @@ export const asyncRouterMap = [
       path: 'userManage',
       component: () => import('@/views/userManage/index'),
       name: 'userManage',
-      meta: { title: 'userManage', icon: 'documentation', noCache: true }
+      meta: { title: 'userManage', icon: 'peoples', noCache: true }
     }]
   },
   {
@@ -105,20 +105,20 @@ export const asyncRouterMap = [
     alwaysShow: true,
     meta: {
       title: 'template',
-      icon: 'component'
+      icon: 'documentation'
     },
     children: [{
       path: 'template/edit/:id',
       component: () => import('@/views/template/edit'),
       name: 'templateEdit',
       hidden: true,
-      meta: { title: 'templateEdit', icon: 'component', noCache: true }
+      meta: { title: 'templateEdit', icon: 'list', noCache: true }
     },
     {
       path: 'template/add',
       component: () => import('@/views/template/edit'),
       name: 'templateAdd',
-      meta: { title: 'templateAdd', icon: 'component', noCache: true }
+      meta: { title: 'templateAdd', icon: 'international', noCache: true }
     },
     {
       path: 'template/index',
@@ -133,7 +133,7 @@ export const asyncRouterMap = [
     redirect: '/task/index',
     meta: {
       title: 'task',
-      icon: 'component'
+      icon: 'clipboard'
     },
     children: [
       {
@@ -146,7 +146,7 @@ export const asyncRouterMap = [
         path: 'task/addTask',
         component: () => import('@/views/task/addTask'),
         name: 'addTask',
-        meta: { title: 'addTask', icon: 'component', noCache: true }
+        meta: { title: 'addTask', icon: 'edit', noCache: true }
       }
     ]
   },
@@ -158,7 +158,7 @@ export const asyncRouterMap = [
       path: 'userConfig',
       component: () => import('@/views/userConfig/index'),
       name: 'userConfig',
-      meta: { title: 'userConfig', icon: 'component', noCache: true }
+      meta: { title: 'userConfig', icon: 'excel', noCache: true }
     }]
   },
   {
