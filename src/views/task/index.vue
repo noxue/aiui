@@ -524,7 +524,7 @@ export default {
       //   audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
 
       // }
-      audio.src = 'http://127.0.0.1:9527/3.0.1.wav'
+      audio.src = 'http://127.0.0.1:9527/static/3.0.1.wav'
       audio.play()
     }
   },

@@ -171,6 +171,8 @@ $dark_gray: #889aa4;
 $light_gray: #eee;
 
 .login-container {
+  background-image:url(/static/seagull.jpg);
+  background-size:100% 100%;
   position: fixed;
   height: 100%;
   width: 100%;
