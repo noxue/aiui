@@ -33,10 +33,10 @@
           <span>待处理信息</span>
         </div></el-col>
         <el-col :span="24"><div style="margin-top:20px;margin-left:30px;">
-          <span class="second-details-content" style="text-align:center;">待执行任务: 5</span>
+          <span class="details-content" style="text-align:center;">待执行任务: 5</span>
         </div></el-col>
         <el-col :span="24"><div style="margin-top:10px;margin-left:30px;">
-          <span class="second-details-content">待呼叫数量: 55</span>
+          <span class="details-content">待呼叫数量: 55</span>
         </div></el-col>
     </div></el-col>
     <!--echart-->
@@ -77,14 +77,14 @@
     <el-col :span="6"><div class="grid-content-bottom bg-purple-light">
       <!--为出现的关键词-->
       <el-col :span="24"><div class="grid bg-purple-light-top">
-          <span>异常信息</span>
+          <span class="title">异常信息</span>
           <el-col :span="24"><div class="lower-right-corner">
               暂无异常信息
           </div></el-col>
       </div></el-col>  
       <!--错误报告-->
       <el-col :span="24"><div class="grid bg-purple-light-bottom">
-          <span>关键字</span>
+          <span class="title">关键字</span>
           <el-col :span="24"><div class="lower-right-corner">
               暂无不匹配现象
           </div></el-col>
@@ -265,19 +265,25 @@ img{
   max-width: 45%;
 }
 .title{
-  font-size:28px
+  font-size:15px;
+  color: black;
+  font-weight:bold;
+
 }
 .bg-purple-second {
   color: #444;
 }
 .second-details{
   margin-top:20px;
+  font-size:14px;
 }
-second-details-content{
-  font-size:20px;
-}
+
 .second-details-bottom{
+  font-size:14px;
   margin-top:10px;
+}
+.details-content{
+  font-size:14px;
 }
 .bg-purple-third {
   color: #444;
@@ -301,9 +307,7 @@ second-details-content{
   padding-top: 10px;
   padding-left:10px;
 }
-.grid span{
-  font-size:28px
-}
+
 .bg-purple-light-top {
   height: 80px;
 }
@@ -320,7 +324,9 @@ second-details-content{
   height: 344px;
 }
 .lower-right-corner{
-  margin-top:10px;margin-left:30px;
+  font-size:14px;
+  margin-top:10px;
+  margin-left:30px;
 }
 .echart-top{
   text-align: right;

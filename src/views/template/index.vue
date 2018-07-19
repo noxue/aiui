@@ -3,9 +3,9 @@
     <section>
       <!--工具条-->
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-form :inline="true" :model="filters">
+        <el-form :inline="true" :model="filters" onsubmit="return false">
           <el-form-item>
-            <el-input v-model="filters.name" placeholder="模板名称"></el-input>
+            <el-input v-model="filters.name"  @keyup.enter.native="getTemplates" placeholder="模板名称"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" v-on:click="getTemplates">查询</el-button>
