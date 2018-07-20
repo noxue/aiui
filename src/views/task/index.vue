@@ -223,7 +223,7 @@ export default {
           } else if (val === 1) {
             return '未开始'
           } else if (val === 2) {
-            return '待开始'
+            return '已开始'
           } else if (val === 3) {
             return '执行中'
           } else if (val === 4) {

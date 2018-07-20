@@ -38,26 +38,6 @@ export const constantRouterMap = [
       name: 'dashboard',
       meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
     }]
-  }
-]
-
-export default new Router({
-  mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
-})
-
-export const asyncRouterMap = [
-  {
-    path: '',
-    component: Layout,
-    redirect: 'robot',
-    children: [{
-      path: 'robot',
-      component: () => import('@/views/robot/index'),
-      name: 'robot',
-      meta: { title: 'robot', icon: 'component', roles: ['role_admin'], noCache: true }
-    }]
   },
   {
     path: '',
@@ -71,9 +51,6 @@ export const asyncRouterMap = [
     }]
   },
   {
-    path: '*', redirect: '/404', hidden: true
-  },
-  {
     path: '',
     component: Layout,
     redirect: 'gateway',
@@ -83,9 +60,6 @@ export const asyncRouterMap = [
       name: 'gateway',
       meta: { title: 'gateway', icon: 'icon', noCache: true }
     }]
-  },
-  {
-    path: '*', redirect: '/404', hidden: true
   },
   {
     path: '',
@@ -159,6 +133,31 @@ export const asyncRouterMap = [
       component: () => import('@/views/userConfig/index'),
       name: 'userConfig',
       meta: { title: 'userConfig', icon: 'excel', noCache: true }
+    }]
+  }
+]
+
+export default new Router({
+  mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
+})
+
+export const asyncRouterMap = [
+  {
+    path: '',
+    component: Layout,
+    redirect: 'robot',
+    meta: {
+      title: 'robot',
+      icon: 'lock',
+      roles: ['role_admin'] // you can set roles in root nav
+    },
+    children: [{
+      path: 'robot',
+      component: () => import('@/views/robot/index'),
+      name: 'robot',
+      meta: { title: 'robot', icon: 'component', roles: ['role_admin'], noCache: true }
     }]
   },
   {
