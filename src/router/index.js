@@ -40,68 +40,6 @@ export const constantRouterMap = [
     }]
   },
   {
-    path: '',
-    component: Layout,
-    redirect: 'userManage',
-    children: [{
-      path: 'userManage',
-      component: () => import('@/views/userManage/index'),
-      name: 'userManage',
-      meta: { title: 'userManage', icon: 'peoples', noCache: true }
-    }]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'gateway',
-    children: [{
-      path: 'gateway',
-      component: () => import('@/views/gateway/index'),
-      name: 'gateway',
-      meta: { title: 'gateway', icon: 'icon', noCache: true }
-    }]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'sim',
-    children: [{
-      path: 'sim',
-      component: () => import('@/views/sim/index'),
-      name: 'sim',
-      meta: { title: 'sim', icon: 'tab', noCache: true }
-    }]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'template/index',
-    alwaysShow: true,
-    meta: {
-      title: 'template',
-      icon: 'documentation'
-    },
-    children: [{
-      path: 'template/edit/:id',
-      component: () => import('@/views/template/edit'),
-      name: 'templateEdit',
-      hidden: true,
-      meta: { title: 'templateEdit', icon: 'list', noCache: true }
-    },
-    {
-      path: 'template/add',
-      component: () => import('@/views/template/edit'),
-      name: 'templateAdd',
-      meta: { title: 'templateAdd', icon: 'international', noCache: true }
-    },
-    {
-      path: 'template/index',
-      component: () => import('@/views/template/index'),
-      name: 'templateList',
-      meta: { title: 'templateList', icon: 'component', noCache: true }
-    }]
-  },
-  {
     path: '/task',
     component: Layout,
     redirect: '/task/index',
@@ -158,6 +96,72 @@ export const asyncRouterMap = [
       component: () => import('@/views/robot/index'),
       name: 'robot',
       meta: { title: 'robot', icon: 'component', roles: ['role_admin'], noCache: true }
+    }]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'userManage',
+    meta: { roles: ['role_admin', 'role_company', 'role_agent'] },
+    children: [{
+      path: 'userManage',
+      component: () => import('@/views/userManage/index'),
+      name: 'userManage',
+      meta: { title: 'userManage', roles: ['role_admin', 'role_company', 'role_agent'], icon: 'peoples', noCache: true }
+    }]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'gateway',
+    meta: { title: 'gateway', roles: ['role_admin'], icon: 'icon', noCache: true },
+    children: [{
+      path: 'gateway',
+      component: () => import('@/views/gateway/index'),
+      name: 'gateway',
+      meta: { title: 'gateway', roles: ['role_admin'], icon: 'icon', noCache: true }
+    }]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'sim',
+    meta: { roles: ['role_admin', 'role_company', 'role_agent'] },
+    children: [{
+      path: 'sim',
+      component: () => import('@/views/sim/index'),
+      name: 'sim',
+      meta: { title: 'sim', roles: ['role_admin', 'role_company', 'role_agent'], icon: 'tab', noCache: true }
+    }]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'template/index',
+    alwaysShow: true,
+    meta: {
+      title: 'template',
+      roles: ['role_admin', 'role_company', 'role_agent'],
+      icon: 'documentation'
+    },
+    children: [{
+      path: 'template/edit/:id',
+      component: () => import('@/views/template/edit'),
+      name: 'templateEdit',
+      hidden: true,
+      meta: { title: 'templateEdit', roles: ['role_admin'], icon: 'list', noCache: true }
+    },
+    {
+      path: 'template/add',
+      component: () => import('@/views/template/edit'),
+      name: 'templateAdd',
+      meta: { title: 'templateAdd', roles: ['role_admin'], icon: 'international', noCache: true }
+    },
+    {
+      path: 'template/index',
+      component: () => import('@/views/template/index'),
+      name: 'templateList',
+      meta: { title: 'templateList', icon: 'component', noCache: true }
     }]
   },
   {

@@ -104,7 +104,7 @@
           </el-form-item>
           <el-form-item label="性别">
 						<el-radio-group v-model="addForm.sex">
-							<el-radio class="radio" :label="1">男</el-radio>
+							<el-radio class="radio" :label="1" >男</el-radio>
 							<el-radio class="radio" :label="0">女</el-radio>
 						</el-radio-group>
 					</el-form-item>
@@ -203,13 +203,11 @@ export default {
       getUsers() {
         const para = { start: this.page + '', uid: this.filters.uid }
         this.listLoading = true
-        // NProgress.start();
         getUserList(para).then((response) => {
           this.total = response.data.data.pageInfo.total
           this.users = response.data.data.pageInfo.list
           console.log(this.users)
           this.listLoading = false
-        // NProgress.done();
         })
       },
       getRoleList() {
