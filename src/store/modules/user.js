@@ -39,6 +39,7 @@ const user = {
             reject('error')
           }
           const data = response.data
+          window.localStorage.setItem('role', window.JSON.stringify(data.data.roles))
           console.log(data.data.roles)
           if (data.data.roles && data.data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.data.roles)
@@ -57,6 +58,7 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       commit('SET_ROLES', [])
+      localStorage.removeItem('role')
       removeToken()
     },
     // 动态修改权限

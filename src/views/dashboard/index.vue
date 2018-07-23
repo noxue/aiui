@@ -96,7 +96,6 @@
 
 <script>
 var echarts = require('echarts')
-// import vSidebar from './Sidebar.vue'
 import { mapGetters } from 'vuex'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
@@ -119,11 +118,6 @@ export default {
       return store.getter.routes
     }
   },
-  // created() {
-  //   if (!this.roles.includes('role_admin')) {
-  //     this.currentRole = 'editorDashboard'
-  //   }
-  // },
   methods: {
     dateFammte: function() {
       var data1 = Date.parse(this.timeSlot[0].replace(/-/g, '/'))

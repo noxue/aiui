@@ -24,7 +24,7 @@
         </el-table-column>
          <el-table-column prop="createdAt" label="创建时间" min-width="130"  :formatter="formatTime" sortable>
         </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="150" v-if='show'>
           <template slot-scope="scope">
             <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
@@ -50,6 +50,7 @@ export default {
       filters: {
         name: ''
       },
+      show: false,
       templates: [],
       total: 0,
       page: 1,
@@ -126,7 +127,14 @@ export default {
   },
   mounted() {
     this.getTemplates()
+  },
+  created() {
+    const role = window.JSON.parse(window.localStorage.getItem('role') || '[]')
+    if (role[0] === 'role_admin') {
+      this.show = true
+    }
   }
+
 }
 
 </script>
