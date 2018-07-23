@@ -213,6 +213,7 @@
 <script>
 import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate } from '@/api/task'
 export default {
+  inject: ['reload'],
   data() {
     return {
       filters: {
@@ -315,7 +316,7 @@ export default {
       this.editForm = Object.assign({}, row)
       this.editForm.mobile = row.mobile
       this.editForm.remark = row.remark
-      this.editType = row.type + ''
+      this.editType = this.formatType(row.type)
     },
     handleCalled: function(index, row) {
       this.calledFormVisible = true
@@ -350,10 +351,11 @@ export default {
             this.editLoading = true
             // NProgress.start();
             const para = Object.assign({}, this.editForm)
+            console.log(para)
             const reqData = {
               id: para.id + '',
               mobile: para.mobile + '',
-              type: para.type + '',
+              type: this.editType + '',
               remark: para.remark
             }
             editTaskUser(reqData).then(response => {
@@ -369,10 +371,10 @@ export default {
                   message: '编辑成功',
                   type: 'success'
                 })
+                this.$refs['editForm'].resetFields()
+                this.editFormVisible = false
+                this.reload()
               }
-              this.$refs['editForm'].resetFields()
-              this.editFormVisible = false
-              this.getTaskUsersList(para)
             })
           })
         }
@@ -391,7 +393,7 @@ export default {
     formatType: function(row, column) {
       return row.type === 1 ? 'A类' : row.type === 2 ? 'B类' : row.type === 3
         ? 'C类' : row.type === 4 ? 'D类' : row.type === 5 ? 'E类'
-          : row.type === 6 ? 'F类' : '未知'
+          : row.type === 6 ? 'F类' : '未分类'
     },
     handleCurrentChange(val) {
       this.page = val
@@ -457,9 +459,7 @@ export default {
           message: response.meta.msg,
           type: 'success'
         })
-        // const val = 1
-        // this.handleCurrentChange(val)
-        location.reload()
+        this.reload()
       }
     },
     getTaskUsersList(item) {
@@ -514,9 +514,7 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          // const val = 1
-          // this.handleCurrentChange(val)
-          location.reload()
+          this.reload()
         }
       })
     },
@@ -538,9 +536,7 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          // const val = 1
-          // this.handleCurrentChange(val)
-          location.reload()
+          this.reload()
         }
       })
     },
