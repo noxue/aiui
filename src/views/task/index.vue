@@ -184,30 +184,34 @@
 
         <!--通话详情界面-->
         <el-dialog title="通话详情" :fullscreen="true" width=80%  :visible.sync="calledFormVisible">
-         <div class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-            <div class="portrait ">
-              <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
-            </div>
-          <div class="app-msg">
-            <span> 喂，您好</span>
-          </div>
-          <div class="app-msg-voice">
-            <el-button slot="append" icon="el-icon-caret-right" @click="playSound()">
-              播放
-            </el-button>
-            <audio id="snd" src="D:\3.0.1.wav">
-            </audio>
-          </div>
-        </div>
-        <!-- Right -->
-        <div class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-            <div class="portrait">
-               <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
-            </div>
-         <div class="app-msg" style="color:#ffffff">
-              <span> hellodlkjaskldajsioxcvlnfwerophellodlkjaskldajshellodlkjaskldajsioxcvlnfweropiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkioxcvlnfweropiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslk </span>
-         </div>
-        </div>  
+          <ul class="phone-list">
+            <li v-for="(item,k) in content.nodes" :key='k'>
+                <div v-if="item.type === 0" class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+                  <div class="portrait ">
+                    <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
+                  </div>
+                  <div class="app-msg">
+                    <span> {{item.word}}</span>
+                  </div>
+                  <div class="app-msg-voice">
+                    <el-button slot="append" icon="el-icon-caret-right" @click="playSound(item.voice)">
+                      播放
+                    </el-button>
+                    <audio id="snd" src="">
+                    </audio>
+                  </div>
+                </div>
+                  <!-- Right -->
+                <div v-else class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+                   <div class="portrait">
+                     <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
+                   </div>
+                   <div class="app-msg" style="color:#ffffff">
+                     <span> {{item.word}} </span>
+                   </div>
+                </div>
+            </li>
+          </ul>
         </el-dialog>
       </el-main>
     </el-container>
@@ -216,6 +220,7 @@
 <script>
 import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate } from '@/api/task'
 export default {
+  inject: ['reload'],
   data() {
     return {
       filters: {
@@ -278,6 +283,7 @@ export default {
       page: 1,
       currentPage: 1,
       tasks: [],
+      content: [],
       itemId: '',
       action: '',
       taskUsers: [],
@@ -318,11 +324,13 @@ export default {
       this.editForm = Object.assign({}, row)
       this.editForm.mobile = row.mobile
       this.editForm.remark = row.remark
-      this.editType = row.type + ''
+      this.editType = this.formatType(row.type)
     },
     handleCalled: function(index, row) {
       this.calledFormVisible = true
-      this.editForm = Object.assign({}, row)
+      this.content = JSON.parse(row.content)
+
+      console.log(this.content)
     },
     formatDate: function(para) {
       if (para === '' || para === null || para === undefined) {
@@ -356,7 +364,7 @@ export default {
             const reqData = {
               id: para.id + '',
               mobile: para.mobile + '',
-              type: para.type + '',
+              type: this.editType + '',
               remark: para.remark
             }
             editTaskUser(reqData).then(response => {
@@ -372,10 +380,10 @@ export default {
                   message: '编辑成功',
                   type: 'success'
                 })
+                this.$refs['editForm'].resetFields()
+                this.editFormVisible = false
+                this.reload()
               }
-              this.$refs['editForm'].resetFields()
-              this.editFormVisible = false
-              this.getTaskUsersList(para)
             })
           })
         }
@@ -394,7 +402,7 @@ export default {
     formatType: function(row, column) {
       return row.type === 1 ? 'A类' : row.type === 2 ? 'B类' : row.type === 3
         ? 'C类' : row.type === 4 ? 'D类' : row.type === 5 ? 'E类'
-          : row.type === 6 ? 'F类' : '未知'
+          : row.type === 6 ? 'F类' : '未分类'
     },
     handleCurrentChange(val) {
       this.page = val
@@ -460,9 +468,7 @@ export default {
           message: response.meta.msg,
           type: 'success'
         })
-        // const val = 1
-        // this.handleCurrentChange(val)
-        location.reload()
+        this.reload()
       }
     },
     getTaskUsersList(item) {
@@ -516,7 +522,7 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          location.reload()
+          this.reload()
         }
       })
     },
@@ -538,7 +544,7 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          location.reload()
+          this.reload()
         }
       })
     },
@@ -550,7 +556,7 @@ export default {
       var audio = document.getElementById('snd')
       audio.pause()
       audio.currentTime = 0
-      audio.src = 'http://127.0.0.1:9527/static/3.0.1.wav'
+      audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
       audio.play()
     }
   },
@@ -657,6 +663,10 @@ body > .el-container {
   float: right;
   font-size: 14px;
   color: #888;
+}
+
+.phone-list >li{
+  list-style: none;
 }
 
 /* bubble style */
