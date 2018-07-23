@@ -1,6 +1,6 @@
 <template>
-    <el-container>
-      <el-aside width="300px">
+    <el-container class="task-container">
+      <el-aside class="left-aside">
         <!--工具条-->
         <div class="toolbar" style="margin-top:30px;">
           <el-form :inline="true" :model="filters"  onsubmit="return false">
@@ -36,7 +36,14 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="详细结果" key="first" name="first">
               <el-col :span="24" class="toolbar" style="padding: 0px;">
-                <el-form :inline="true" :model="tables" style="text-align:right;">
+                <el-form :inline="true" :model="tables" style="text-align:left;">
+                  
+                  <el-form-item>
+                    <el-button type="primary" v-on:click="startTask" >开始</el-button>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" v-on:click="stopTask" >暂停</el-button>
+                  </el-form-item>
                   <el-form-item>
                     <el-input v-model="tables.name" style="width:160px;" @keyup.enter.native="getTaskUsersList" placeholder="姓名"></el-input>
                   </el-form-item>
@@ -56,14 +63,7 @@
                       :value="item.value">
                     </el-option>
                   </el-select>
-                  <!-- <el-select v-model="tables.share" style="width:160px;" placeholder="是否公开">
-                    <el-option
-                      v-for="item in this.tables.isShare"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select> -->
+                  
                   <el-form-item>
                     <el-button type="primary" v-on:click="getTaskUsersList">查询</el-button>
                   </el-form-item>
@@ -73,34 +73,37 @@
                   <el-form-item>
                     <el-button type="primary" v-on:click="importExcel">导入Excel</el-button>
                   </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" v-on:click="startTask" >开始</el-button>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" v-on:click="stopTask" >暂停</el-button>
-                  </el-form-item>
+                  <!-- <el-select v-model="tables.share" style="width:160px;" placeholder="是否公开">
+                    <el-option
+                      v-for="item in this.tables.isShare"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select> -->
                 </el-form>
               </el-col>
-              <el-table :data="taskUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+              <el-table :data="taskUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" >
                 <el-table-column type="index" width="50">
+                </el-table-column>
+                <el-table-column prop="name" label="姓名" width="120" sortable>
                 </el-table-column>
                 <el-table-column prop="mobile" label="客户号码" width="140" sortable>
                 </el-table-column>
                 <el-table-column prop="status" label="任务状态" width="120" :formatter="formatStatus" sortable>
+                </el-table-column>
+                <el-table-column prop="type" label="客户类型" width="120" :formatter="formatType" sortable>
                 </el-table-column>  
                 <el-table-column prop="time" label="通话时长" width="120" sortable>
                 </el-table-column>
-                <el-table-column prop="type" label="客户类型" width="120" :formatter="formatType" sortable>
-                </el-table-column>
-                <el-table-column prop="share" label="是否公开" width="120" :formatter="formatShare" sortable>
-                </el-table-column>
-                <el-table-column prop="name" label="姓名" width="120" sortable>
-                </el-table-column>
+                <!-- <el-table-column prop="share" label="是否公开" width="120" :formatter="formatShare" sortable>
+                </el-table-column> -->
+                
                 <!-- <el-table-column prop="remark" label="备注" width="120"  sortable>
                 </el-table-column> -->
                 <!-- <el-table-column prop="calledAt" label="呼叫时间" width="120" :formatter="formatDate" sortable>
                 </el-table-column> -->
-                <el-table-column label="操作" width="170">
+                <el-table-column label="操作">
                   <template slot-scope="scope">
                     <el-button size="small" type="primary" plain @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" type="info" plain @click="handleCalled(scope.$index, scope.row)">通话详情</el-button>
@@ -503,7 +506,6 @@ export default {
         id: this.itemId + '',
         status: 2 + ''
       }
-      // this.listLoading = true
       editTaskStatus(rePara).then(response => {
         if (!response.data.meta.success) {
           this.$message.error(
@@ -514,8 +516,6 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          // const val = 1
-          // this.handleCurrentChange(val)
           location.reload()
         }
       })
@@ -538,8 +538,6 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          // const val = 1
-          // this.handleCurrentChange(val)
           location.reload()
         }
       })
@@ -552,14 +550,6 @@ export default {
       var audio = document.getElementById('snd')
       audio.pause()
       audio.currentTime = 0
-      // if (voice !== '' && typeof voice !== undefined && this.flows[this.activeFlow].section.voice.length > 0) {
-      //   if (voice === 'random') {
-      //     voice = this.flows[this.activeFlow].section.voice[Math.floor(Math.random() * this.flows[this.activeFlow].section.voice.length)]
-      //   }
-
-      //   audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
-
-      // }
       audio.src = 'http://127.0.0.1:9527/static/3.0.1.wav'
       audio.play()
     }
@@ -570,15 +560,14 @@ export default {
 }
 </script>
 
-
-
  <style lang="scss" scoped>
- body{
+
+.task-container{
   height:100%;
   overflow: hidden;
- }
+}
 
-.el-aside {
+.left-aside {
   //background-color: #D3DCE6;
   color: #333;
   text-align: center;
