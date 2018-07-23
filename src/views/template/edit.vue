@@ -87,7 +87,19 @@ export default {
             rule: 'time:0,10;word:0,5;section:0,10'
           },
           {
+            name: '未接听',
+            rule: ''
+          },
+          {
             name: '空号',
+            rule: ''
+          },
+          {
+            name: '停机',
+            rule: ''
+          },
+          {
+            name: '关机',
             rule: ''
           },
           {
