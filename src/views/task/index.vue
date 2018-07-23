@@ -184,30 +184,34 @@
 
         <!--通话详情界面-->
         <el-dialog title="通话详情" :fullscreen="true" width=80%  :visible.sync="calledFormVisible">
-         <div class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-            <div class="portrait ">
-              <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
-            </div>
-          <div class="app-msg">
-            <span> 喂，您好</span>
-          </div>
-          <div class="app-msg-voice">
-            <el-button slot="append" icon="el-icon-caret-right" @click="playSound()">
-              播放
-            </el-button>
-            <audio id="snd" src="D:\3.0.1.wav">
-            </audio>
-          </div>
-        </div>
-        <!-- Right -->
-        <div class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-            <div class="portrait">
-               <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
-            </div>
-         <div class="app-msg" style="color:#ffffff">
-              <span> hellodlkjaskldajsioxcvlnfwerophellodlkjaskldajshellodlkjaskldajsioxcvlnfweropiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkioxcvlnfweropiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslkiwjlkdioxcvlnfweropiwjlkdfjopiaewrjmqnfioudfhslk </span>
-         </div>
-        </div>  
+          <ul class="phone-list">
+            <li v-for="(item,k) in content.nodes" :key='k'>
+                <div v-if="item.type === 0" class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+                  <div class="portrait ">
+                    <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
+                  </div>
+                  <div class="app-msg">
+                    <span> {{item.word}}</span>
+                  </div>
+                  <div class="app-msg-voice">
+                    <el-button slot="append" icon="el-icon-caret-right" @click="playSound(item.voice)">
+                      播放
+                    </el-button>
+                    <audio id="snd" src="">
+                    </audio>
+                  </div>
+                </div>
+                  <!-- Right -->
+                <div v-else class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+                   <div class="portrait">
+                     <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
+                   </div>
+                   <div class="app-msg" style="color:#ffffff">
+                     <span> {{item.word}} </span>
+                   </div>
+                </div>
+            </li>
+          </ul>
         </el-dialog>
       </el-main>
     </el-container>
@@ -279,6 +283,7 @@ export default {
       page: 1,
       currentPage: 1,
       tasks: [],
+      content: [],
       itemId: '',
       action: '',
       taskUsers: [],
@@ -323,7 +328,9 @@ export default {
     },
     handleCalled: function(index, row) {
       this.calledFormVisible = true
-      this.editForm = Object.assign({}, row)
+      this.content = JSON.parse(row.content)
+
+      console.log(this.content)
     },
     formatDate: function(para) {
       if (para === '' || para === null || para === undefined) {
@@ -354,7 +361,6 @@ export default {
             this.editLoading = true
             // NProgress.start();
             const para = Object.assign({}, this.editForm)
-            console.log(para)
             const reqData = {
               id: para.id + '',
               mobile: para.mobile + '',
@@ -550,7 +556,7 @@ export default {
       var audio = document.getElementById('snd')
       audio.pause()
       audio.currentTime = 0
-      audio.src = 'http://127.0.0.1:9527/static/3.0.1.wav'
+      audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
       audio.play()
     }
   },
@@ -657,6 +663,10 @@ body > .el-container {
   float: right;
   font-size: 14px;
   color: #888;
+}
+
+.phone-list >li{
+  list-style: none;
 }
 
 /* bubble style */
