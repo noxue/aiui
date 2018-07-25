@@ -33,10 +33,10 @@
           <span>待处理信息</span>
         </div></el-col>
         <el-col :span="24"><div style="margin-top:20px;margin-left:30px;">
-          <span class="details-content" style="text-align:center;">待执行任务: 5</span>
+          <span class="details-content" style="text-align:center;">待执行任务: {{toDoTask}}</span>
         </div></el-col>
         <el-col :span="24"><div style="margin-top:10px;margin-left:30px;">
-          <span class="details-content">待呼叫数量: 55</span>
+          <span class="details-content">待呼叫数量: {{toDoTaskUser}}</span>
         </div></el-col>
     </div></el-col>
     <!--echart-->
@@ -45,18 +45,18 @@
             <el-col :span="6"><div class="title">
               <span>呼叫结果</span>
             </div></el-col>
-            <el-col :span="5"><div class="echart-top">
+            <!-- <el-col :span="5"><div class="echart-top">
               <el-select value="请选择卡号">
                 <el-option :value="1">1</el-option>
                 <el-option :value="2">2</el-option>
                 <el-option :value="3">3</el-option>
               </el-select>
-            </div></el-col>
-            <el-col :span="13"><div class="echart-top">
+            </div></el-col> -->
+            <el-col :span="18"><div class="echart-top">
               <el-date-picker
                 v-model="timeSlot"
                 type="daterange"
-                value-format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 :default-time="['00:00:00', '23:59:59']">
@@ -83,12 +83,12 @@
           </div></el-col>
       </div></el-col>  
       <!--错误报告-->
-      <el-col :span="24"><div class="grid bg-purple-light-bottom">
+      <!-- <el-col :span="24"><div class="grid bg-purple-light-bottom">
           <span class="title">关键字</span>
           <el-col :span="24"><div class="lower-right-corner">
               暂无不匹配现象
           </div></el-col>
-      </div></el-col>
+      </div></el-col> -->
     </div></el-col>
   </el-row>
   </div>
@@ -100,6 +100,7 @@ import { mapGetters } from 'vuex'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
 import store from '@/store'
+import { getCountList, getTaskToDo } from '@/api/task'
 
 export default {
   name: 'dashboard',
@@ -107,7 +108,21 @@ export default {
   data() {
     return {
       currentRole: 'adminDashboard',
-      timeSlot: []
+      timeSlot: [],
+      countList: [],
+      timeList: ['', '', '', '', '', '', ''],
+      AL: [0, 0, 0, 0, 0, 0, 0],
+      BL: [0, 0, 0, 0, 0, 0, 0],
+      CL: [0, 0, 0, 0, 0, 0, 0],
+      DL: [0, 0, 0, 0, 0, 0, 0],
+      EL: [0, 0, 0, 0, 0, 0, 0],
+      FL: [0, 0, 0, 0, 0, 0, 0],
+      countData: [],
+      countData1: [],
+      numList: [],
+      index: '',
+      toDoTask: '',
+      toDoTaskUser: ''
     }
   },
   computed: {
@@ -119,24 +134,87 @@ export default {
     }
   },
   methods: {
-    dateFammte: function() {
-      var data1 = Date.parse(this.timeSlot[0].replace(/-/g, '/'))
-      var data2 = Date.parse(this.timeSlot[1].replace(/-/g, '/'))
-      var datadiff = data2 - data1
-      var time = 7 * 24 * 60 * 60 * 1000
-      if (this.timeSlot[0].length > 0 && this.timeSlot[0].length > 0) {
-        if (datadiff < 0 || datadiff > time) {
-          alert('开始时间应小于结束时间并且间隔小于或等于7天，请检查!')
-          return false
+    getToDoData: function() {
+      getTaskToDo(Request).then(response => {
+        if (response.data.meta.success === false) {
+          this.$message({
+            message: response.data.meta.msg,
+            type: 'fail'
+          })
+        } else {
+          console.log('sdsa:' + response.data.data.countTask)
+          if (response.data.data.countTask.length > 0) {
+            this.toDoTask = response.data.data.countTask[0]
+            this.toDoTaskUser = response.data.data.countTask[1]
+          }
         }
-      }
+      })
     },
     toCount: function() {
       if (this.timeSlot[0] !== undefined) {
-        this.dateFammte()
+        var data1 = Date.parse(this.timeSlot[0].replace(/-/g, '/'))
+        var data2 = Date.parse(this.timeSlot[1].replace(/-/g, '/'))
+        var datadiff = data2 - data1
+        var time = 7 * 24 * 60 * 60 * 1000
+        if (this.timeSlot[0].length > 0 && this.timeSlot[0].length > 0) {
+          if (datadiff < 0 || datadiff > time) {
+            alert('开始时间应小于结束时间并且间隔小于或等于7天，请检查!')
+            return false
+          }
+        }
       }
-      this.lineCount()
-      this.pieCount()
+      const para = {
+        staTime: this.timeSlot[0],
+        endTime: this.timeSlot[1]
+      }
+      getCountList(para).then(response => {
+        if (response.data.meta.success === false) {
+          this.$message({
+            message: response.data.meta.msg,
+            type: 'fail'
+          })
+        } else {
+          this.countList = []
+          this.countData1 = []
+          this.countData = []
+          this.AL = [0, 0, 0, 0, 0, 0, 0]
+          this.BL = [0, 0, 0, 0, 0, 0, 0]
+          this.CL = [0, 0, 0, 0, 0, 0, 0]
+          this.DL = [0, 0, 0, 0, 0, 0, 0]
+          this.EL = [0, 0, 0, 0, 0, 0, 0]
+          this.FL = [0, 0, 0, 0, 0, 0, 0]
+          this.countList = response.data.data.countType
+          for (var i = 0; i < this.countList.length; i++) {
+            this.countData1.push((this.countList[i].date).substring(0, 10))
+          }
+          this.countData = this.unique(this.countData1)
+          for (var j = 0; j < this.countList.length; j++) {
+            if (this.countData.indexOf((this.countList[j].date).substring(0, 10)) > -1) {
+              this.index = this.countData.indexOf((this.countList[j].date).substring(0, 10))
+            }
+            if (this.countList[j].type === 1) {
+              this.AL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 2) {
+              this.BL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 3) {
+              this.CL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 4) {
+              this.DL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 5) {
+              this.EL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 6) {
+              this.FL[this.index] = this.countList[j].num
+            }
+          }
+        }
+        this.lineCount()
+        this.pieCount()
+      })
     },
     lineCount: function() {
       const myChart = echarts.init(document.getElementById('homeChart'))
@@ -148,38 +226,38 @@ export default {
         title: { text: '统计结果' },
         tooltip: { trigger: 'axis' },
         xAxis: {
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          data: this.countData
         },
         yAxis: { type: 'value' },
         series: [{
           name: 'A类',
           type: 'line',
-          data: [73, 4, 53, 8, 176, 15, 6]
+          data: this.AL
         },
         {
           name: 'B类',
           type: 'line',
-          data: [9, 3, 5, 234, 1, 1, 19]
+          data: this.BL
         },
         {
           name: 'C类',
           type: 'line',
-          data: [93, 20, 35, 245, 59, 85, 114]
+          data: this.CL
         },
         {
           name: 'D类',
           type: 'line',
-          data: [343, 121, 76, 234, 167, 113, 245]
+          data: this.DL
         },
         {
           name: 'E类',
           type: 'line',
-          data: [6, 1, 290, 2, 290, 9, 14]
+          data: this.EL
         },
         {
           name: 'F类',
           type: 'line',
-          data: [323, 215, 50, 234, 165, 130, 234]
+          data: this.FL
         }]
       })
     },
@@ -220,20 +298,44 @@ export default {
               }
             },
             data: [
-              { value: 335, name: 'A意向强烈' },
-              { value: 272, name: 'B有意向' },
-              { value: 651, name: 'C待筛选' },
-              { value: 1299, name: 'D拒绝' },
-              { value: 322, name: 'E在忙' },
-              { value: 1351, name: 'F未接通' }
+              { value: this.sum(this.AL), name: 'A意向强烈' },
+              { value: this.sum(this.BL), name: 'B有意向' },
+              { value: this.sum(this.CL), name: 'C待筛选' },
+              { value: this.sum(this.DL), name: 'D拒绝' },
+              { value: this.sum(this.EL), name: 'E在忙' },
+              { value: this.sum(this.FL), name: 'F未接通' }
             ]
           }
         ]
       })
+    },
+    unique: function(item) {
+      var len = item.length
+      var result = []
+      for (var i = 0; i < len; i++) {
+        var flag = true
+        for (var j = i; j < item.length - 1; j++) {
+          if (item[i] === item[j + 1]) {
+            flag = false
+            break
+          }
+        }
+        if (flag) {
+          result.push(item[i])
+        }
+      }
+      return result
+    },
+    sum: function(item) {
+      var totle = 0
+      for (var i = 0; i < item.length; i++) {
+        totle += item[i]
+      }
+      return totle
     }
-
   },
   mounted() {
+    this.getToDoData()
     this.toCount()
   }
 
