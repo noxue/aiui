@@ -86,3 +86,26 @@ export function getTemplate(id) {
     method: 'get'
   })
 }
+
+export function getCountList(para) {
+  return request({
+    url: '/task/user/count',
+    method: 'post',
+    data: para
+  })
+}
+
+export function getTaskToDo() {
+  return request({
+    url: '/task/todo',
+    method: 'get'
+  })
+}
+
+export function toDoRedial(para) {
+  return request({
+    url: '/task/toRedial',
+    method: 'post',
+    data: para
+  })
+}

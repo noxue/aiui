@@ -106,7 +106,8 @@
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <el-button size="small" type="primary" plain @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" type="info" plain @click="handleCalled(scope.$index, scope.row)">通话详情</el-button>
+                    <el-button size="small" type="primary" v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)">重拨</el-button>
+                    <el-button size="small" type="info" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)">通话详情</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -218,7 +219,7 @@
 </template>
 
 <script>
-import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate } from '@/api/task'
+import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial } from '@/api/task'
 export default {
   inject: ['reload'],
   data() {
@@ -275,7 +276,8 @@ export default {
         stratAt: '',
         createAt: '',
         finishAt: '',
-        status: ''
+        status: '',
+        test: ''
       },
       num: 'sd',
       total: 0,
@@ -287,6 +289,9 @@ export default {
       itemId: '',
       action: '',
       taskUsers: [],
+      phoneDetail: false,
+      redial: false,
+      isTest: '',
       listLoading: false,
       activeName: 'first',
       sels: [], // 列表选中列
@@ -326,11 +331,46 @@ export default {
       this.editForm.remark = row.remark
       this.editType = this.formatType(row.type)
     },
+    isRedial: function(index, row) {
+      for (var i = 0; i < this.tasks.length; i++) {
+        if (this.tasks[i].id === row.taskId) {
+          this.isTest = this.tasks[i].test
+        }
+      }
+      if (this.isTest) {
+        this.redial = true
+        return this.redial
+      }
+    },
+    isPhoneDetail: function(index, row) {
+      if (row.content) {
+        this.phoneDetail = true
+        return this.phoneDetail
+      }
+    },
     handleCalled: function(index, row) {
       this.calledFormVisible = true
       this.content = JSON.parse(row.content)
-
-      console.log(this.content)
+    },
+    toRedial: function(index, row) {
+      const reqData = {
+        taskId: row.taskId + '',
+        taskUserId: row.id + ''
+      }
+      toDoRedial(reqData).then(response => {
+        if (response.data.meta.success === false) {
+          this.$message({
+            message: response.data.meta.msg,
+            type: 'fail'
+          })
+        } else {
+          this.$message({
+            message: '编辑成功',
+            type: 'success'
+          })
+          this.reload()
+        }
+      })
     },
     formatDate: function(para) {
       if (para === '' || para === null || para === undefined) {
@@ -657,6 +697,10 @@ body > .el-container {
 .task-list > li > div {
   float: left;
   width: 70%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
 }
 .task-list > li > span {
   width: 30%;
