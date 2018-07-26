@@ -365,7 +365,7 @@ export default {
           })
         } else {
           this.$message({
-            message: response.data.meta.msg,
+            message: '正在呼叫',
             type: 'success'
           })
           this.reload()
