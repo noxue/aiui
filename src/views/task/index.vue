@@ -86,15 +86,15 @@
               <el-table :data="taskUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" >
                 <el-table-column type="index" width="50">
                 </el-table-column>
-                <el-table-column prop="name" label="姓名" width="120" sortable>
+                <el-table-column prop="name" label="姓名" sortable>
                 </el-table-column>
-                <el-table-column prop="mobile" label="客户号码" width="140" sortable>
+                <el-table-column prop="mobile" label="客户号码"  sortable>
                 </el-table-column>
-                <el-table-column prop="status" label="任务状态" width="120" :formatter="formatStatus" sortable>
+                <el-table-column prop="status" label="任务状态"  :formatter="formatStatus" sortable>
                 </el-table-column>
-                <el-table-column prop="type" label="客户类型" width="120" :formatter="formatType" sortable>
+                <el-table-column prop="type" label="客户类型" :formatter="formatType" sortable>
                 </el-table-column>  
-                <el-table-column prop="time" label="通话时长" width="120" sortable>
+                <el-table-column prop="time" label="通话时长" sortable>
                 </el-table-column>
                 <!-- <el-table-column prop="share" label="是否公开" width="120" :formatter="formatShare" sortable>
                 </el-table-column> -->
@@ -103,7 +103,7 @@
                 </el-table-column> -->
                 <!-- <el-table-column prop="calledAt" label="呼叫时间" width="120" :formatter="formatDate" sortable>
                 </el-table-column> -->
-                <el-table-column label="操作">
+                <el-table-column label="操作" width="240">
                   <template slot-scope="scope">
                     <el-button size="small" type="primary" plain @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" type="primary" v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)">重拨</el-button>
@@ -365,7 +365,7 @@ export default {
           })
         } else {
           this.$message({
-            message: '编辑成功',
+            message: response.data.meta.msg,
             type: 'success'
           })
           this.reload()
@@ -437,7 +437,7 @@ export default {
         ? '通话完毕'
         : row.status === 1
           ? '任务未执行'
-          : row.status === 2 ? '客户端获取任务' : '未知'
+          : row.status === 2 ? '正在执行' : '未知'
     },
     formatType: function(row, column) {
       return row.type === 1 ? 'A类' : row.type === 2 ? 'B类' : row.type === 3

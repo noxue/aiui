@@ -29,14 +29,6 @@
               {{$t('navbar.dashboard')}}
             </el-dropdown-item>
           </router-link>
-<<<<<<< HEAD
-          <!-- <a target='_blank' href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item>
-              {{$t('navbar.github')}}
-            </el-dropdown-item>
-          </a> -->
-=======
->>>>>>> 71fe162575108f6c98cda77f9e1b340d298f1b6f
           <el-dropdown-item divided>
             <span @click="logout" style="display:block;">{{$t('navbar.logOut')}}</span>
           </el-dropdown-item>
