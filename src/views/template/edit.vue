@@ -148,12 +148,25 @@ export default {
       if (this.$route.params.id > 0) {
         updateTemplate(this.$route.params.id, { name: this.name, content: JSON.stringify(this.template) }).then((res) => {
           console.log(res.data)
+          if (res.data.meta.code === 0) {
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
+          } else {
+            this.$message.error('保存错误：' + res.data.meta.msg)
+          }
         }).catch({
 
         })
       } else {
         addTemplate({ name: this.name, content: JSON.stringify(this.template) }).then((res) => {
           console.log(res.data)
+          if (res.data.meta.code === 0) {
+            this.$router.push({ name: 'templateList' })
+          } else {
+            this.$message.error('保存错误：' + res.data.meta.msg)
+          }
         }).catch({
 
         })
