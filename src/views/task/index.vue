@@ -140,7 +140,7 @@
                 <el-col :span="8"><div class="grid-content bg-purple">并发数：{{this.task.thread}}</div></el-col>
               </el-row>
               <el-row :gutter="20">
-                <el-col :span="24"><div id="basicChart"></div></el-col>
+                <el-col :span="24"><div id="basicChart" style="width:800px;height:400px;"></div></el-col>
               </el-row>
             </el-tab-pane>
         </el-tabs>
@@ -223,8 +223,7 @@
 
 <script>
 var echarts = require('echarts')
-//, countUserType
-import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial } from '@/api/task'
+import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial, countUserType } from '@/api/task'
 export default {
   inject: ['reload'],
   data() {
@@ -335,13 +334,8 @@ export default {
       ],
       editType: '',
       typeList: [],
-      AL: 0,
-      BL: 0,
-      CL: 0,
-      DL: 0,
-      EL: 0,
-      FL: 0,
-      GL: 0
+      userType: [0, 0, 0, 0, 0, 0, 0, 0],
+      myChart: null
     }
   },
   methods: {
@@ -472,20 +466,56 @@ export default {
       this.getTasks()
     },
     // 统计userType
-    getUserType: function(Id) {
-      const myChart = echarts.init(document.getElementById('basicChart'))
-      myChart.setOption({
-        xAxis: {
-          type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: [{
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
-          type: 'line'
-        }]
+    getUserType: function(id) {
+      const para = {
+        taskId: id + ''
+      }
+      countUserType(para).then(response => {
+        if (response.data.meta.success === false) {
+          this.$message({
+            message: response.data.meta.msg,
+            type: 'fail'
+          })
+        } else {
+          this.userType = [0, 0, 0, 0, 0, 0, 0]
+          this.typeList = response.data.data.userType
+          for (var i = 0; i < this.typeList.length; i++) {
+            if (this.typeList[i].type === 0) {
+              this.userType[0] = this.typeList[i].num
+            } else if (this.typeList[i].type === 1) {
+              this.userType[1] = this.typeList[i].num
+            } else if (this.typeList[i].type === 2) {
+              this.userType[2] = this.typeList[i].num
+            } else if (this.typeList[i].type === 3) {
+              this.userType[3] = this.typeList[i].num
+            } else if (this.typeList[i].type === 4) {
+              this.userType[4] = this.typeList[i].num
+            } else if (this.typeList[i].type === 5) {
+              this.userType[5] = this.typeList[i].num
+            } else if (this.typeList[i].type === 6) {
+              this.userType[6] = this.typeList[i].num
+            }
+          }
+          this.myChart = echarts.init(document.getElementById('basicChart'))
+          // this.myChart.showLoading()
+          this.myChart.setOption({
+            tooltip: {
+              trigger: 'axis'
+            },
+            xAxis: {
+              type: 'category',
+              data: ['未分类', 'A类', 'B类', 'C类', 'D类', 'E类', 'F类']
+            },
+            yAxis: {
+              type: 'value'
+            },
+            series: [{
+              data: this.userType,
+              type: 'line'
+            }]
+          })
+          // this.chart.hideLoading()
+        }
       })
     },
     // 获取任务列表
@@ -576,6 +606,7 @@ export default {
       getTaskUserList(rePara).then(response => {
         this.taskUserTotal = response.data.data.taskUserList.total
         this.taskUsers = response.data.data.taskUserList.list
+        this.getUserType(this.itemId)
         this.listLoading = false
         // NProgress.done();
       })
@@ -640,7 +671,6 @@ export default {
   },
   mounted() {
     this.getTasks()
-    this.getUserType()
   }
 }
 </script>
@@ -833,7 +863,4 @@ span{
 // .portrait>i{
 //   color:#fff;
 // }
-#basicChart{
-  max-height: 400px;
-}
 </style>
