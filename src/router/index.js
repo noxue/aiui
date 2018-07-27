@@ -38,40 +38,6 @@ export const constantRouterMap = [
       name: 'dashboard',
       meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
     }]
-  },
-  {
-    path: '/task',
-    component: Layout,
-    redirect: '/task/index',
-    meta: {
-      title: 'task',
-      icon: 'clipboard'
-    },
-    children: [
-      {
-        path: 'task/index',
-        component: () => import('@/views/task/index'),
-        name: 'taskList',
-        meta: { title: 'taskList', icon: 'tab', noCache: true }
-      },
-      {
-        path: 'task/addTask',
-        component: () => import('@/views/task/addTask'),
-        name: 'addTask',
-        meta: { title: 'addTask', icon: 'edit', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'userConfig',
-    children: [{
-      path: 'userConfig',
-      component: () => import('@/views/userConfig/index'),
-      name: 'userConfig',
-      meta: { title: 'userConfig', icon: 'excel', noCache: true }
-    }]
   }
 ]
 
@@ -162,6 +128,40 @@ export const asyncRouterMap = [
       component: () => import('@/views/template/index'),
       name: 'templateList',
       meta: { title: 'templateList', icon: 'component', noCache: true }
+    }]
+  },
+  {
+    path: '/task',
+    component: Layout,
+    redirect: '/task/index',
+    meta: {
+      title: 'task',
+      icon: 'clipboard'
+    },
+    children: [
+      {
+        path: 'task/index',
+        component: () => import('@/views/task/index'),
+        name: 'taskList',
+        meta: { title: 'taskList', icon: 'tab', noCache: true }
+      },
+      {
+        path: 'task/addTask',
+        component: () => import('@/views/task/addTask'),
+        name: 'addTask',
+        meta: { title: 'addTask', icon: 'edit', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'userConfig',
+    children: [{
+      path: 'userConfig',
+      component: () => import('@/views/userConfig/index'),
+      name: 'userConfig',
+      meta: { title: 'userConfig', icon: 'excel', noCache: true }
     }]
   },
   {

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form ref="form"  label-position="top" :model="form" label-width="80px">
-      <el-form-item label="任务名称" ><el-input v-model="form.taskName"></el-input></el-form-item>
+      <el-form-item label="任务名称" ><el-input style="width:200px;" v-model="form.taskName"></el-input></el-form-item>
       <el-form-item label="模板信息" >
         <el-select v-model="form.region" placeholder="请选择">
           <el-option

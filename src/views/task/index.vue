@@ -6,7 +6,7 @@
           <el-form :inline="true" :model="filters"  onsubmit="return false">
 
             <el-form-item>
-              <el-input v-model="filters.name" style="width:120px;" @keyup.enter.native="getTasks" placeholder="请输入任务名"></el-input>
+              <el-input v-model="filters.name" style="width:190px;" @keyup.enter.native="getTasks" placeholder="请输入任务名"></el-input>
             </el-form-item>
             
             <el-form-item>
@@ -88,7 +88,7 @@
                 </el-table-column>
                 <el-table-column prop="name" label="姓名" sortable>
                 </el-table-column>
-                <el-table-column prop="mobile" label="客户号码"  sortable>
+                <el-table-column prop="mobile" label="客户号码"  width="120" sortable>
                 </el-table-column>
                 <el-table-column prop="status" label="任务状态"  :formatter="formatStatus" sortable>
                 </el-table-column>
@@ -138,6 +138,9 @@
                 <el-col :span="8"><div class="grid-content bg-purple">号码总数：{{this.task.total}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple">已拨打：{{this.task.called}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple">并发数：{{this.task.thread}}</div></el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :span="24"><div id="basicChart"></div></el-col>
               </el-row>
             </el-tab-pane>
         </el-tabs>
@@ -219,6 +222,8 @@
 </template>
 
 <script>
+var echarts = require('echarts')
+//, countUserType
 import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial } from '@/api/task'
 export default {
   inject: ['reload'],
@@ -258,8 +263,8 @@ export default {
         ],
         taskStatus: [
           { value: '0', label: '通话完毕' },
-          { value: '1', label: '任务未执行' },
-          { value: '2', label: '任务被获取' }
+          { value: '1', label: '未执行' },
+          { value: '2', label: '正在执行' }
         ],
         isShare: [
           { value: '1', label: '是' },
@@ -305,7 +310,6 @@ export default {
         type: '',
         remark: ''
       },
-
       // 通话详情界面是否显示
       calledFormVisible: false,
       calledLoading: false,
@@ -319,7 +323,15 @@ export default {
         { value: '5', label: 'E类' },
         { value: '6', label: 'F类' }
       ],
-      editType: ''
+      editType: '',
+      typeList: [],
+      AL: 0,
+      BL: 0,
+      CL: 0,
+      DL: 0,
+      EL: 0,
+      FL: 0,
+      GL: 0
     }
   },
   methods: {
@@ -379,7 +391,6 @@ export default {
       var d = new Date(para)
       return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDay() + '  ' + d.getHours() + ':' + d.getMinutes()
     },
-
     formatTemplateName: function(para) {
       if (para === '' || para === null || para === undefined) {
         return ''
@@ -392,7 +403,6 @@ export default {
         }
       })
     },
-
     // 编辑
     editSubmit: function() {
       this.$refs.editForm.validate(valid => {
@@ -453,6 +463,23 @@ export default {
       this.getTaskUsersList(this.itemId)
       this.getTasks()
     },
+    // 统计userType
+    getUserType: function(Id) {
+      const myChart = echarts.init(document.getElementById('basicChart'))
+      myChart.setOption({
+        xAxis: {
+          type: 'category',
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          type: 'line'
+        }]
+      })
+    },
     // 获取任务列表
     getTasks() {
       const para = {
@@ -481,6 +508,7 @@ export default {
           this.task.finishAt = this.tasks[0].finishAt
           this.task.status = this.tasks[0].status
           this.getTaskUsersList(this.tasks[0])
+          this.getUserType(this.itemId)
         }
         this.listLoading = false
       })
@@ -588,7 +616,9 @@ export default {
         }
       })
     },
-    handleClick(tab, event) {},
+    handleClick(tab, event) {
+      // this.getUserType(this.itemId)
+    },
     selsChange(sels) {
       this.sels = sels
     },
@@ -602,6 +632,7 @@ export default {
   },
   mounted() {
     this.getTasks()
+    this.getUserType()
   }
 }
 </script>
@@ -794,4 +825,7 @@ span{
 // .portrait>i{
 //   color:#fff;
 // }
+#basicChart{
+  max-height: 400px;
+}
 </style>

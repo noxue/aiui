@@ -142,7 +142,6 @@ export default {
             type: 'fail'
           })
         } else {
-          console.log('sdsa:' + response.data.data.countTask)
           if (response.data.data.countTask.length > 0) {
             this.toDoTask = response.data.data.countTask[0]
             this.toDoTaskUser = response.data.data.countTask[1]

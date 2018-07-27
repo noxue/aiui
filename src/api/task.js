@@ -109,3 +109,11 @@ export function toDoRedial(para) {
     data: para
   })
 }
+
+export function countUserType(para) {
+  return request({
+    url: '/task/user/type',
+    method: 'post',
+    data: para
+  })
+}
