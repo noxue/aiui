@@ -133,12 +133,13 @@ export default {
           }
           this.checkedCities = checked
           var schedule = JSON.parse(response.data.data.userConfig.value).schedule
-          var dema = new Array(schedule.length)
-          for (var j = 0; j < schedule.length; j++) {
-            dema[j] = schedule[j]
+          if (schedule !== undefined) {
+            var dema = new Array(schedule.length)
+            for (var j = 0; j < schedule.length; j++) {
+              dema[j] = schedule[j]
+            }
+            this.dynamicValidateForm.domains = dema
           }
-          this.dynamicValidateForm.domains = dema
-          console.log(this.dynamicValidateForm.domains)
         }
       })
     }
