@@ -15,8 +15,11 @@
       <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
         <theme-picker class="theme-switch right-menu-item"></theme-picker>
       </el-tooltip>
-      <el-tooltip class="username right-menu-item" content="当前用户名" placement="bottom">
-        <span> {{loginName}}</span>
+      <el-tooltip class="right-menu-item" content="当前用户名" placement="bottom">
+         <span class="username1">
+            <span class="username"> {{loginName}}</span>
+            </span>
+       
       </el-tooltip>
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
@@ -138,6 +141,21 @@ export default {
         }
       }
     }
+  }
+ 
+  .username{
+    position: absolute;
+    top:-25px;
+    left:0px;
+    display: inline-block;
+    margin-top: -18px;
+    z-index: 100;
+  }
+  .username1{
+     position: relative;
+    display: inline-block;
+    width:50px;
+
   }
 }
 </style>
