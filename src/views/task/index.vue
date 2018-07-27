@@ -253,12 +253,17 @@ export default {
         share: '',
         status: '',
         taskTypes: [
-          { value: '1', label: 'A类' },
-          { value: '2', label: 'B类' },
-          { value: '3', label: 'C类' },
-          { value: '4', label: 'D类' },
-          { value: '5', label: 'E类' },
-          { value: '6', label: 'F类' }
+          { value: '0', label: '未分类' },
+          { value: '1', label: '未接听' },
+          { value: '2', label: '空号' },
+          { value: '3', label: '停机' },
+          { value: '4', label: '关机' },
+          { value: '5', label: 'A类' },
+          { value: '6', label: 'B类' },
+          { value: '7', label: 'C类' },
+          { value: '8', label: 'D类' },
+          { value: '9', label: 'E类' },
+          { value: '10', label: 'F类' }
         ],
         taskStatus: [
           { value: '0', label: '通话完毕' },
@@ -315,12 +320,17 @@ export default {
       // 通话详情界面数据
       calledForm: {},
       option: [
-        { value: '1', label: 'A类' },
-        { value: '2', label: 'B类' },
-        { value: '3', label: 'C类' },
-        { value: '4', label: 'D类' },
-        { value: '5', label: 'E类' },
-        { value: '6', label: 'F类' }
+        { value: '0', label: '未分类' },
+        { value: '1', label: '未接听' },
+        { value: '2', label: '空号' },
+        { value: '3', label: '停机' },
+        { value: '4', label: '关机' },
+        { value: '5', label: 'A类' },
+        { value: '6', label: 'B类' },
+        { value: '7', label: 'C类' },
+        { value: '8', label: 'D类' },
+        { value: '9', label: 'E类' },
+        { value: '10', label: 'F类' }
       ],
       editType: '',
       typeList: [],
@@ -444,9 +454,7 @@ export default {
           : row.status === 2 ? '正在执行' : '未知'
     },
     formatType: function(row, column) {
-      return row.type === 1 ? 'A类' : row.type === 2 ? 'B类' : row.type === 3
-        ? 'C类' : row.type === 4 ? 'D类' : row.type === 5 ? 'E类'
-          : row.type === 6 ? 'F类' : '未分类'
+      return this.tables.taskTypes[row.type].label
     },
     handleCurrentChange(val) {
       this.page = val
