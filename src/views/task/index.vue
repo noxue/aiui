@@ -353,7 +353,7 @@ export default {
           this.isTest = this.tasks[i].test
         }
       }
-      if (this.isTest) {
+      if (this.isTest && row.status !== 1) {
         this.redial = true
         return this.redial
       }
