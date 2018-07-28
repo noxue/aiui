@@ -110,7 +110,13 @@ export default {
       currentRole: 'adminDashboard',
       timeSlot: [],
       countList: [],
+      userType: ['未分类', '未接听', '空号', '停机', '关机', 'A类', 'B类', 'C类', 'D类', 'E类', 'F类'],
       timeList: ['', '', '', '', '', '', ''],
+      NECL: [0, 0, 0, 0, 0, 0, 0],
+      NASL: [0, 0, 0, 0, 0, 0, 0],
+      SPACEL: [0, 0, 0, 0, 0, 0, 0],
+      DIEL: [0, 0, 0, 0, 0, 0, 0],
+      CLOSEL: [0, 0, 0, 0, 0, 0, 0],
       AL: [0, 0, 0, 0, 0, 0, 0],
       BL: [0, 0, 0, 0, 0, 0, 0],
       CL: [0, 0, 0, 0, 0, 0, 0],
@@ -176,6 +182,11 @@ export default {
           this.countList = []
           this.countData1 = []
           this.countData = []
+          this.NECL = [0, 0, 0, 0, 0, 0, 0]
+          this.NASL = [0, 0, 0, 0, 0, 0, 0]
+          this.SPACEL = [0, 0, 0, 0, 0, 0, 0]
+          this.DIEL = [0, 0, 0, 0, 0, 0, 0]
+          this.CLOSEL = [0, 0, 0, 0, 0, 0, 0]
           this.AL = [0, 0, 0, 0, 0, 0, 0]
           this.BL = [0, 0, 0, 0, 0, 0, 0]
           this.CL = [0, 0, 0, 0, 0, 0, 0]
@@ -191,22 +202,37 @@ export default {
             if (this.countData.indexOf((this.countList[j].date).substring(0, 10)) > -1) {
               this.index = this.countData.indexOf((this.countList[j].date).substring(0, 10))
             }
+            if (this.countList[j].type === 0) {
+              this.NECL[this.index] = this.countList[j].num
+            }
             if (this.countList[j].type === 1) {
-              this.AL[this.index] = this.countList[j].num
+              this.NASL[this.index] = this.countList[j].num
             }
             if (this.countList[j].type === 2) {
-              this.BL[this.index] = this.countList[j].num
+              this.SPACEL[this.index] = this.countList[j].num
             }
             if (this.countList[j].type === 3) {
-              this.CL[this.index] = this.countList[j].num
+              this.DIEL[this.index] = this.countList[j].num
             }
             if (this.countList[j].type === 4) {
-              this.DL[this.index] = this.countList[j].num
+              this.CLOSEL[this.index] = this.countList[j].num
             }
             if (this.countList[j].type === 5) {
-              this.EL[this.index] = this.countList[j].num
+              this.AL[this.index] = this.countList[j].num
             }
             if (this.countList[j].type === 6) {
+              this.BL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 7) {
+              this.CL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 8) {
+              this.DL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 9) {
+              this.EL[this.index] = this.countList[j].num
+            }
+            if (this.countList[j].type === 10) {
               this.FL[this.index] = this.countList[j].num
             }
           }
@@ -219,45 +245,67 @@ export default {
       const myChart = echarts.init(document.getElementById('homeChart'))
       myChart.setOption({
         legend: {
-          data: ['A类', 'B类', 'C类', 'D类', 'E类', 'F类'],
+          data: this.userType,
           left: 'center'
         },
-        title: { text: '统计结果' },
+        title: { text: '' },
         tooltip: { trigger: 'axis' },
         xAxis: {
           data: this.countData
         },
         yAxis: { type: 'value' },
-        series: [{
-          name: 'A类',
-          type: 'line',
-          data: this.AL
-        },
-        {
-          name: 'B类',
-          type: 'line',
-          data: this.BL
-        },
-        {
-          name: 'C类',
-          type: 'line',
-          data: this.CL
-        },
-        {
-          name: 'D类',
-          type: 'line',
-          data: this.DL
-        },
-        {
-          name: 'E类',
-          type: 'line',
-          data: this.EL
-        },
-        {
-          name: 'F类',
-          type: 'line',
-          data: this.FL
-        }]
+        series: [
+          {
+            name: this.userType[0],
+            type: 'line',
+            data: this.NECL
+          }, {
+            name: this.userType[1],
+            type: 'line',
+            data: this.NASL
+          }, {
+            name: this.userType[2],
+            type: 'line',
+            data: this.SPACEL
+          }, {
+            name: this.userType[3],
+            type: 'line',
+            data: this.DIEL
+          }, {
+            name: this.userType[4],
+            type: 'line',
+            data: this.CLOSEL
+          },
+          {
+            name: this.userType[5],
+            type: 'line',
+            data: this.AL
+          },
+          {
+            name: this.userType[6],
+            type: 'line',
+            data: this.BL
+          },
+          {
+            name: this.userType[7],
+            type: 'line',
+            data: this.CL
+          },
+          {
+            name: this.userType[8],
+            type: 'line',
+            data: this.DL
+          },
+          {
+            name: this.userType[9],
+            type: 'line',
+            data: this.EL
+          },
+          {
+            name: this.userType[10],
+            type: 'line',
+            data: this.FL
+          }]
       })
     },
     pieCount: function() {
@@ -269,14 +317,14 @@ export default {
         },
         legend: {
           // orient: 'vertical',
-          // x: 'left',
-          data: ['A意向强烈', 'B有意向', 'C待筛选', 'D拒绝', 'E在忙', 'F未接通']
+          x: 'center',
+          data: this.userType
         },
         series: [
           {
             name: '客户类型',
             type: 'pie',
-            radius: ['50%', '70%'],
+            radius: ['40%', '60%'],
             avoidLabelOverlap: false,
             label: {
               normal: {
@@ -297,12 +345,17 @@ export default {
               }
             },
             data: [
-              { value: this.sum(this.AL), name: 'A意向强烈' },
-              { value: this.sum(this.BL), name: 'B有意向' },
-              { value: this.sum(this.CL), name: 'C待筛选' },
-              { value: this.sum(this.DL), name: 'D拒绝' },
-              { value: this.sum(this.EL), name: 'E在忙' },
-              { value: this.sum(this.FL), name: 'F未接通' }
+              { value: this.sum(this.NECL), name: this.userType[0] },
+              { value: this.sum(this.NASL), name: this.userType[1] },
+              { value: this.sum(this.SPACEL), name: this.userType[2] },
+              { value: this.sum(this.DIEL), name: this.userType[3] },
+              { value: this.sum(this.CLOSEL), name: this.userType[4] },
+              { value: this.sum(this.AL), name: this.userType[5] },
+              { value: this.sum(this.BL), name: this.userType[6] },
+              { value: this.sum(this.CL), name: this.userType[7] },
+              { value: this.sum(this.DL), name: this.userType[8] },
+              { value: this.sum(this.EL), name: this.userType[9] },
+              { value: this.sum(this.FL), name: this.userType[10] }
             ]
           }
         ]
@@ -432,6 +485,6 @@ img{
 }
 #pieChart{
   height:344px;
-  margin-top:30px;
+  margin-top:20px;
 }
 </style>

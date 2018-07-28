@@ -39,10 +39,13 @@
                 <el-form :inline="true" :model="tables" style="text-align:left;">
                   
                   <el-form-item>
-                    <el-button type="primary" v-on:click="startTask" >开始</el-button>
+                    <el-button type="primary" v-on:click="startTask">开始</el-button>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" v-on:click="stopTask" >暂停</el-button>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="danger" v-on:click="delTask" >删除</el-button>
                   </el-form-item>
                   <el-form-item>
                     <el-input v-model="tables.name" style="width:160px;" @keyup.enter.native="getTaskUsersList" placeholder="姓名"></el-input>
@@ -223,7 +226,7 @@
 
 <script>
 var echarts = require('echarts')
-import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial, countUserType } from '@/api/task'
+import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial, countUserType, deleteTask } from '@/api/task'
 export default {
   inject: ['reload'],
   data() {
@@ -334,7 +337,7 @@ export default {
       ],
       editType: '',
       typeList: [],
-      userType: [0, 0, 0, 0, 0, 0, 0, 0],
+      userType: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       myChart: null
     }
   },
@@ -477,7 +480,7 @@ export default {
             type: 'fail'
           })
         } else {
-          this.userType = [0, 0, 0, 0, 0, 0, 0]
+          this.userType = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           this.typeList = response.data.data.userType
           for (var i = 0; i < this.typeList.length; i++) {
             if (this.typeList[i].type === 0) {
@@ -494,6 +497,14 @@ export default {
               this.userType[5] = this.typeList[i].num
             } else if (this.typeList[i].type === 6) {
               this.userType[6] = this.typeList[i].num
+            } else if (this.typeList[i].type === 7) {
+              this.userType[7] = this.typeList[i].num
+            } else if (this.typeList[i].type === 8) {
+              this.userType[8] = this.typeList[i].num
+            } else if (this.typeList[i].type === 9) {
+              this.userType[9] = this.typeList[i].num
+            } else if (this.typeList[i].type === 10) {
+              this.userType[10] = this.typeList[i].num
             }
           }
           this.myChart = echarts.init(document.getElementById('basicChart'))
@@ -504,7 +515,7 @@ export default {
             },
             xAxis: {
               type: 'category',
-              data: ['未分类', 'A类', 'B类', 'C类', 'D类', 'E类', 'F类']
+              data: ['未分类', '未接听', '空号', '停机', '关机', 'A类', 'B类', 'C类', 'D类', 'E类', 'F类']
             },
             yAxis: {
               type: 'value'
@@ -653,6 +664,36 @@ export default {
           })
           this.reload()
         }
+      })
+    },
+    delTask(item) {
+      this.$confirm('确认删除该任务吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        this.listLoading = true
+        // NProgress.start();
+        if (item.id !== undefined) {
+          this.itemId = item.id
+        }
+        const para = { id: this.itemId + '' }
+        deleteTask(para).then((response) => {
+          this.listLoading = false
+          // NProgress.done();
+          if (response.data.meta.success === false) {
+            this.$message({
+              message: '删除失败',
+              type: 'fail'
+            })
+          } else {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.reload()
+          }
+        })
+      }).catch(() => {
+
       })
     },
     handleClick(tab, event) {
