@@ -24,13 +24,13 @@
         </el-table-column> -->
         <el-table-column type="index" width="60">
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="120" sortable>
+        <el-table-column prop="name" label="名称" sortable>
         </el-table-column>
-        <el-table-column prop="ip"   label="ip" width="130" sortable>
+        <el-table-column prop="ip"   label="ip"  sortable>
         </el-table-column>
-        <el-table-column prop="port" label="端口" width="80" sortable>
+        <el-table-column prop="port" label="端口" sortable>
         </el-table-column>
-        <el-table-column prop="userId" label="用户" width="120" sortable>
+        <el-table-column prop="userId" label="用户" sortable>
         </el-table-column>
         <el-table-column prop="description" label="描述" min-width="180" sortable>
         </el-table-column>

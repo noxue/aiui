@@ -85,9 +85,9 @@
           <el-table :data="simUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
           <!-- <el-table-column type="selection" width="55">
           </el-table-column> -->
-            <el-table-column type="index" width="60">
+            <el-table-column type="index">
             </el-table-column>
-            <el-table-column prop="userId" label="用户名" width="350" sortable>
+            <el-table-column prop="userId" label="用户名" sortable>
             </el-table-column>
             <el-table-column label="操作" width="220">
               <template slot-scope="scope">

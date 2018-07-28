@@ -19,21 +19,21 @@
       <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
         <!-- <el-table-column type="selection" width="55">
         </el-table-column> -->
-        <el-table-column type="index" width="60">
+        <el-table-column type="index">
         </el-table-column>
-        <el-table-column prop="uid" label="登录名" width="160" sortable>
+        <el-table-column prop="uid" label="登录名" sortable>
         </el-table-column>
-        <el-table-column prop="username" label="用户名" width="160" sortable>
+        <el-table-column prop="username" label="用户名" sortable>
         </el-table-column>  
-        <el-table-column prop="realName" label="真实姓名" width="140" sortable>
+        <el-table-column prop="realName" label="真实姓名"   sortable>
         </el-table-column>
-        <el-table-column prop="phone" label="电话" width="140" sortable>
+        <el-table-column prop="phone" label="电话"   sortable>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" width="180" sortable>
+        <el-table-column prop="email" label="邮箱"  sortable>
         </el-table-column>
-        <el-table-column prop="sex" label="性别" width="120" :formatter="formatSex" sortable>
+        <el-table-column prop="sex" label="性别"   :formatter="formatSex" sortable>
         </el-table-column>
-        <el-table-column prop="status" label="用户状态" width="120" :formatter="formatStatus" sortable>
+        <el-table-column prop="status" label="用户状态"   :formatter="formatStatus" sortable>
         </el-table-column>
         <el-table-column label="操作" width="170">
           <template slot-scope="scope">
