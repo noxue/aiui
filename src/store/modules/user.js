@@ -35,12 +35,14 @@ const user = {
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getUserInfo(state.token).then(response => {
+          const username = response.data.data.account.appId
+          localStorage.setItem('username', username)
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('error')
           }
           const data = response.data
           window.localStorage.setItem('role', window.JSON.stringify(data.data.roles))
-          console.log(data.data.roles)
+          // console.log(data.data.roles)
           if (data.data.roles && data.data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.data.roles)
           } else {
@@ -59,6 +61,7 @@ const user = {
     LogOut({ commit, state }) {
       commit('SET_ROLES', [])
       localStorage.removeItem('role')
+      localStorage.removeItem('username')
       removeToken()
     },
     // 动态修改权限
