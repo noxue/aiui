@@ -21,7 +21,7 @@
           </li>
         </ul>
         <!--工具条-->
-        <el-col :span="24" class="toolbar">
+        <el-col :span="24" class="bottom-toolbar">
           <!-- <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button> -->
           <el-pagination ref="pagination" layout="prev, pager, next" 
           @current-change="handleCurrentChange" 
@@ -102,7 +102,7 @@
                 </el-table-column>
               </el-table>
             <!--工具条-->
-              <el-col :span="24" class="toolbar">
+              <el-col :span="24" class="bottom-toolbar">
                   <el-button-group>                    
                     <el-button type="primary" v-on:click="exportExcel" >导出Excel</el-button>
                     <el-button type="primary" v-on:click="importExcel" >导入Excel</el-button>
@@ -884,6 +884,9 @@ span{
   max-width:600px;
   padding:5px 10px 10px 10px;
   box-shadow: 2px 2px 5px rgb(111, 128, 148);
+}
+.bottom-toolbar{
+  padding-top:5px;
 }
 // .portrait{
 //   text-align: center;
