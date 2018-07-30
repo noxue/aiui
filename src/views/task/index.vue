@@ -37,19 +37,7 @@
             <el-tab-pane label="详细结果" key="first" name="first">
               <el-col :span="24" class="toolbar" style="padding: 0px;">
                 <el-form :inline="true" :model="tables" style="text-align:left;">
-                  
-                  <el-form-item>
-                    <el-button type="primary" v-on:click="startTask">开始</el-button>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" v-on:click="stopTask" >暂停</el-button>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="danger" v-on:click="delTask" >删除</el-button>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-input v-model="tables.name" style="width:160px;" @keyup.enter.native="getTaskUsersList" placeholder="姓名"></el-input>
-                  </el-form-item>
+                  <el-input v-model="tables.name" style="width:160px;" @keyup.enter.native="getTaskUsersList" placeholder="姓名"></el-input>
                   <el-select v-model="tables.type" style="width:160px;" placeholder="客户类型">
                     <el-option
                       v-for="item in this.tables.taskTypes"
@@ -67,15 +55,12 @@
                     </el-option>
                   </el-select>
                   
-                  <el-form-item>
-                    <el-button type="primary" v-on:click="getTaskUsersList">查询</el-button>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" v-on:click="exportExcel">导出Excel</el-button>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" v-on:click="importExcel">导入Excel</el-button>
-                  </el-form-item>
+                  <el-button-group>
+                    <el-button type="primary" icon="el-icon-search" v-on:click="getTaskUsersList"></el-button>
+                    <el-button type="primary" icon="el-icon-caret-right" v-on:click="startTask"></el-button>
+                    <el-button type="primary" v-on:click="stopTask" ><svg-icon icon-class="stop" /></el-button>
+                    <el-button type="danger" icon="el-icon-delete" v-on:click="delTask"></el-button>
+                  </el-button-group>
                   <!-- <el-select v-model="tables.share" style="width:160px;" placeholder="是否公开">
                     <el-option
                       v-for="item in this.tables.isShare"
@@ -108,14 +93,20 @@
                 </el-table-column> -->
                 <el-table-column label="操作" width="240">
                   <template slot-scope="scope">
-                    <el-button size="small" type="primary" plain @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" type="primary" v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)">重拨</el-button>
-                    <el-button size="small" type="info" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)">通话详情</el-button>
+                    <el-button-group>   
+                      <el-button size="mini"  type="primary" plain icon="el-icon-edit"  @click="handleEdit(scope.$index, scope.row)"></el-button>
+                      <el-button size="mini"  type="primary" plain v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)"><svg-icon icon-class="recall" /></el-button>
+                      <el-button size="mini"  type="primary" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button>
+                    </el-button-group>
                   </template>
                 </el-table-column>
               </el-table>
             <!--工具条-->
               <el-col :span="24" class="toolbar">
+                  <el-button-group>                    
+                    <el-button type="primary" v-on:click="exportExcel" >导出Excel</el-button>
+                    <el-button type="primary" v-on:click="importExcel" >导入Excel</el-button>
+                  </el-button-group>
                 <!-- <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button> -->
                 <el-pagination layout="prev, pager, next"
                  :current-page=currentPage 
