@@ -11,19 +11,19 @@
            <span>今日呼叫</span>
         </div></el-col>
         <el-col :span="8"><div class="second-details">
-            <span class="second-details-content">呼叫量: 55</span>
+            <span class="second-details-content">呼叫量: {{todayCalled[0]}}</span>
         </div></el-col>
         <el-col :span="8"><div class="second-details">
-            <span class="second-details-content">接通数: 55</span>
+            <span class="second-details-content">接通数: {{todayCalled[1]}}</span>
         </div></el-col>
         <el-col :span="8"><div class="second-details">
-            <span class="second-details-content">接通率: 100%</span>
+            <span class="second-details-content">接通率: {{todayCalled[2]}}</span>
         </div></el-col>
         <el-col :span="12"><div class="second-details-bottom">
-            <span class="second-details-content">通话时长: 55s</span>
+            <span class="second-details-content">通话总时长: {{todayCalled[3]}}</span>
         </div></el-col>
         <el-col :span="12"><div class="second-details-bottom">
-            <span class="second-details-content">平均通话: 55s</span>
+            <span class="second-details-content">平均通话: {{todayCalled[4]}}</span>
         </div></el-col>
 
     </div></el-col>
@@ -100,7 +100,7 @@ import { mapGetters } from 'vuex'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
 import store from '@/store'
-import { getCountList, getTaskToDo } from '@/api/task'
+import { getCountList, getTaskToDo, todayCount } from '@/api/task'
 
 export default {
   name: 'dashboard',
@@ -128,7 +128,8 @@ export default {
       numList: [],
       index: '',
       toDoTask: '',
-      toDoTaskUser: ''
+      toDoTaskUser: '',
+      todayCalled: []
     }
   },
   computed: {
@@ -153,6 +154,11 @@ export default {
             this.toDoTaskUser = response.data.data.countTask[1]
           }
         }
+      })
+    },
+    todayCallCount: function() {
+      todayCount().then(response => {
+        this.todayCalled = response.data.data.today
       })
     },
     toCount: function() {
@@ -387,6 +393,7 @@ export default {
     }
   },
   mounted() {
+    this.todayCallCount()
     this.getToDoData()
     this.toCount()
   }

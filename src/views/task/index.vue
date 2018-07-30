@@ -624,7 +624,7 @@ export default {
       editTaskStatus(rePara).then(response => {
         if (!response.data.meta.success) {
           this.$message.error(
-            '准备失败,' + '错误信息：' + response.data.meta.msg
+            '开始失败,' + '错误信息：' + response.data.meta.msg
           )
         } else {
           this.$message({
@@ -646,7 +646,7 @@ export default {
       editTaskStatus(rePara).then(response => {
         if (!response.data.meta.success) {
           this.$message.error(
-            '准备失败,' + '错误信息：' + response.data.meta.msg
+            '暂停失败,' + '错误信息：' + response.data.meta.msg
           )
         } else {
           this.$message({

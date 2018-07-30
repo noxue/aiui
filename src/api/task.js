@@ -117,3 +117,10 @@ export function countUserType(para) {
     data: para
   })
 }
+
+export function todayCount() {
+  return request({
+    url: '/task/todayCount',
+    method: 'post'
+  })
+}
