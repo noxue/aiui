@@ -84,7 +84,10 @@ export default {
 
       for (var a = 0; a < this.dynamicValidateForm.domains.length; a++) {
         if (this.dynamicValidateForm.domains[a].workTime === '' || this.dynamicValidateForm.domains[a].workTime === null) {
-          alert('新增的时间段不可以为空')
+          this.$message.error({
+            message: '新增的时间段不可以为空',
+            type: 'fail'
+          })
           return false
         }
       }
