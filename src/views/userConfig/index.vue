@@ -81,6 +81,13 @@ export default {
         this.workday = this.filters.desc(this.day)
         this.getWorkDay[this.workday] = 1
       }
+
+      for (var a = 0; a < this.dynamicValidateForm.domains.length; a++) {
+        if (this.dynamicValidateForm.domains[a].workTime === '' || this.dynamicValidateForm.domains[a].workTime === null) {
+          alert('新增的时间段不可以为空')
+          return false
+        }
+      }
       const data = {
         rep: [this.getWorkDay] + '',
         sech: JSON.stringify(this.dynamicValidateForm.domains) + ''
