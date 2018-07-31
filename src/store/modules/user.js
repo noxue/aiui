@@ -62,6 +62,8 @@ const user = {
       commit('SET_ROLES', [])
       localStorage.removeItem('role')
       localStorage.removeItem('username')
+      localStorage.removeItem('taskId')
+      localStorage.removeItem('appId')
       removeToken()
     },
     // 动态修改权限

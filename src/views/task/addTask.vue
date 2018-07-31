@@ -94,6 +94,9 @@ export default {
               message: '提交成功',
               type: 'success'
             })
+            if (localStorage.getItem('taskId') !== undefined) {
+              localStorage.removeItem('taskId')
+            }
             this.$router.push({ name: 'taskList' })
           }
         }

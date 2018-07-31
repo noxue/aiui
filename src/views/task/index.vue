@@ -15,7 +15,7 @@
           </el-form>
          <!--task部分-->
         <ul class="task-list">
-          <li v-for="(item,k) in tasks" :key='k'  v-bind:class="{active:item.id===itemId}"  @click="getTaskUsersList(item)">
+          <li v-for="(item,k) in tasks" :key='k'  v-bind:class="{active:item.id===itemId}"  @click="getTaskUsersList(item,0)">
             <div>{{item.name}}</div>
             <span>{{filters.desc(item.status)}}</span>
           </li>
@@ -444,7 +444,7 @@ export default {
       return row.status === 0
         ? '通话完毕'
         : row.status === 1
-          ? '任务未执行'
+          ? '未执行'
           : row.status === 2 ? '正在执行' : '未知'
     },
     formatType: function(row, column) {
@@ -521,7 +521,7 @@ export default {
       })
     },
     // 获取任务列表
-    getTasks() {
+    getTasks(type) {
       const para = {
         page: this.page + '',
         name: this.filters.name
@@ -532,25 +532,35 @@ export default {
         this.total = response.data.data.taskList.total
         this.tasks = response.data.data.taskList.list
         // NProgress.done();
+        // 长度大于 0 时执行：
         if (this.tasks.length > 0) {
-          if (!this.itemId >= 0) {
-            this.itemId = this.tasks[0].id
+          // localStorage中的taskId不为空
+          var index = 0
+          var task_id = localStorage.getItem('taskId')
+          if (task_id !== '') {
+            for (var i = 0; i < this.tasks.length; i++) {
+              if (task_id + '' === this.tasks[i].id + '') {
+                index = i
+                this.itemId = task_id
+              }
+            }
           }
+          this.itemId = this.tasks[index].id
           this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
-          this.task.userId = this.tasks[0].userId
-          this.task.name = this.tasks[0].name
-          this.task.tempateId = this.formatTemplateName(this.tasks[0].templateId)
-          this.task.thread = this.tasks[0].thread
-          this.task.total = this.tasks[0].total
-          this.task.called = this.tasks[0].called
-          this.task.startAt = this.tasks[0].startAt
-          this.task.createdAt = this.tasks[0].createdAt
-          this.task.finishAt = this.tasks[0].finishAt
-          this.task.status = this.tasks[0].status
-          this.getTaskUsersList(this.tasks[0])
+          this.task.userId = this.tasks[index].userId
+          this.task.name = this.tasks[index].name
+          this.task.tempateId = this.formatTemplateName(this.tasks[index].templateId)
+          this.task.thread = this.tasks[index].thread
+          this.task.total = this.tasks[index].total
+          this.task.called = this.tasks[index].called
+          this.task.startAt = this.tasks[index].startAt
+          this.task.createdAt = this.tasks[index].createdAt
+          this.task.finishAt = this.tasks[index].finishAt
+          this.task.status = this.tasks[index].status
+          this.getTaskUsersList(this.tasks[index], type)
           this.getUserType(this.itemId)
+          this.listLoading = false
         }
-        this.listLoading = false
       })
     },
     exportExcel: function(event) {
@@ -576,12 +586,18 @@ export default {
           message: response.meta.msg,
           type: 'success'
         })
-        this.reload()
+        this.getTasks('', 1)
       }
     },
-    getTaskUsersList(item) {
-      if (item.id !== undefined) {
-        this.itemId = item.id
+    getTaskUsersList(item, type) {
+      // 判断是否从localStorage中获取taskId
+      if (type !== 1) {
+        if (item.id !== undefined) {
+          this.itemId = item.id
+          localStorage.setItem('taskId', item.id)
+        }
+      } else {
+        this.itemId = localStorage.getItem('taskId')
       }
       this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
       const rePara = {
@@ -631,7 +647,7 @@ export default {
             message: response.data.meta.msg,
             type: 'success'
           })
-          this.reload()
+          this.getTasks('', 1)
         }
       })
     },
