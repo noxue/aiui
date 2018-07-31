@@ -31,7 +31,7 @@
 </template>
 <script>
 import { addUserConfig, getUserConfig } from '@/api/userConfig'
-const cityOptions = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+const cityOptions = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 export default {
   data() {
     return {
@@ -49,19 +49,19 @@ export default {
       isIndeterminate: true,
       filters: {
         desc(val) {
-          if (val === '周一') {
+          if (val === '周日') {
             return '0'
-          } else if (val === '周二') {
+          } else if (val === '周一') {
             return '1'
-          } else if (val === '周三') {
+          } else if (val === '周二') {
             return '2'
-          } else if (val === '周四') {
+          } else if (val === '周三') {
             return '3'
-          } else if (val === '周五') {
+          } else if (val === '周四') {
             return '4'
-          } else if (val === '周六') {
+          } else if (val === '周五') {
             return '5'
-          } else if (val === '周日') {
+          } else if (val === '周六') {
             return '6'
           }
         }
