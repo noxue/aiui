@@ -82,7 +82,7 @@
                 </el-table-column>
                 <el-table-column prop="type" label="客户类型" :formatter="formatType" sortable>
                 </el-table-column>  
-                <el-table-column prop="time" label="通话时长" sortable>
+                <el-table-column prop="time" label="通话时长" :formatter="formatTime" sortable>
                 </el-table-column>
                 <!-- <el-table-column prop="share" label="是否公开" width="120" :formatter="formatShare" sortable>
                 </el-table-column> -->
@@ -449,6 +449,11 @@ export default {
     },
     formatType: function(row, column) {
       return this.tables.taskTypes[row.type].label
+    },
+    formatTime: function(row, column) {
+      var m = Math.floor(row.time / 60)
+      var s = row.time - (m * 60)
+      return m + '分' + s + '秒'
     },
     handleCurrentChange(val) {
       this.page = val

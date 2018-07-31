@@ -19,10 +19,10 @@
         <el-col :span="8"><div class="second-details">
             <span class="second-details-content">接通率: {{todayCalled[2]}}</span>
         </div></el-col>
-        <el-col :span="12"><div class="second-details-bottom">
+        <el-col :span="8"><div class="second-details-bottom">
             <span class="second-details-content">通话总时长: {{todayCalled[3]}}</span>
         </div></el-col>
-        <el-col :span="12"><div class="second-details-bottom">
+        <el-col :span="8"><div class="second-details-bottom">
             <span class="second-details-content">平均通话: {{todayCalled[4]}}</span>
         </div></el-col>
 
