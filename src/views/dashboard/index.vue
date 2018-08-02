@@ -10,19 +10,19 @@
         <el-col :span="24"><div class="title">
            <span>今日呼叫</span>
         </div></el-col>
-        <el-col :span="8"><div class="second-details">
+        <el-col :span="9"><div class="second-details">
             <span class="second-details-content">呼叫量: {{todayCalled[0]}}</span>
         </div></el-col>
-        <el-col :span="8"><div class="second-details">
+        <el-col :span="7"><div class="second-details">
             <span class="second-details-content">接通数: {{todayCalled[1]}}</span>
         </div></el-col>
         <el-col :span="8"><div class="second-details">
             <span class="second-details-content">接通率: {{todayCalled[2]}}</span>
         </div></el-col>
-        <el-col :span="8"><div class="second-details-bottom">
+        <el-col :span="9"><div class="second-details-bottom">
             <span class="second-details-content">通话总时长: {{todayCalled[3]}}</span>
         </div></el-col>
-        <el-col :span="8"><div class="second-details-bottom">
+        <el-col :span="9"><div class="second-details-bottom">
             <span class="second-details-content">平均通话: {{todayCalled[4]}}</span>
         </div></el-col>
 

@@ -30,6 +30,8 @@
         </el-table-column>
         <el-table-column prop="port" label="端口" sortable>
         </el-table-column>
+        <el-table-column prop="appId" label="客户端" :formatter="formatName" sortable>
+        </el-table-column>
         <el-table-column prop="userId" label="用户" sortable>
         </el-table-column>
         <el-table-column prop="description" label="描述" min-width="180" sortable>
@@ -62,6 +64,16 @@
           <el-form-item label="用户" prop="userId">
             <el-input v-model="editForm.userId" auto-complete="off"></el-input>
           </el-form-item>
+          <el-form-item>
+            <el-select v-model="appName" placeholder="请选择客户端">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              </el-option>
+            </el-select>
+					</el-form-item>
           <el-form-item label="描述" prop="description">
            <el-input type="textarea" v-model="editForm.description"></el-input>
           </el-form-item>
@@ -119,6 +131,7 @@ export default {
           username: ''
         },
         gateways: [],
+        appName: '',
         total: 0,
         page: 1,
         listLoading: false,
@@ -147,6 +160,7 @@ export default {
           ip: '',
           port: '',
           userId: '',
+          app_id: '',
           description: ''
         },
 
@@ -203,6 +217,15 @@ export default {
           this.options = response.data.data.appList.list
         })
       },
+      formatName: function(row, column) {
+        var app_id = row.appId
+        for (var i = 0; i < this.options.length; i++) {
+          if (row.appId === this.options[i].id) {
+            app_id = this.options[i].name
+          }
+        }
+        return app_id
+      },
       // 删除
       handleDel: function(index, row) {
         this.$confirm('确认删除该记录吗?', '提示', {
@@ -235,6 +258,7 @@ export default {
       handleEdit: function(index, row) {
         this.editFormVisible = true
         this.editForm = Object.assign({}, row)
+        this.appName = row.appId
       },
       // 显示新增界面
       handleAdd: function() {
@@ -254,8 +278,10 @@ export default {
                 ip: para.ip,
                 port: para.port + '',
                 userId: para.userId,
+                app_id: this.appName + '',
                 description: para.description
               }
+              console.log('reqData:' + reqData)
               editGateway(reqData).then((response) => {
                 this.editLoading = false
                 // NProgress.done();

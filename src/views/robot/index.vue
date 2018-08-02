@@ -21,11 +21,13 @@
         </el-table-column> -->
         <el-table-column type="index" width="60">
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="220" sortable>
+        <el-table-column prop="id" label="ID"  sortable>
         </el-table-column>
-        <el-table-column prop="key" label="key" width="180" sortable>
+        <el-table-column prop="name" label="名称"  sortable>
         </el-table-column>
-        <el-table-column prop="description" label="描述" min-width="400" sortable>
+        <el-table-column prop="key" label="key" sortable>
+        </el-table-column>
+        <el-table-column prop="description" label="描述"  sortable>
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
