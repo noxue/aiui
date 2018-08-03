@@ -24,9 +24,9 @@
       </el-form-item> -->
       <!-- <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item> -->
       <el-form-item label="是否允许打断：">
-          <el-radio v-model="form.radio" label="0">不打断</el-radio>
-          <el-radio v-model="form.radio" label="-1">声音打断</el-radio>
-          <el-radio v-model="form.radio" label="-2">关键词打断</el-radio>
+          <el-radio v-model="radio" label="0">不打断</el-radio>
+          <el-radio v-model="radio" label="-1">声音打断</el-radio>
+          <el-radio v-model="radio" label="-2">关键词打断</el-radio>
       </el-form-item>
       <el-form-item label="任务类型：">
         <el-radio-group v-model="form.test">
@@ -67,13 +67,14 @@ export default {
           testName: '',
           testPhone: '',
           remark: '',
-          visible: 'false',
-          radio: '1'
-        }
+          visible: 'false'
+        },
+        radio: '0'
       }
     },
     methods: {
       onSubmit(form) {
+        alert('ra:' + this.radio)
         const reqData = {
           taskName: this.form.taskName,
           template: this.form.region + '',
@@ -86,12 +87,12 @@ export default {
           testName: this.form.testName,
           testPhone: this.form.testPhone + '',
           remark: this.form.remark,
-          radio: this.form.radio
+          radio: this.radio
         }
         addTask(reqData).then((response) => {
           // NProgress.done();
           if (response.data.meta.success === false) {
-            this.$message({
+            this.$message.error({
               message: response.data.meta.msg,
               type: 'fail'
             })
