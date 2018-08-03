@@ -23,8 +23,13 @@
         </el-select>
       </el-form-item> -->
       <!-- <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item> -->
-      <el-form-item >
-        <el-radio-group v-model="form.test" >
+      <el-form-item label="是否允许打断：">
+          <el-radio v-model="form.radio" label="0">不打断</el-radio>
+          <el-radio v-model="form.radio" label="-1">声音打断</el-radio>
+          <el-radio v-model="form.radio" label="-2">关键词打断</el-radio>
+      </el-form-item>
+      <el-form-item label="任务类型：">
+        <el-radio-group v-model="form.test">
           <el-radio-button :label=0>正式任务</el-radio-button>
           <el-radio-button :label=1>测试任务</el-radio-button>
         </el-radio-group>
@@ -62,9 +67,9 @@ export default {
           testName: '',
           testPhone: '',
           remark: '',
-          visible: 'false'
+          visible: 'false',
+          radio: '1'
         }
-  
       }
     },
     methods: {
@@ -80,7 +85,8 @@ export default {
           test: this.form.test + '',
           testName: this.form.testName,
           testPhone: this.form.testPhone + '',
-          remark: this.form.remark
+          remark: this.form.remark,
+          radio: this.form.radio
         }
         addTask(reqData).then((response) => {
           // NProgress.done();

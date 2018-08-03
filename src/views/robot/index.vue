@@ -229,7 +229,6 @@ export default {
               const para = Object.assign({}, this.addForm)
               // alert(this.$refs.addForm)
               addApp(para).then((response) => {
-                console.log(response)
                 this.addLoading = false
                 // NProgress.done();
                 if (response.data.meta.success === false) {

@@ -206,7 +206,6 @@ export default {
         getUserList(para).then((response) => {
           this.total = response.data.data.pageInfo.total
           this.users = response.data.data.pageInfo.list
-          console.log(this.users)
           this.listLoading = false
         })
       },
@@ -304,7 +303,6 @@ export default {
             this.addLoading = true
             // NProgress.start();
             const para1 = Object.assign({}, this.addForm)
-            console.log(para1)
             const para = {
               uid: para1.uid,
               username: para1.username,

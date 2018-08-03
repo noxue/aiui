@@ -134,6 +134,9 @@
                 <el-col :span="8"><div class="grid-content bg-purple">并发数：{{this.task.thread}}</div></el-col>
               </el-row>
               <el-row :gutter="20">
+                <el-col :span="8"><div class="grid-content bg-purple">打断类型：{{this.task.interrupt}}</div></el-col>
+              </el-row>
+              <el-row :gutter="20">
                 <el-col :span="24"><div id="basicChart" style="width:800px;height:400px;"></div></el-col>
               </el-row>
             </el-tab-pane>
@@ -280,7 +283,8 @@ export default {
         createAt: '',
         finishAt: '',
         status: '',
-        test: ''
+        test: '',
+        interrupt: ''
       },
       num: 'sd',
       total: 0,
@@ -388,6 +392,15 @@ export default {
       }
       var d = new Date(para)
       return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDay() + '  ' + d.getHours() + ':' + d.getMinutes()
+    },
+    formatBreak: function(para) {
+      if (para === 0) {
+        return '不打断'
+      } else if (para === -1) {
+        return '声音打断'
+      } else if (para === -2) {
+        return '关键字打断'
+      }
     },
     formatTemplateName: function(para) {
       if (para === '' || para === null || para === undefined) {
@@ -555,6 +568,7 @@ export default {
           this.task.userId = this.tasks[index].userId
           this.task.name = this.tasks[index].name
           this.task.tempateId = this.formatTemplateName(this.tasks[index].templateId)
+          this.task.interrupt = this.formatBreak(this.tasks[index].interrupt)
           this.task.thread = this.tasks[index].thread
           this.task.total = this.tasks[index].total
           this.task.called = this.tasks[index].called
@@ -564,9 +578,9 @@ export default {
           this.task.status = this.tasks[index].status
           this.getTaskUsersList(this.tasks[index], type)
           this.getUserType(this.itemId)
-          this.listLoading = false
         }
       })
+      this.listLoading = false
     },
     exportExcel: function(event) {
       const reqData = {
@@ -616,6 +630,7 @@ export default {
       this.task.name = item.name
       this.task.userId = item.userId
       this.task.templateId = this.formatTemplateName(item.templateId)
+      this.task.interrupt = this.formatBreak(item.interrupt)
       this.task.thread = item.thread
       this.task.total = item.total
       this.task.called = item.called

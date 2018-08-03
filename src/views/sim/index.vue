@@ -228,7 +228,6 @@ export default {
         this.listLoading = true
         // NProgress.start();
         getSimUserList(para).then((response) => {
-          console.log(response)
           this.userTotal = response.data.data.simpUserList.total
           this.simUsers = response.data.data.simpUserList.list
           this.listLoading = false

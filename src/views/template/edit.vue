@@ -144,10 +144,8 @@ export default {
   },
   methods: {
     saveTemplate() {
-      console.log(JSON.stringify(this.template))
       if (this.$route.params.id > 0) {
         updateTemplate(this.$route.params.id, { name: this.name, content: JSON.stringify(this.template) }).then((res) => {
-          console.log(res.data)
           if (res.data.meta.code === 0) {
             this.$message({
               message: '保存成功',
@@ -161,7 +159,6 @@ export default {
         })
       } else {
         addTemplate({ name: this.name, content: JSON.stringify(this.template) }).then((res) => {
-          console.log(res.data)
           if (res.data.meta.code === 0) {
             this.$router.push({ name: 'templateList' })
           } else {

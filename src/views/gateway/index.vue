@@ -281,7 +281,6 @@ export default {
                 app_id: this.appName + '',
                 description: para.description
               }
-              console.log('reqData:' + reqData)
               editGateway(reqData).then((response) => {
                 this.editLoading = false
                 // NProgress.done();
@@ -313,7 +312,6 @@ export default {
               this.addLoading = true
               // NProgress.start();
               const para = Object.assign({}, this.addForm)
-              console.log(para)
               const reqData = {
                 name: para.name,
                 ip: para.ip,
