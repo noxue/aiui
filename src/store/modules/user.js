@@ -1,5 +1,6 @@
 import { loginByUsername, getUserInfo } from '@/api/login'
 import { setToken, removeToken, setAppId } from '@/utils/auth'
+import { Message } from 'element-ui'
 
 const user = {
   state: {
@@ -21,10 +22,18 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
-          const data = response.data.data
-          setToken(data.jwt)
-          setAppId(username)
-          resolve()
+          if (response.data.meta.code === 1002) {
+            Message.error({
+              message: response.data.meta.msg + ' 用户名或密码错误',
+              type: 'fail'
+            })
+            return false
+          } else {
+            const data = response.data.data
+            setToken(data.jwt)
+            setAppId(username)
+            resolve()
+          }
         }).catch(error => {
           reject(error)
         })
