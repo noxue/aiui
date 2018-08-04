@@ -74,7 +74,6 @@ export default {
     },
     methods: {
       onSubmit(form) {
-        alert('ra:' + this.radio)
         const reqData = {
           taskName: this.form.taskName,
           template: this.form.region + '',
