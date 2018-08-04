@@ -118,16 +118,16 @@ export const asyncRouterMap = [
       meta: { title: 'templateEdit', roles: ['role_admin'], icon: 'list', noCache: true }
     },
     {
-      path: 'template/add',
-      component: () => import('@/views/template/edit'),
-      name: 'templateAdd',
-      meta: { title: 'templateAdd', roles: ['role_admin'], icon: 'international', noCache: true }
-    },
-    {
       path: 'template/index',
       component: () => import('@/views/template/index'),
       name: 'templateList',
       meta: { title: 'templateList', icon: 'component', noCache: true }
+    },
+    {
+      path: 'template/add',
+      component: () => import('@/views/template/edit'),
+      name: 'templateAdd',
+      meta: { title: 'templateAdd', roles: ['role_admin'], icon: 'international', noCache: true }
     }]
   },
   {
