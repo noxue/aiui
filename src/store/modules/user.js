@@ -24,7 +24,7 @@ const user = {
         loginByUsername(username, userInfo.password).then(response => {
           if (response.data.meta.code === 1002) {
             Message.error({
-              message: response.data.meta.msg + ' 用户名或密码错误',
+              message: ' 用户名或密码错误',
               type: 'fail'
             })
             return false
