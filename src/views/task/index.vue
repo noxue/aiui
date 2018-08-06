@@ -96,8 +96,9 @@
                     <el-button-group>   
                       <el-button size="mini"  type="primary" plain icon="el-icon-edit"  @click="handleEdit(scope.$index, scope.row)"></el-button>
                       <el-button size="mini"  type="primary" plain v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)"><svg-icon icon-class="recall" /></el-button>
-                      <el-button size="mini"  type="primary" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button>
-                    </el-button-group>
+                      <!-- <el-button size="mini"  type="primary" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button> -->
+                      <el-button size="mini"  type="primary" plain  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button>
+                   </el-button-group>
                   </template>
                 </el-table-column>
               </el-table>
@@ -163,6 +164,9 @@
           <el-form-item label="号码" prop="mobile" >
             <el-input v-model="editForm.mobile"  :disabled="true" auto-complete="off"></el-input>
           </el-form-item>
+          <el-form-item label="姓名" prop="mobile" >
+            <el-input v-model="editForm.name"  auto-complete="off"></el-input>
+          </el-form-item>
           <el-form-item label="客户类型" style="text-align: left;" >
             <el-select v-model="editType" placeholder="请选择">
               <el-option
@@ -185,34 +189,53 @@
 
         <!--通话详情界面-->
         <el-dialog title="通话详情" :fullscreen="true" width=80%  :visible.sync="calledFormVisible">
-          <ul class="phone-list">
-            <li v-for="(item,k) in content.nodes" :key='k'>
-                <div v-if="item.type === 0" class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-                  <div class="portrait ">
-                    <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
-                  </div>
-                  <div class="app-msg">
-                    <span> {{item.word}}</span>
-                  </div>
-                  <div class="app-msg-voice">
-                    <el-button slot="append" icon="el-icon-caret-right" @click="playSound(item.voice)">
-                      播放
-                    </el-button>
-                    <audio id="snd" src="">
-                    </audio>
-                  </div>
-                </div>
-                  <!-- Right -->
-                <div v-else class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-                   <div class="portrait">
-                     <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
-                   </div>
-                   <div class="app-msg" style="color:#ffffff">
-                     <span> {{item.word}} </span>
-                   </div>
-                </div>
-            </li>
-          </ul>
+            <el-row :gutter="2">
+                <el-col :span="4"><div class="grid-content bg-purple-light">
+                  <span class="calledSpan">姓名：{{contentName}}</span>
+                </div></el-col>
+                <el-col :span="4"><div class="grid-content bg-purple-light">
+                  <span class="calledSpan">号码：{{contentMobile}}</span>
+                </div></el-col> 
+                <el-col :span="3"><div class="grid-content bg-purple-light">
+                  <span class="calledSpan">客户类型：{{contentType}}</span>
+                </div></el-col> 
+                <el-col :span="5"><div class="grid-content bg-purple-light">
+                  <span class="calledSpan">拨打时间：{{contentCallAt}}</span>
+                </div></el-col>
+                <el-col :span="8"><div class="grid-content bg-purple-light">
+                  <span class="calledSpan">模板名称：{{templateName}}</span>
+                </div></el-col>
+              <el-col :span="24"><div class="grid-content bg-purple">
+                <ul class="phone-list">
+                  <li v-for="(item,k) in content.nodes" :key='k'>
+                    <div v-if="item.type === 0" class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+                        <div class="portrait ">
+                      <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
+                        </div>
+                        <div class="app-msg">
+                          <span> {{item.word}}</span>
+                      </div>
+                      <div class="app-msg-voice">
+                      <el-button slot="append" icon="el-icon-caret-right" @click="playSound(item.voice)">
+                        播放
+                      </el-button>
+                          <audio id="snd" src="">
+                      </audio>
+                      </div>
+                      </div>
+                      <!-- Right -->
+                      <div v-else class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+                         <div class="portrait">
+                           <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
+                         </div>
+                       <div class="app-msg" style="color:#ffffff">
+                         <span> {{item.word}} </span>
+                       </div>
+                      </div>
+                  </li>
+                </ul>  
+              </div></el-col>
+            </el-row>
         </el-dialog>
       </el-main>
     </el-container>
@@ -293,6 +316,11 @@ export default {
       currentPage: 1,
       tasks: [],
       content: [],
+      contentType: '',
+      contentName: '',
+      contentMobile: '',
+      contentCallAt: '',
+      templateName: '',
       itemId: '',
       action: '',
       taskUsers: [],
@@ -309,6 +337,7 @@ export default {
       // 编辑界面数据
       editForm: {
         mobile: '',
+        name: '',
         type: '',
         remark: ''
       },
@@ -342,6 +371,7 @@ export default {
       this.editFormVisible = true
       this.editForm = Object.assign({}, row)
       this.editForm.mobile = row.mobile
+      this.editForm.name = row.name
       this.editForm.remark = row.remark
       this.editType = this.formatType(row.type)
     },
@@ -365,6 +395,10 @@ export default {
     handleCalled: function(index, row) {
       this.calledFormVisible = true
       this.content = JSON.parse(row.content)
+      this.contentType = this.formatType(row, '')
+      this.contentName = row.name
+      this.contentMobile = row.mobile
+      this.contentCallAt = this.formatDate(this.content.timeStart)
     },
     toRedial: function(index, row) {
       const reqData = {
@@ -391,7 +425,7 @@ export default {
         return ''
       }
       var d = new Date(para)
-      return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDay() + '  ' + d.getHours() + ':' + d.getMinutes()
+      return d.getMonth() + '月' + d.getDay() + '日  ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
     },
     formatBreak: function(para) {
       if (para === 0) {
@@ -411,6 +445,7 @@ export default {
           return ''
         } else {
           this.task.templateId = response.data.data.template.name
+          this.templateName = response.data.data.template.name
         }
       })
     },
@@ -425,6 +460,7 @@ export default {
             const reqData = {
               id: para.id + '',
               mobile: para.mobile + '',
+              name: para.name,
               type: this.editType + '',
               remark: para.remark
             }
@@ -492,29 +528,7 @@ export default {
           this.userType = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
           this.typeList = response.data.data.userType
           for (var i = 0; i < this.typeList.length; i++) {
-            if (this.typeList[i].type === 0) {
-              this.userType[0] = this.typeList[i].num
-            } else if (this.typeList[i].type === 1) {
-              this.userType[1] = this.typeList[i].num
-            } else if (this.typeList[i].type === 2) {
-              this.userType[2] = this.typeList[i].num
-            } else if (this.typeList[i].type === 3) {
-              this.userType[3] = this.typeList[i].num
-            } else if (this.typeList[i].type === 4) {
-              this.userType[4] = this.typeList[i].num
-            } else if (this.typeList[i].type === 5) {
-              this.userType[5] = this.typeList[i].num
-            } else if (this.typeList[i].type === 6) {
-              this.userType[6] = this.typeList[i].num
-            } else if (this.typeList[i].type === 7) {
-              this.userType[7] = this.typeList[i].num
-            } else if (this.typeList[i].type === 8) {
-              this.userType[8] = this.typeList[i].num
-            } else if (this.typeList[i].type === 9) {
-              this.userType[9] = this.typeList[i].num
-            } else if (this.typeList[i].type === 10) {
-              this.userType[10] = this.typeList[i].num
-            }
+            this.userType[this.typeList[i].type] = this.typeList[i].num
           }
           this.myChart = echarts.init(document.getElementById('basicChart'))
           // this.myChart.showLoading()
@@ -602,7 +616,7 @@ export default {
       } else {
         this.impFormVisible = false
         this.$message({
-          message: response.meta.msg,
+          message: '操作成功',
           type: 'success'
         })
         this.getTasks('', 1)
@@ -664,7 +678,7 @@ export default {
           )
         } else {
           this.$message({
-            message: response.data.meta.msg,
+            message: '操作成功',
             type: 'success'
           })
           this.getTasks('', 1)
@@ -686,7 +700,7 @@ export default {
           )
         } else {
           this.$message({
-            message: response.data.meta.msg,
+            message: '操作成功',
             type: 'success'
           })
           this.reload()
@@ -787,6 +801,7 @@ body > .el-container {
 }
 .el-col {
   border-radius: 4px;
+  margin-bottom: 20px;
 }
 .bg-purple-dark {
   background: #99a9bf;
@@ -934,4 +949,10 @@ span{
 // .portrait>i{
 //   color:#fff;
 // }
+.calledSpan{
+  font-size:14px;
+  margin-top:6px;
+  margin-left:15px;
+  text-align: center;
+}
 </style>
