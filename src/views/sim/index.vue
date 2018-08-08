@@ -5,7 +5,7 @@
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
         <el-form :inline="true" :model="filters" onsubmit="return false">
           <el-form-item>
-            <el-input v-model="filters.number" @keyup.enter.native="getSims" placeholder="姓名"></el-input>
+            <el-input v-model="filters.number" @keyup.enter.native="getSims" placeholder="号码"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" v-on:click="getSims">查询</el-button>
@@ -74,7 +74,7 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
           <el-form :inline="true" :model="filters">
             <el-form-item>
-              <el-input v-model="filters.userId" placeholder="用户名"></el-input>
+              <el-input v-model="filters.userId" placeholder="登陆名"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary"  @click.native="assignSimUser">新增</el-button>
@@ -412,7 +412,9 @@ export default {
               type: 'success'
             })
           }
+          this.filters.userId = ''
           this.getSimUsers(this.assignSimId)
+          // this.$refs['assignForm'].resetFields()
         })
       },
       selsChange: function(sels) {
