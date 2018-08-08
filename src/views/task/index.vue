@@ -96,8 +96,9 @@
                     <el-button-group>   
                       <el-button size="mini"  type="primary" plain icon="el-icon-edit"  @click="handleEdit(scope.$index, scope.row)"></el-button>
                       <el-button size="mini"  type="primary" plain v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)"><svg-icon icon-class="recall" /></el-button>
-                      <!-- <el-button size="mini"  type="primary" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button> -->
-                      <el-button size="mini"  type="primary" plain  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button>
+                      <el-button size="mini"  type="primary" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button>
+                      <el-button size="mini"  type="primary" plain v-if="isRefresh(scope.$index, scope.row)"  @click="getTaskUsersList"><svg-icon icon-class="reset" /></el-button>
+
                    </el-button-group>
                   </template>
                 </el-table-column>
@@ -325,6 +326,7 @@ export default {
       action: '',
       taskUsers: [],
       phoneDetail: false,
+      refresh: true,
       redial: false,
       isTest: '',
       listLoading: false,
@@ -361,8 +363,7 @@ export default {
       ],
       editType: '',
       typeList: [],
-      userType: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      myChart: null
+      userType: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     }
   },
   methods: {
@@ -390,6 +391,19 @@ export default {
       if (row.content) {
         this.phoneDetail = true
         return this.phoneDetail
+      }
+    },
+    isRefresh: function(index, row) {
+      for (var i = 0; i < this.tasks.length; i++) {
+        if (row.taskId + '' === this.tasks[i].id + '') {
+          if (this.tasks[i].test === true) {
+            return !this.phoneDetail
+          } else {
+            return false
+          }
+        } else {
+          return false
+        }
       }
     },
     handleCalled: function(index, row) {
@@ -530,9 +544,9 @@ export default {
           for (var i = 0; i < this.typeList.length; i++) {
             this.userType[this.typeList[i].type] = this.typeList[i].num
           }
-          this.myChart = echarts.init(document.getElementById('basicChart'))
+          const myChart = echarts.init(document.getElementById('basicChart'))
           // this.myChart.showLoading()
-          this.myChart.setOption({
+          myChart.setOption({
             tooltip: {
               trigger: 'axis'
             },
@@ -579,17 +593,6 @@ export default {
           }
           this.itemId = this.tasks[index].id
           this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
-          this.task.userId = this.tasks[index].userId
-          this.task.name = this.tasks[index].name
-          this.task.tempateId = this.formatTemplateName(this.tasks[index].templateId)
-          this.task.interrupt = this.formatBreak(this.tasks[index].interrupt)
-          this.task.thread = this.tasks[index].thread
-          this.task.total = this.tasks[index].total
-          this.task.called = this.tasks[index].called
-          this.task.startAt = this.tasks[index].startAt
-          this.task.createdAt = this.tasks[index].createdAt
-          this.task.finishAt = this.tasks[index].finishAt
-          this.task.status = this.tasks[index].status
           this.getTaskUsersList(this.tasks[index], type)
           this.getUserType(this.itemId)
         }
@@ -624,15 +627,43 @@ export default {
     },
     getTaskUsersList(item, type) {
       // 判断是否从localStorage中获取taskId
-      if (type !== 1) {
-        if (item.id !== undefined) {
-          this.itemId = item.id
-          localStorage.setItem('taskId', item.id)
-        }
+      // if (type !== 1) {
+      //   if (item.id !== undefined) {
+      //     this.itemId = item.id
+      //     localStorage.setItem('taskId', item.id)
+      //   }
+      // } else {
+      //   this.itemId = localStorage.getItem('taskId')
+      // }
+      if (type === 0) {
+        this.itemId = item.id
+        localStorage.setItem('taskId', item.id)
       } else {
         this.itemId = localStorage.getItem('taskId')
       }
+      var index = 0
+      var task_id = localStorage.getItem('taskId')
+      if (task_id !== '') {
+        for (var i = 0; i < this.tasks.length; i++) {
+          if (task_id + '' === this.tasks[i].id + '') {
+            index = i
+            this.itemId = task_id
+          }
+        }
+      }
       this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
+      this.task.userId = this.tasks[index].userId
+      this.task.name = this.tasks[index].name
+      this.task.templateId = this.formatTemplateName(this.tasks[index].templateId)
+      this.task.interrupt = this.formatBreak(this.tasks[index].interrupt)
+      this.task.thread = this.tasks[index].thread
+      this.task.total = this.tasks[index].total
+      this.task.called = this.tasks[index].called
+      this.task.startAt = this.tasks[index].startAt
+      this.task.createdAt = this.tasks[index].createdAt
+      this.task.finishAt = this.tasks[index].finishAt
+      this.task.status = this.tasks[index].status
+
       const rePara = {
         page: this.currentPage + '',
         taskId: this.itemId + '',
@@ -641,26 +672,12 @@ export default {
         share: this.tables.share + '',
         status: this.tables.status + ''
       }
-      this.task.name = item.name
-      this.task.userId = item.userId
-      this.task.templateId = this.formatTemplateName(item.templateId)
-      this.task.interrupt = this.formatBreak(item.interrupt)
-      this.task.thread = item.thread
-      this.task.total = item.total
-      this.task.called = item.called
-      this.task.startAt = item.startAt
-      this.task.createdAt = item.createdAt
-      this.task.finishAt = item.finishAt
-      this.task.status = item.status
-
       this.listLoading = true
-      // NProgress.start();
       getTaskUserList(rePara).then(response => {
         this.taskUserTotal = response.data.data.taskUserList.total
         this.taskUsers = response.data.data.taskUserList.list
         this.getUserType(this.itemId)
         this.listLoading = false
-        // NProgress.done();
       })
     },
     startTask(item) {

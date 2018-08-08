@@ -30,8 +30,8 @@
       </el-form-item>
       <el-form-item label="任务类型：">
         <el-radio-group v-model="form.test">
-          <el-radio-button :label=0>正式任务</el-radio-button>
-          <el-radio-button :label=1>测试任务</el-radio-button>
+          <el-radio-button :label=0>群呼任务</el-radio-button>
+          <el-radio-button :label=1>单呼任务</el-radio-button>
         </el-radio-group>
       </el-form-item>
       <!--测试任务选中时触发-->
