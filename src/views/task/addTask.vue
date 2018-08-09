@@ -37,7 +37,7 @@
       <!--测试任务选中时触发-->
         <el-form-item label="测试姓名" v-if="form.test" label-position="left"><el-input v-model="form.testName"></el-input>
         </el-form-item>
-        <el-form-item label="测试号码" v-if="form.test" label-position="left"><el-input v-model="form.testPhone"></el-input>
+        <el-form-item label="测试号码" v-if="form.test" :rules="testRules" label-position="left"><el-input v-model="form.testPhone"></el-input>
         </el-form-item>
         <el-form-item label="备注" v-if="form.test" label-position="left"><el-input v-model="form.remark"></el-input>
         </el-form-item>
@@ -68,6 +68,11 @@ export default {
           testPhone: '',
           remark: '',
           visible: 'false'
+        },
+        testRules: {
+          testPhone: [
+            { required: true, message: '请输入号码', trigger: 'blur' }
+          ]
         },
         Break: '0'
       }
@@ -119,7 +124,7 @@ export default {
         })
       },
       changeVisible() {
-        if (this.form.radio === '测试任务') {
+        if (this.form.radio === '单呼任务') {
           this.form.visible = true
         } else {
           this.form.visible = false
