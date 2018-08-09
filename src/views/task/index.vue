@@ -3,10 +3,10 @@
       <el-aside class="left-aside">
         <!--工具条-->
         <div class="toolbar" style="margin-top:30px;">
-          <el-form :inline="true" :model="filters"  onsubmit="return false">
+          <el-form :inline="true"  onsubmit="return false">
 
             <el-form-item>
-              <el-input v-model="filters.name" style="width:190px;" @keyup.enter.native="getTasks" placeholder="请输入任务名"></el-input>
+              <el-input v-model="taskFilterName" style="width:190px;" @keyup.enter.native="getTasks" placeholder="请输入任务名"></el-input>
             </el-form-item>
             
             <el-form-item>
@@ -15,16 +15,15 @@
           </el-form>
          <!--task部分-->
         <ul class="task-list">
-          <li v-for="(item,k) in tasks" :key='k'  v-bind:class="{active:item.id===itemId}"  @click="getTaskUsersList(item,0)">
+          <li v-for="(item,k) in tasks" :key='k'  v-bind:class="{active:item.id===itemId}">
             <div>{{item.name}}</div>
-            <span>{{filters.desc(item.status)}}</span>
+            <span>{{item.status|taskStatus}}</span>
           </li>
         </ul>
         <!--工具条-->
         <el-col :span="24" class="bottom-toolbar">
           <!-- <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button> -->
           <el-pagination ref="pagination" layout="prev, pager, next" 
-          @current-change="handleCurrentChange" 
           :current-page.sync = "page"
           :page-size="20" :total="total" 
           style="float:right;">
@@ -32,727 +31,68 @@
         </el-col>
         </div>
       </el-aside>
-      <el-main>
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="详细结果" key="first" name="first">
-              <el-col :span="24" class="toolbar" style="padding: 0px;">
-                <el-form :inline="true" :model="tables" style="text-align:left;">
-                  <el-input v-model="tables.name" style="width:160px;" @keyup.enter.native="getTaskUsersList" placeholder="姓名"></el-input>
-                  <el-select v-model="tables.type" style="width:160px;" placeholder="客户类型">
-                    <el-option
-                      v-for="item in this.tables.taskTypes"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                  <el-select v-model="tables.status" style="width:160px;" placeholder="任务状态">
-                    <el-option
-                      v-for="item in this.tables.taskStatus"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                  
-                  <el-button-group>
-                    <el-button type="primary" icon="el-icon-search" v-on:click="getTaskUsersList"></el-button>
-                    <el-button type="primary" icon="el-icon-caret-right" v-on:click="startTask"></el-button>
-                    <el-button type="primary" v-on:click="stopTask" ><svg-icon icon-class="stop" /></el-button>
-                    <el-button type="danger" icon="el-icon-delete" v-on:click="delTask"></el-button>
-                  </el-button-group>
-                  <!-- <el-select v-model="tables.share" style="width:160px;" placeholder="是否公开">
-                    <el-option
-                      v-for="item in this.tables.isShare"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select> -->
-                </el-form>
-              </el-col>
-              <el-table :data="taskUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" >
-                <el-table-column type="index" width="50">
-                </el-table-column>
-                <el-table-column prop="name" label="姓名" sortable>
-                </el-table-column>
-                <el-table-column prop="mobile" label="客户号码"  width="120" sortable>
-                </el-table-column>
-                <el-table-column prop="status" label="任务状态"  :formatter="formatStatus" sortable>
-                </el-table-column>
-                <el-table-column prop="type" label="客户类型" :formatter="formatType" sortable>
-                </el-table-column>  
-                <el-table-column prop="time" label="通话时长" :formatter="formatTime" sortable>
-                </el-table-column>
-                <!-- <el-table-column prop="share" label="是否公开" width="120" :formatter="formatShare" sortable>
-                </el-table-column> -->
-                
-                <!-- <el-table-column prop="remark" label="备注" width="120"  sortable>
-                </el-table-column> -->
-                <!-- <el-table-column prop="calledAt" label="呼叫时间" width="120" :formatter="formatDate" sortable>
-                </el-table-column> -->
-                <el-table-column label="操作" width="240">
-                  <template slot-scope="scope">
-                    <el-button-group>   
-                      <el-button size="mini"  type="primary" plain icon="el-icon-edit"  @click="handleEdit(scope.$index, scope.row)"></el-button>
-                      <el-button size="mini"  type="primary" plain v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)"><svg-icon icon-class="recall" /></el-button>
-                      <!-- <el-button size="mini"  type="primary" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button> -->
-                      <el-button size="mini"  type="primary" plain  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button>
-                   </el-button-group>
-                  </template>
-                </el-table-column>
-              </el-table>
-            <!--工具条-->
-              <el-col :span="24" class="bottom-toolbar">
-                  <el-button-group>                    
-                    <el-button type="primary" v-on:click="exportExcel" >导出Excel</el-button>
-                    <el-button type="primary" v-on:click="importExcel" >导入Excel</el-button>
-                  </el-button-group>
-                <!-- <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button> -->
-                <el-pagination layout="prev, pager, next"
-                 :current-page=currentPage 
-                 @current-change="handleCurrentTaskUserChange" 
-                 :page-size="16" 
-                 :total="taskUserTotal" 
-                 style="float:right;">
-                </el-pagination>
-              </el-col>
-            </el-tab-pane>
-            <el-tab-pane label="任务信息" name="second">
-              <el-row :gutter="20">
-                <el-col :span="8"><div class="grid-content bg-purple">创建人：{{this.task.userId}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">任务名：{{this.task.name}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">任务模板：{{this.task.templateId}}</div></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><div class="grid-content bg-purple">创建时间：{{formatDate(this.task.createdAt)}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">开始时间：{{formatDate(this.task.startAt)}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">完成时间：{{formatDate(this.task.finishAt)}}</div></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><div class="grid-content bg-purple">号码总数：{{this.task.total}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">已拨打：{{this.task.called}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple">并发数：{{this.task.thread}}</div></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="8"><div class="grid-content bg-purple">打断类型：{{this.task.interrupt}}</div></el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :span="24"><div id="basicChart" style="width:800px;height:400px;"></div></el-col>
-              </el-row>
-            </el-tab-pane>
-        </el-tabs>
-
-        <!--导入界面-->
-      <el-dialog title="导入用户" width="400px" :visible.sync="impFormVisible">
-        <el-upload
-          class="upload-demo"
-          drag
-          :action="action"
-          :on-success="uploadSuccess"
-          :multiple="false">
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div class="el-upload__tip" slot="tip">只能上传Excel文件，且不超过10M</div>
-          <div class="el-upload__down" slot="tip"><a href="/static/导入模板.xls" target="view_window">下载模板</a></div>
-        </el-upload>
-      </el-dialog>
-
-      <!--编辑界面-->
-      <el-dialog title="编辑"  :visible.sync="editFormVisible">
-        <el-form :model="editForm" label-width="80px" ref="editForm" >
-          <el-form-item label="号码" prop="mobile" >
-            <el-input v-model="editForm.mobile"  :disabled="true" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="姓名" prop="mobile" >
-            <el-input v-model="editForm.name"  auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="客户类型" style="text-align: left;" >
-            <el-select v-model="editType" placeholder="请选择">
-              <el-option
-                v-for="item in this.option"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="描述">
-            <el-input type="textarea" v-model="editForm.remark"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click.native="editFormVisible = false">取消</el-button>
-          <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-        </div>
-      </el-dialog>
-
-        <!--通话详情界面-->
-        <el-dialog title="通话详情" :fullscreen="true" width=80%  :visible.sync="calledFormVisible">
-            <el-row :gutter="2">
-                <el-col :span="4"><div class="grid-content bg-purple-light">
-                  <span class="calledSpan">姓名：{{contentName}}</span>
-                </div></el-col>
-                <el-col :span="4"><div class="grid-content bg-purple-light">
-                  <span class="calledSpan">号码：{{contentMobile}}</span>
-                </div></el-col> 
-                <el-col :span="3"><div class="grid-content bg-purple-light">
-                  <span class="calledSpan">客户类型：{{contentType}}</span>
-                </div></el-col> 
-                <el-col :span="5"><div class="grid-content bg-purple-light">
-                  <span class="calledSpan">拨打时间：{{contentCallAt}}</span>
-                </div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple-light">
-                  <span class="calledSpan">模板名称：{{templateName}}</span>
-                </div></el-col>
-              <el-col :span="24"><div class="grid-content bg-purple">
-                <ul class="phone-list">
-                  <li v-for="(item,k) in content.nodes" :key='k'>
-                    <div v-if="item.type === 0" class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-                        <div class="portrait ">
-                      <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:35px"></i>
-                        </div>
-                        <div class="app-msg">
-                          <span> {{item.word}}</span>
-                      </div>
-                      <div class="app-msg-voice">
-                      <el-button slot="append" icon="el-icon-caret-right" @click="playSound(item.voice)">
-                        播放
-                      </el-button>
-                          <audio id="snd" src="">
-                      </audio>
-                      </div>
-                      </div>
-                      <!-- Right -->
-                      <div v-else class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-                         <div class="portrait">
-                           <i class="el-icon-phone" style="padding:6px 4px;font-size:35px"></i>
-                         </div>
-                       <div class="app-msg" style="color:#ffffff">
-                         <span> {{item.word}} </span>
-                       </div>
-                      </div>
-                  </li>
-                </ul>  
-              </div></el-col>
-            </el-row>
-        </el-dialog>
-      </el-main>
+      
     </el-container>
 </template>
 
 <script>
-var echarts = require('echarts')
-import { getTaskList, getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial, countUserType, deleteTask } from '@/api/task'
+// var echarts = require('echarts')
+import NProgress from 'nprogress'
+// , getTaskUserList, expExcel, editTaskUser, editTaskStatus, getTemplate, toDoRedial, countUserType, deleteTask
+import { getTaskList } from '@/api/task'
 export default {
-  inject: ['reload'],
+  filters: {
+    taskStatus(val) {
+      if (val === 0) {
+        return '已结束'
+      } else if (val === 1) {
+        return '未开始'
+      } else if (val === 2) {
+        return '已开始'
+      } else if (val === 3) {
+        return '执行中'
+      } else if (val === 4) {
+        return '暂停中'
+      } else if (val === 5) {
+        return '执行失败'
+      }
+      return '未知'
+    }
+  },
   data() {
     return {
-      filters: {
-        name: '',
-        desc(val) {
-          if (val === 0) {
-            return '已结束'
-          } else if (val === 1) {
-            return '未开始'
-          } else if (val === 2) {
-            return '已开始'
-          } else if (val === 3) {
-            return '执行中'
-          } else if (val === 4) {
-            return '暂停中'
-          } else if (val === 5) {
-            return '卡壳中'
-          }
-          return '未知'
-        }
-      },
-      tables: {
-        name: '',
-        type: '',
-        share: '',
-        status: '',
-        taskTypes: [
-          { value: '0', label: '未分类' },
-          { value: '1', label: '未接听' },
-          { value: '2', label: '空号' },
-          { value: '3', label: '停机' },
-          { value: '4', label: '关机' },
-          { value: '5', label: 'A类' },
-          { value: '6', label: 'B类' },
-          { value: '7', label: 'C类' },
-          { value: '8', label: 'D类' },
-          { value: '9', label: 'E类' },
-          { value: '10', label: 'F类' }
-        ],
-        taskStatus: [
-          { value: '0', label: '通话完毕' },
-          { value: '1', label: '未执行' },
-          { value: '2', label: '正在执行' }
-        ],
-        isShare: [
-          { value: '1', label: '是' },
-          { value: '0', label: '否' }
-        ]
-      },
-      task: {
-        userId: '',
-        name: '',
-        templateId: '',
-        thread: '',
-        total: '',
-        called: '',
-        stratAt: '',
-        createAt: '',
-        finishAt: '',
-        status: '',
-        test: '',
-        interrupt: ''
-      },
-      num: 'sd',
-      total: 0,
-      taskUserTotal: 0,
+      taskFilterName: '',
       page: 1,
-      currentPage: 1,
       tasks: [],
-      content: [],
-      contentType: '',
-      contentName: '',
-      contentMobile: '',
-      contentCallAt: '',
-      templateName: '',
-      itemId: '',
-      action: '',
-      taskUsers: [],
-      phoneDetail: false,
-      redial: false,
-      isTest: '',
-      listLoading: false,
-      activeName: 'first',
-      sels: [], // 列表选中列
-      impFormVisible: false,
-      // 编辑界面是否显示
-      editFormVisible: false,
-      editLoading: false,
-      // 编辑界面数据
-      editForm: {
-        mobile: '',
-        name: '',
-        type: '',
-        remark: ''
-      },
-      // 通话详情界面是否显示
-      calledFormVisible: false,
-      calledLoading: false,
-      // 通话详情界面数据
-      calledForm: {},
-      option: [
-        { value: '0', label: '未分类' },
-        { value: '1', label: '未接听' },
-        { value: '2', label: '空号' },
-        { value: '3', label: '停机' },
-        { value: '4', label: '关机' },
-        { value: '5', label: 'A类' },
-        { value: '6', label: 'B类' },
-        { value: '7', label: 'C类' },
-        { value: '8', label: 'D类' },
-        { value: '9', label: 'E类' },
-        { value: '10', label: 'F类' }
-      ],
-      editType: '',
-      typeList: [],
-      userType: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      myChart: null
+      total: 0
     }
   },
   methods: {
-    // 显示编辑界面
-    handleEdit: function(index, row) {
-      this.editFormVisible = true
-      this.editForm = Object.assign({}, row)
-      this.editForm.mobile = row.mobile
-      this.editForm.name = row.name
-      this.editForm.remark = row.remark
-      this.editType = this.formatType(row.type)
-    },
-    isRedial: function(index, row) {
-      for (var i = 0; i < this.tasks.length; i++) {
-        if (this.tasks[i].id === row.taskId) {
-          this.isTest = this.tasks[i].test
-        }
-      }
-      if (this.isTest && row.status !== 1) {
-        this.redial = true
-        return this.redial
-      }
-    },
-    isPhoneDetail: function(index, row) {
-      if (row.content) {
-        this.phoneDetail = true
-        return this.phoneDetail
-      }
-    },
-    handleCalled: function(index, row) {
-      this.calledFormVisible = true
-      this.content = JSON.parse(row.content)
-      this.contentType = this.formatType(row, '')
-      this.contentName = row.name
-      this.contentMobile = row.mobile
-      this.contentCallAt = this.formatDate(this.content.timeStart)
-    },
-    toRedial: function(index, row) {
-      const reqData = {
-        taskId: row.taskId + '',
-        taskUserId: row.id + ''
-      }
-      toDoRedial(reqData).then(response => {
-        if (response.data.meta.success === false) {
-          this.$message({
-            message: response.data.meta.msg,
-            type: 'fail'
-          })
-        } else {
-          this.$message({
-            message: '正在呼叫',
-            type: 'success'
-          })
-          this.reload()
-        }
-      })
-    },
-    formatDate: function(para) {
-      if (para === '' || para === null || para === undefined) {
-        return ''
-      }
-      var d = new Date(para)
-      return d.getMonth() + '月' + d.getDay() + '日  ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
-    },
-    formatBreak: function(para) {
-      if (para === 0) {
-        return '不打断'
-      } else if (para === -1) {
-        return '声音打断'
-      } else if (para === -2) {
-        return '关键字打断'
-      }
-    },
-    formatTemplateName: function(para) {
-      if (para === '' || para === null || para === undefined) {
-        return ''
-      }
-      getTemplate(para).then(response => {
-        if (response.data.meta.msg === false) {
-          return ''
-        } else {
-          this.task.templateId = response.data.data.template.name
-          this.templateName = response.data.data.template.name
-        }
-      })
-    },
-    // 编辑
-    editSubmit: function() {
-      this.$refs.editForm.validate(valid => {
-        if (valid) {
-          this.$confirm('确认提交吗？', '提示', {}).then(() => {
-            this.editLoading = true
-            // NProgress.start();
-            const para = Object.assign({}, this.editForm)
-            const reqData = {
-              id: para.id + '',
-              mobile: para.mobile + '',
-              name: para.name,
-              type: this.editType + '',
-              remark: para.remark
-            }
-            editTaskUser(reqData).then(response => {
-              this.editLoading = false
-              // NProgress.done();
-              if (response.data.meta.success === false) {
-                this.$message({
-                  message: response.data.meta.msg,
-                  type: 'fail'
-                })
-              } else {
-                this.$message({
-                  message: '编辑成功',
-                  type: 'success'
-                })
-                this.$refs['editForm'].resetFields()
-                this.editFormVisible = false
-                this.reload()
-              }
-            })
-          })
-        }
-      })
-    },
-    formatShare: function(row, column) {
-      return row.share === false ? '否' : row.sex === true ? '是' : '未知'
-    },
-    formatStatus: function(row, column) {
-      return row.status === 0
-        ? '通话完毕'
-        : row.status === 1
-          ? '未执行'
-          : row.status === 2 ? '正在执行' : '未知'
-    },
-    formatType: function(row, column) {
-      return this.tables.taskTypes[row.type].label
-    },
-    formatTime: function(row, column) {
-      var m = Math.floor(row.time / 60)
-      var s = row.time - (m * 60)
-      return m + '分' + s + '秒'
-    },
-    handleCurrentChange(val) {
-      this.page = val
-      this.getTasks()
-    },
-    handleCurrentTaskUserChange(val) {
-      this.currentPage = val
-      this.getTaskUsersList(this.itemId)
-      this.getTasks()
-    },
-    // 统计userType
-    getUserType: function(id) {
-      const para = {
-        taskId: id + ''
-      }
-      countUserType(para).then(response => {
-        if (response.data.meta.success === false) {
-          this.$message({
-            message: response.data.meta.msg,
-            type: 'fail'
-          })
-        } else {
-          this.userType = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-          this.typeList = response.data.data.userType
-          for (var i = 0; i < this.typeList.length; i++) {
-            this.userType[this.typeList[i].type] = this.typeList[i].num
-          }
-          this.myChart = echarts.init(document.getElementById('basicChart'))
-          // this.myChart.showLoading()
-          this.myChart.setOption({
-            tooltip: {
-              trigger: 'axis'
-            },
-            xAxis: {
-              type: 'category',
-              data: ['未分类', '未接听', '空号', '停机', '关机', 'A类', 'B类', 'C类', 'D类', 'E类', 'F类']
-            },
-            yAxis: {
-              type: 'value'
-            },
-            series: [{
-              data: this.userType,
-              type: 'line'
-            }]
-          })
-          // this.chart.hideLoading()
-        }
-      })
-    },
-    // 获取任务列表
-    getTasks(type) {
-      const para = {
+    getTasks() {
+      NProgress.start()
+      getTaskList({
         page: this.page + '',
-        name: this.filters.name
-      }
-      this.listLoading = true
-      // NProgress.start();
-      getTaskList(para).then(response => {
-        this.total = response.data.data.taskList.total
-        this.tasks = response.data.data.taskList.list
-        // NProgress.done();
-        // 长度大于 0 时执行：
-        if (this.tasks.length > 0) {
-          // localStorage中的taskId不为空
-          var index = 0
-          var task_id = localStorage.getItem('taskId')
-          if (task_id !== '') {
-            for (var i = 0; i < this.tasks.length; i++) {
-              if (task_id + '' === this.tasks[i].id + '') {
-                index = i
-                this.itemId = task_id
-              }
-            }
-          }
-          this.itemId = this.tasks[index].id
-          this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
-          this.task.userId = this.tasks[index].userId
-          this.task.name = this.tasks[index].name
-          this.task.tempateId = this.formatTemplateName(this.tasks[index].templateId)
-          this.task.interrupt = this.formatBreak(this.tasks[index].interrupt)
-          this.task.thread = this.tasks[index].thread
-          this.task.total = this.tasks[index].total
-          this.task.called = this.tasks[index].called
-          this.task.startAt = this.tasks[index].startAt
-          this.task.createdAt = this.tasks[index].createdAt
-          this.task.finishAt = this.tasks[index].finishAt
-          this.task.status = this.tasks[index].status
-          this.getTaskUsersList(this.tasks[index], type)
-          this.getUserType(this.itemId)
-        }
-      })
-      this.listLoading = false
-    },
-    exportExcel: function(event) {
-      const reqData = {
-        taskId: this.itemId + ''
-      }
-      expExcel(reqData).then(response => {
-        window.open(
-          'data:application/vnd.ms-excel;base64,' + response.data.data.task
-        )
-      })
-    },
-    importExcel: function(event) {
-      this.impFormVisible = true
-    },
-    uploadSuccess(response) {
-      if (!response.meta.success) {
-        this.$message.error('导入错误,' + '错误信息：' + response.meta.msg)
-        return
-      } else {
-        this.impFormVisible = false
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        this.getTasks('', 1)
-      }
-    },
-    getTaskUsersList(item, type) {
-      // 判断是否从localStorage中获取taskId
-      if (type !== 1) {
-        if (item.id !== undefined) {
-          this.itemId = item.id
-          localStorage.setItem('taskId', item.id)
-        }
-      } else {
-        this.itemId = localStorage.getItem('taskId')
-      }
-      this.action = process.env.BASE_API + 'task/imp?id=' + this.itemId
-      const rePara = {
-        page: this.currentPage + '',
-        taskId: this.itemId + '',
-        name: this.tables.name,
-        type: this.tables.type + '',
-        share: this.tables.share + '',
-        status: this.tables.status + ''
-      }
-      this.task.name = item.name
-      this.task.userId = item.userId
-      this.task.templateId = this.formatTemplateName(item.templateId)
-      this.task.interrupt = this.formatBreak(item.interrupt)
-      this.task.thread = item.thread
-      this.task.total = item.total
-      this.task.called = item.called
-      this.task.startAt = item.startAt
-      this.task.createdAt = item.createdAt
-      this.task.finishAt = item.finishAt
-      this.task.status = item.status
-
-      this.listLoading = true
-      // NProgress.start();
-      getTaskUserList(rePara).then(response => {
-        this.taskUserTotal = response.data.data.taskUserList.total
-        this.taskUsers = response.data.data.taskUserList.list
-        this.getUserType(this.itemId)
-        this.listLoading = false
-        // NProgress.done();
-      })
-    },
-    startTask(item) {
-      if (item.id !== undefined) {
-        this.itemId = item.id
-      }
-      const rePara = {
-        id: this.itemId + '',
-        status: 2 + ''
-      }
-      editTaskStatus(rePara).then(response => {
-        if (!response.data.meta.success) {
-          this.$message.error(
-            '开始失败,' + '错误信息：' + response.data.meta.msg
-          )
+        name: this.taskFilterName
+      }).then(response => {
+        const data = response.data
+        console.log(data)
+        if (data.meta.code !== 0) {
+          this.$message.error(data.meta.msg)
         } else {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.getTasks('', 1)
+          this.total = data.data.taskList.total
+          this.tasks = data.data.taskList.list
         }
+        NProgress.done()
       })
-    },
-    stopTask(item) {
-      if (item.id !== undefined) {
-        this.itemId = item.id
-      }
-      const rePara = {
-        id: this.itemId + '',
-        status: 4 + ''
-      }
-      editTaskStatus(rePara).then(response => {
-        if (!response.data.meta.success) {
-          this.$message.error(
-            '暂停失败,' + '错误信息：' + response.data.meta.msg
-          )
-        } else {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.reload()
-        }
-      })
-    },
-    delTask(item) {
-      this.$confirm('确认删除该任务吗?', '提示', {
-        type: 'warning'
-      }).then(() => {
-        this.listLoading = true
-        // NProgress.start();
-        if (item.id !== undefined) {
-          this.itemId = item.id
-        }
-        const para = { id: this.itemId + '' }
-        deleteTask(para).then((response) => {
-          this.listLoading = false
-          // NProgress.done();
-          if (response.data.meta.success === false) {
-            this.$message({
-              message: '删除失败',
-              type: 'fail'
-            })
-          } else {
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            this.reload()
-          }
-        })
-      }).catch(() => {
-
-      })
-    },
-    handleClick(tab, event) {
-      // this.getUserType(this.itemId)
-    },
-    selsChange(sels) {
-      this.sels = sels
-    },
-    playSound(voice) {
-      var audio = document.getElementById('snd')
-      audio.pause()
-      audio.currentTime = 0
-      audio.src = process.env.BASE_API + 'voice/file/wav/' + voice
-      audio.play()
     }
   },
   mounted() {
     this.getTasks()
+  },
+  watchers: {
+    'page': function(newValue, oldValue) {
+      console.log(newValue)
+    }
   }
 }
 </script>
