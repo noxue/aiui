@@ -93,7 +93,7 @@
                 </el-table-column> -->
                 <el-table-column label="操作" width="240">
                   <template slot-scope="scope">
-                    <el-button-group>   
+                    <el-button-group>
                       <el-button size="mini"  type="primary" plain icon="el-icon-edit"  @click="handleEdit(scope.$index, scope.row)"></el-button>
                       <el-button size="mini"  type="primary" plain v-if="isRedial(scope.$index, scope.row)" @click="toRedial(scope.$index, scope.row)"><svg-icon icon-class="recall" /></el-button>
                       <!-- <el-button size="mini"  type="primary" plain v-if="isPhoneDetail(scope.$index, scope.row)"  @click="handleCalled(scope.$index, scope.row)"><svg-icon icon-class="detail" /></el-button> -->
