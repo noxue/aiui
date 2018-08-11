@@ -16,18 +16,19 @@
       <el-table :data="templates" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
         <!-- <el-table-column type="selection" width="55">
         </el-table-column> -->
-        <el-table-column type="index" width="60">
+        <el-table-column type="index" width="80">
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="130" sortable>
+        <el-table-column prop="name" label="名称"  sortable>
         </el-table-column>
         <el-table-column prop="status" label="模板状态" min-width="120" :formatter="formatStatus" sortable>
         </el-table-column>
          <el-table-column prop="createdAt" label="创建时间" min-width="130"  :formatter="formatTime" sortable>
         </el-table-column>
-        <el-table-column label="操作" width="150" v-if='show'>
+        <el-table-column label="操作" width="300" v-if='show' fixed="right">
           <template slot-scope="scope">
-            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+            <el-button type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button type="success" size="mini" @click="copyTemplate(scope.$index, scope.row)">复制</el-button>
+            <el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -42,7 +43,7 @@
 </template>
 
 <script>
-import { getTemplateList, deleteTemplate } from '@/api/template'
+import { getTemplateList, deleteTemplate, copyTemplate } from '@/api/template'
 // import router from '@/router/index'
 export default {
   data() {
@@ -64,11 +65,11 @@ export default {
       this.page = val
       this.getTemplates()
     },
-    formatStatus: function(row, column) {
+    formatStatus(row, column) {
       return row.status === 0 ? '已上线' : row.status === 1 ? '制作中' : row.status === 2 ? '测试中' : row.status === 3 ? '审核中' : '未知'
     },
 
-    formatTime: function(row, column) {
+    formatTime(row, column) {
       if (row.createdAt !== null) {
         return row.createdAt.substring(0, 10)
       } else {
@@ -76,20 +77,28 @@ export default {
       }
     },
 
-    // 获取用户列表
+    // 获取模板列表
     getTemplates() {
       const para = { page: this.page + '', name: this.filters.name }
       this.listLoading = true
-      // NProgress.start();
       getTemplateList(para).then((response) => {
         this.total = response.data.data.templateList.total
         this.templates = response.data.data.templateList.list
         this.listLoading = false
-        // NProgress.done();
+      })
+    },
+    copyTemplate(index, row) {
+      copyTemplate(row.id).then((response) => {
+        if (response.data.meta.success) {
+          this.$message('复制成功')
+          this.getTemplates()
+        } else {
+          this.$message.error('复制失败：' + response.data.meta.msg)
+        }
       })
     },
     // 删除
-    handleDel: function(index, row) {
+    handleDel(index, row) {
       this.$confirm('确认删除该记录吗?', '提示', {
         type: 'warning'
       }).then(() => {
@@ -117,10 +126,10 @@ export default {
       })
     },
     // 修改
-    handleEdit: function(index, row) {
+    handleEdit(index, row) {
       this.$router.push({ name: 'templateEdit', params: { id: row.id }})
     },
-    selsChange: function(sels) {
+    selsChange(sels) {
       this.sels = sels
     }
 

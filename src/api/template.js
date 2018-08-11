@@ -32,6 +32,13 @@ export function addTemplate(data) {
   })
 }
 
+export function copyTemplate(id) {
+  return request({
+    url: '/template/' + id + '/copy',
+    method: 'post'
+  })
+}
+
 export function getTemplate(id) {
   return request({
     url: '/template/' + id,
