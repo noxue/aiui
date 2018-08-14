@@ -425,7 +425,15 @@ export default {
         return ''
       }
       var d = new Date(para)
-      return d.getMonth() + '月' + d.getDay() + '日  ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+      var minute = d.getMinutes()
+      if (minute < 10) {
+        minute = '0' + minute // 补齐
+      }
+      var seconds = d.getSeconds()
+      if (seconds < 10) {
+        seconds = '0' + seconds // 补齐
+      }
+      return d.getMonth() + '月' + d.getDay() + '日  ' + d.getHours() + ':' + minute + ':' + seconds
     },
     formatBreak: function(para) {
       if (para === 0) {
