@@ -331,10 +331,7 @@ export default {
         return '关键字打断'
       }
     },
-    formatTemplateName: function(para) {
-      if (para === '' || para === null || para === undefined) {
-        return ''
-      }
+    formatTemplateName: function(id) {
       getTemplate(id).then(response => {
         if (response.data.meta.code !== 0) {
           this.$message.error(response.data.meta.msg)
@@ -573,13 +570,6 @@ export default {
     },
     formatStatus(row, column) {
       return taskStatus[row.status]
-    },
-    formatDate(para) {
-      if (para === '' || para === null || para === undefined) {
-        return ''
-      }
-      var d = new Date(para)
-      return d.getMonth() + '月' + d.getDay() + '日  ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
     },
     formatTime(row, column) {
       var m = Math.floor(row.time / 60)

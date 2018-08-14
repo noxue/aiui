@@ -110,8 +110,7 @@ export default {
             }
             this.$router.push({ name: 'taskList' })
           }
-        }
-        )
+        })
       },
       getTempaltes() {
         getTemplateListById(Request).then((response) => {
