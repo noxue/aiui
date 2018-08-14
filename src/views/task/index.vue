@@ -307,9 +307,33 @@ export default {
         NProgress.done()
       })
     },
-    getTemplate(id) {
-      if (this.templates[id] !== undefined) {
-        return
+    formatDate: function(para) {
+      if (para === '' || para === null || para === undefined) {
+        return ''
+      }
+      var d = new Date(para)
+      var minute = d.getMinutes()
+      if (minute < 10) {
+        minute = '0' + minute // 补齐
+      }
+      var seconds = d.getSeconds()
+      if (seconds < 10) {
+        seconds = '0' + seconds // 补齐
+      }
+      return d.getMonth() + '月' + d.getDay() + '日  ' + d.getHours() + ':' + minute + ':' + seconds
+    },
+    formatBreak: function(para) {
+      if (para === 0) {
+        return '不打断'
+      } else if (para === -1) {
+        return '声音打断'
+      } else if (para === -2) {
+        return '关键字打断'
+      }
+    },
+    formatTemplateName: function(para) {
+      if (para === '' || para === null || para === undefined) {
+        return ''
       }
       getTemplate(id).then(response => {
         if (response.data.meta.code !== 0) {
