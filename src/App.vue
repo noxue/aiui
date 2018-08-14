@@ -5,25 +5,28 @@
 </template>
 
 <script>
-    export default{
+window.onbeforeunload = function(e) {
+  e = window.event || e
+  e.returnValue = '确定离开当前页面吗？'
+}
+export default{
   name: 'App',
-  provide() {
-        return {
-          reload: this.reload
-        }
-  },
   data() {
-        return {
-          isRouterAlive: true
-        }
-  },
-  methods: {
-        reload() {
-          this.isRouterAlive = false
-          this.$nextTick(function() {
-            this.isRouterAlive = true
-          })
-        }
+    return {
+      isRouterAlive: true
+    }
   }
 }
 </script>
+
+<style>
+*{
+  moz-user-select: -moz-none; 
+  -moz-user-select: none; 
+  -o-user-select:none; 
+  -khtml-user-select:none; 
+  -webkit-user-select:none; 
+  -ms-user-select:none; 
+  user-select:none;
+}
+</style>

@@ -6,6 +6,8 @@
       element-loading-background="rgba(0, 0, 0, 0.5)"
     >
         <div>
+          <span>话术拥有人</span>
+          <el-input v-model="uid" style="width:150px"></el-input>
           <span>话术名称</span>
           <el-input v-model="name" style="width:300px"></el-input>
           <el-button type="primary" @click="saveTemplate()">保存修改</el-button>
@@ -38,6 +40,7 @@ export default {
         { label: '全局关键词', key: 'keyword' }
         // { label: '客户分类', key: 'type' }
       ],
+      uid: '',
       name: '',
       template: {
         main: '', // 入口，第一个流程
@@ -137,15 +140,17 @@ export default {
         var data = response.data.data
         this.template = (new Function('return ' + data.template.content))()
         this.name = data.template.name
-
+        this.uid = data.template.userId
         this.loading = false
       })
+    } else {
+      this.uid = localStorage.getItem('appId')
     }
   },
   methods: {
     saveTemplate() {
       if (this.$route.params.id > 0) {
-        updateTemplate(this.$route.params.id, { name: this.name, content: JSON.stringify(this.template) }).then((res) => {
+        updateTemplate(this.$route.params.id, { name: this.name, uid: this.uid, content: JSON.stringify(this.template) }).then((res) => {
           if (res.data.meta.code === 0) {
             this.$message({
               message: '保存成功',
@@ -158,7 +163,7 @@ export default {
 
         })
       } else {
-        addTemplate({ name: this.name, content: JSON.stringify(this.template) }).then((res) => {
+        addTemplate({ name: this.name, uid: this.uid, content: JSON.stringify(this.template) }).then((res) => {
           if (res.data.meta.code === 0) {
             this.$router.push({ name: 'templateList' })
           } else {
