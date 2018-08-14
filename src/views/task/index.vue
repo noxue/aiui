@@ -331,7 +331,7 @@ export default {
         return '关键字打断'
       }
     },
-    formatTemplateName: function(id) {
+    getTemplate: function(id) {
       getTemplate(id).then(response => {
         if (response.data.meta.code !== 0) {
           this.$message.error(response.data.meta.msg)
