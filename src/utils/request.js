@@ -24,8 +24,6 @@ service.interceptors.request.use(config => {
 // respone interceptor
 service.interceptors.response.use(
   response => {
-    const res = response.data
-    console.log(res.data)
     if (response.data.meta.code === 1006 || response.data.meta.code === 1007) {
       MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
         confirmButtonText: '重新登录',
@@ -36,6 +34,9 @@ service.interceptors.response.use(
         location.reload()// 为了重新实例化vue-router对象 避免bug
       })
       return
+    } else if (response.data.meta.code === 1005) { // 刷新jwt
+      localStorage.setItem(response.data.data.jwt)
+      location.reload()
     }
     return response
   },
