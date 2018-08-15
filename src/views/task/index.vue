@@ -76,7 +76,7 @@
                 <el-table-column prop="status" label="任务状态"  :formatter="formatStatus" sortable></el-table-column>
                 <el-table-column prop="type" label="客户类型" :formatter="formatType" sortable></el-table-column>
                 <el-table-column prop="time" label="通话时长" :formatter="formatTime" sortable></el-table-column>
-                <el-table-column label="操作" width="240" fixed="right">
+                <el-table-column label="操作" width="200" fixed="right">
                   <template slot-scope="scope">
                     <el-button-group>
                       <el-button size="mini"  type="primary" plain v-if="scope.row.status !== 0"  @click="getUsersList"><svg-icon icon-class="reset" /></el-button>
@@ -310,17 +310,18 @@ export default {
     formatDate: function(para) {
       if (para === '' || para === null || para === undefined) {
         return ''
+      } else {
+        var d = new Date(para)
+        var minute = d.getMinutes()
+        if (minute < 10) {
+          minute = '0' + minute // 补齐
+        }
+        var seconds = d.getSeconds()
+        if (seconds < 10) {
+          seconds = '0' + seconds // 补齐
+        }
+        return (d.getMonth() + 1) + '月' + d.getDate() + '日  ' + d.getHours() + ':' + minute + ':' + seconds
       }
-      var d = new Date(para)
-      var minute = d.getMinutes()
-      if (minute < 10) {
-        minute = '0' + minute // 补齐
-      }
-      var seconds = d.getSeconds()
-      if (seconds < 10) {
-        seconds = '0' + seconds // 补齐
-      }
-      return d.getMonth() + '月' + d.getDay() + '日  ' + d.getHours() + ':' + minute + ':' + seconds
     },
     formatBreak: function(para) {
       if (para === 0) {
