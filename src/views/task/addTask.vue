@@ -28,6 +28,14 @@
           <el-radio v-model="Break" label="-1">声音打断</el-radio>
           <el-radio v-model="Break" label="-2">关键词打断</el-radio>
       </el-form-item>
+<el-form-item label="关注类型：">
+      <el-checkbox-group 
+        v-model="follows"
+        :min="0"
+        :max="3">
+        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+      </el-checkbox-group>
+</el-form-item>
       <el-form-item label="任务类型：">
         <el-radio-group v-model="form.test">
           <el-radio-button :label=0>群呼任务</el-radio-button>
@@ -52,9 +60,12 @@
 <script>
   import { addTask, getTemplateListById, getSimListById } from '@/api/task'
   // const Base64 = require('js-base64').Base64
+const cityOptions = ['A', 'B', 'C', 'D', 'E', 'F']
 export default {
     data() {
       return {
+        follows: [],
+        cities: cityOptions,
         form: {
           taskName: '',
           num: '',
@@ -91,7 +102,8 @@ export default {
           testName: this.form.testName,
           testPhone: this.form.testPhone + '',
           remark: this.form.remark,
-          break: this.Break
+          break: this.Break,
+          follows: this.formatFollow() + ''
         }
         addTask(reqData).then((response) => {
           // NProgress.done();
@@ -122,6 +134,28 @@ export default {
           this.form.simOptions = response.data.data.simpUserPage.list
         })
       },
+      formatFollow() {
+        if (this.follows.length === 0) {
+          return ''
+        } else {
+          for (var i = 0; i < this.follows.length; i++) {
+            if (this.follows[i] === 'A') {
+              this.follows[i] = '5'
+            } else if (this.follows[i] === 'B') {
+              this.follows[i] = '6'
+            } else if (this.follows[i] === 'C') {
+              this.follows[i] = '7'
+            } else if (this.follows[i] === 'D') {
+              this.follows[i] = '8'
+            } else if (this.follows[i] === 'E') {
+              this.follows[i] = '9'
+            } else if (this.follows[i] === 'F') {
+              this.follows[i] = '10'
+            }
+          }
+          return this.follows
+        }
+      },
       changeVisible() {
         if (this.form.radio === '单呼任务') {
           this.form.visible = true
@@ -133,7 +167,7 @@ export default {
     },
     mounted() {
       this.getTempaltes()
-      this.getSims()
+      // this.getSims()
     }
   }
 </script>

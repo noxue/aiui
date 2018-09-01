@@ -38,3 +38,11 @@ export function roleList() {
     method: 'post'
   })
 }
+
+export function banding(para) {
+  return request({
+    url: '/user/banding',
+    method: 'post',
+    data: para
+  })
+}

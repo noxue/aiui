@@ -124,3 +124,18 @@ export function todayCount() {
     method: 'post'
   })
 }
+
+export function getTaskUser(id) {
+  return request({
+    url: '/task/user/' + id,
+    method: 'get'
+  })
+}
+
+export function getTask(para) {
+  return request({
+    url: '/task/select',
+    method: 'post',
+    data: para
+  })
+}

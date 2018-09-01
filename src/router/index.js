@@ -26,6 +26,8 @@ import Layout from '@/views/layout/Layout'
  **/
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
+  { path: '/weChat', component: () => import('@/views/weChat/index'), hidden: true },
+  { path: '/weChat/taskInfo', component: () => import('@/views/weChat/taskDetail'), hidden: true },
   { path: '/404', component: () => import('@/views/errorPage/404'), hidden: true },
   { path: '/401', component: () => import('@/views/errorPage/401'), hidden: true },
   {
