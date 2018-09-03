@@ -9,7 +9,7 @@
       <el-form-item prop="password">
         <el-input name="password" class="we_input" type="password" v-model="loginForm.password" placeholder="登陆密码" />
       </el-form-item>
-      <el-button type="primary" @click.native="login" :loading="editLoading">绑定</el-button>
+      <el-button type="primary" @click.native="login">绑定</el-button>
       <el-button @click.native="editFormVisible = false">取消</el-button>
     </el-form >
   </div>
@@ -60,10 +60,10 @@ export default {
               const para = { openid: this.$route.query.contNo + '', username: this.loginForm.username + '' }
               banding(para).then((response) => {
                 if (response.data.meta.success === false) {
-                  alert('服务器暂忙，请稍后重试')
+                  alert(response.data.meta.msg)
                 } else {
-                  alert('操作成功')
-                  this.$router.push({ path: '/weChat/taskInfo' })
+                  alert('操作成功,请关闭当前页面')
+                  // this.$router.push({ path: '/weChat/taskInfo' })
                 }
               })
             })
