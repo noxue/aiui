@@ -1,22 +1,29 @@
 <template>
-  <div class="task-container">
-    <h3 class="title">任务详情</h3>
+  <div class="wechat-container">
+    <div class="title">
+      <span>通话详情</span>
+    </div>
     <el-row :gutter="2">
+      <el-col :span="24"><div >
+        <span class="calledSpan">客户类型：{{userType}}</span>
+      </div></el-col>
       <el-col :span="24"><div >
         <span class="calledSpan">客户姓名：{{task.name}}</span>
       </div></el-col>
       <el-col :span="24"><div >
-        <span class="calledSpan">客户号码：{{taskUser.mobile}}</span>
+        <span class="calledSpan">客户号码：<a :href="'tel:'+taskUser.mobile+''">{{taskUser.mobile}}</a></span>
       </div></el-col> 
-       <el-col :span="24"><div >
-        <span class="calledSpan">客户类型：{{userType}}</span>
-      </div></el-col>
       <el-col :span="24"><div >
         <span class="calledSpan">模板名称：{{templateName}}</span>
       </div></el-col>
       <el-col :span="24"><div >
         <span class="calledSpan">拨打时间：{{formatDate(taskUser.calledAt)}}</span>
       </div></el-col>
+
+      <div class="tip">
+        <span>与客户交谈部分</span>
+      </div>
+     
       <el-col :span="24"><div class="grid-content bg-purple">
         <ul class="phone-list">
           <li v-for="(item,k) in content.nodes" :key='k'>
@@ -60,6 +67,7 @@ export default {
       templateName: '',
       userType: '',
       taskUser: {},
+      phone: '',
       task: {},
       content: []
     }
@@ -134,18 +142,32 @@ export default {
 
 <style lang="scss" scoped>
 
-.task-container{
-  margin: 5px;
+.wechat-container{
+  //margin: 5px;
   height:100%;
-  // overflow: hidden;
 }
 
-.task-container .title{
-  margin-top: 15px;
+.wechat-container .tip{
+  color:rgba(128, 128, 128, 0.459);
+  text-align:center;
+}
+
+.wechat-container .title{
+  background-color: #00B2EE;
+  height: 50px;
   text-align: center;
 }
 
+.wechat-container .title span{
+    color: rgb(250, 250, 250);
+    font-size: 20px;
+    margin-top:15px 
+  }
+
+a{color:#000;text-decoration:underline;}
+
 .el-row {
+  margin-top:20px; 
   margin-bottom: 20px;
   &:last-child {
     margin-bottom: 0;

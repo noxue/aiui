@@ -206,7 +206,7 @@ $light_gray: #eee;
     position: absolute;
     left: 0;
     right: 0;
-    width: 430px;
+    width: 400px;
     padding: 35px 35px 15px 35px;
     margin: 120px auto;
   }
