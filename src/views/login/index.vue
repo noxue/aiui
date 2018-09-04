@@ -195,8 +195,9 @@ $dark_gray: #889aa4;
 $light_gray: #eee;
 
 .login-container {
-  background-image:url(/static/seagull.jpg);
-  background-size:100% 100%;
+  //background-image:url(/static/seagull.jpg);
+  //background-size:100% 100%;
+  background:url(/static/seagull.jpg) no-repeat 100% 0%;
   position: fixed;
   height: 100%;
   width: 100%;
@@ -205,7 +206,7 @@ $light_gray: #eee;
     position: absolute;
     left: 0;
     right: 0;
-    width: 520px;
+    width: 430px;
     padding: 35px 35px 15px 35px;
     margin: 120px auto;
   }
