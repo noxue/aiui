@@ -27,11 +27,9 @@
       <el-col :span="24"><div class="grid-content bg-purple">
         <ul class="phone-list">
           <li v-for="(item,k) in content.nodes" :key='k'>
-            <div v-if="item.type === 0" class="sender"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
-                <div class="portrait ">
-              <!-- <i class="el-icon-phone-outline" style="padding:6px 4px;font-size:20px"></i> -->
-                </div>
-                <div class="app-msg">
+            <div v-if="item.type === 0" class="sender" >
+               
+                <div class="app-msg" >
                   <span>{{item.word}}</span>
               </div>
               <div class="app-msg-voice">
@@ -40,15 +38,18 @@
               </el-button>
             
               </div>
+              <div style="clear:both;"></div>
               </div>
-              <div v-else class="receiver"  style="width:100%;word-wrap:break-word; word-break:break-all; text-align:left">
+              <div v-else class="receiver">
                  <div class="portrait">
           <!--          <i class="el-icon-phone" style="padding:6px 4px;font-size:20px"></i> -->
                  </div>
                <div class="app-msg" style="color:#ffffff">
                  <span>{{item.word}} </span>
                </div>
+                
               </div>
+            <div style="clear:both"></div>
           </li>
         </ul>  
       </div></el-col>
@@ -153,7 +154,7 @@ export default {
 }
 
 .wechat-container .title{
-  background-color: #00B2EE;
+  background-color: rgba(26, 103, 218, 0.877);
   height: 50px;
   text-align: center;
 }
@@ -197,7 +198,10 @@ a{color:#000;text-decoration:underline;}
   padding: 0;
   margin: 0;
 }
-
+.phone-list{
+  padding-left:10px;
+  padding-right:10px;
+}
 .phone-list >li{
   list-style: none;
 }
@@ -205,7 +209,8 @@ a{color:#000;text-decoration:underline;}
 /* bubble style */
 .sender {
   clear: both;
-  //max-width: 80%;
+  max-width: 90%;
+  margin-bottom:15px;
 }
 .sender div:nth-of-type(1) {
   float: left;
@@ -213,8 +218,8 @@ a{color:#000;text-decoration:underline;}
 .sender div:nth-of-type(2) {
   background-color: #f5f5f5;
   float: left;
-  margin: 0 20px 10px -30px;
   border-radius: 7px;
+  
 }
 
 .receiver div:first-child img,
@@ -225,7 +230,9 @@ a{color:#000;text-decoration:underline;}
 
 .receiver {
   clear: both;
-  //max-width: 80%;
+  max-width: 90%;
+  float:right;
+  margin-bottom:15px;
 }
 
 .receiver div:nth-child(1) {
@@ -244,18 +251,29 @@ a{color:#000;text-decoration:underline;}
 }
 
 span{
+  font-size:16px;
   display:inline-block;
 }
 
 .app-msg{
   font-size: 20px;
   max-width:600px;
-  padding:5px 10px 10px 10px;
-  box-shadow: 2px 2px 5px rgb(111, 128, 148);
+  padding:10px;
+  box-shadow: 1px 1px 5px rgb(146, 146, 146);
+}
+
+.sender>.app-msg{
+  margin-right:5px;
+  margin-top:5px;
+}
+
+.sender>.app-msg-voice{
+  margin-top:5px;
 }
 
 .calledSpan{
-  font-size:20px;
+  color: #777;
+  font-size:18px;
   margin-top:6px;
   margin-left:15px;
   text-align: center;
