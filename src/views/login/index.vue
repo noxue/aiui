@@ -99,8 +99,14 @@ export default {
           this.$store
             .dispatch('LoginByUsername', this.loginForm)
             .then(() => {
-              this.loading = false
-              this.$router.push({ path: '/' })
+              const url = localStorage.getItem('url')
+              localStorage.removeItem('url')
+              if (url !== '' && url !== undefined) {
+                window.location.href = url
+              } else {
+                this.loading = false
+                this.$router.push({ path: '/' })
+              }
             })
             .catch(() => {
               this.loading = false
