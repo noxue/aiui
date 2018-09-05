@@ -479,14 +479,21 @@ export default {
       this.$set(this.task['detail'], 'content', JSON.parse(row.content))
     },
     exportExcel(event) {
+      this.listLoading = true
       const reqData = {
-        taskId: this.activeTaskId + ''
+        page: this.task.page === undefined ? '' : this.task.page + '',
+        taskId: this.activeTaskId === undefined ? '' : this.activeTaskId + '',
+        name: this.task.filter.name === undefined ? '' : this.task.filter.name + '',
+        type: this.task.filter.type === undefined ? '' : this.task.filter.type + '',
+        share: this.task.filter.share === undefined ? '' : this.task.filter.share + '',
+        status: this.task.filter.status === undefined ? '' : this.task.filter.status + ''
       }
       expExcel(reqData).then(response => {
         window.open(
           'data:application/vnd.ms-excel;base64,' + response.data.data.task
         )
       })
+      this.listLoading = false
     },
     importExcel(event) {
       this.impFormVisible = true
