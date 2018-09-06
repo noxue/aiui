@@ -202,7 +202,7 @@
               </div></el-col>
             </el-row>
         </el-dialog>
-           <!--导入界面-->
+      <!--导入界面-->
       <el-dialog title="导入用户" width="400px" :visible.sync="impFormVisible">
         <el-upload
           class="upload-demo"
@@ -224,7 +224,8 @@
 <script>
 var echarts = require('echarts')
 import NProgress from 'nprogress'
-import { getTaskList, getTaskUserList, getTemplate, editTaskUser, editTaskStatus, deleteTask, toDoRedial, expExcel, countUserType } from '@/api/task'
+import { getTaskList, getTaskUserList, getTemplate, editTaskUser,
+  editTaskStatus, deleteTask, toDoRedial, expExcel, countUserType, expExc } from '@/api/task'
 const taskStatus = ['通话完毕', '未开始', '已开始', '正在执行', '暂停中', '执行失败']
 const breakTypes = ['不打断', '声音打断', '关键词打断']
 export default {
@@ -488,13 +489,28 @@ export default {
         share: this.task.filter.share === undefined ? '' : this.task.filter.share + '',
         status: this.task.filter.status === undefined ? '' : this.task.filter.status + ''
       }
-      expExcel(reqData).then(response => {
-        window.open(
-          'data:application/vnd.ms-excel;base64,' + response.data.data.task
-        )
+      expExc(reqData).then(response => {
+        location.href = 'http://localhost/web/api/v1/task/' + response.data.data.task
       })
       this.listLoading = false
     },
+
+    // exportExc(event) {
+    //   const reqData = {
+    //     page: this.task.page === undefined ? '' : this.task.page + '',
+    //     taskId: this.activeTaskId === undefined ? '' : this.activeTaskId + '',
+    //     name: this.task.filter.name === undefined ? '' : this.task.filter.name + '',
+    //     type: this.task.filter.type === undefined ? '' : this.task.filter.type + '',
+    //     share: this.task.filter.share === undefined ? '' : this.task.filter.share + '',
+    //     status: this.task.filter.status === undefined ? '' : this.task.filter.status + ''
+    //   }
+    //   expExcel(reqData).then(response => {
+    //     window.open(
+    //       'data:application/vnd.ms-excel;base64,' + response.data.data.task
+    //     )
+    //   })
+    // },
+
     importExcel(event) {
       this.impFormVisible = true
     },

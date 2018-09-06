@@ -72,6 +72,14 @@ export function expExcel(para) {
   })
 }
 
+export function expExc(para) {
+  return request({
+    url: '/task/expExc',
+    method: 'post',
+    data: para
+  })
+}
+
 export function impExcel(para) {
   return request({
     url: '/task/imp',
