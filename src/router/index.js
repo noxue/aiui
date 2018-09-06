@@ -82,12 +82,12 @@ export const asyncRouterMap = [
     path: '',
     component: Layout,
     redirect: 'gateway',
-    meta: { title: 'gateway', roles: ['role_admin'], icon: 'icon', noCache: true },
+    meta: { title: 'gateway', roles: ['role_admin', 'role_agent'], icon: 'icon', noCache: true },
     children: [{
       path: 'gateway',
       component: () => import('@/views/gateway/index'),
       name: 'gateway',
-      meta: { title: 'gateway', roles: ['role_admin'], icon: 'icon', noCache: true }
+      meta: { title: 'gateway', roles: ['role_admin', 'role_agent'], icon: 'icon', noCache: true }
     }]
   },
   {

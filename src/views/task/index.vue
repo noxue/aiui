@@ -225,7 +225,7 @@
 var echarts = require('echarts')
 import NProgress from 'nprogress'
 import { getTaskList, getTaskUserList, getTemplate, editTaskUser,
-  editTaskStatus, deleteTask, toDoRedial, expExcel, countUserType, expExc } from '@/api/task'
+  editTaskStatus, deleteTask, toDoRedial, countUserType, expExc } from '@/api/task'
 const taskStatus = ['通话完毕', '未开始', '已开始', '正在执行', '暂停中', '执行失败']
 const breakTypes = ['不打断', '声音打断', '关键词打断']
 export default {
