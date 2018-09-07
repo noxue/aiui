@@ -65,6 +65,7 @@ export default {
       return {
         follows: [],
         cities: cityOptions,
+        ispitch: false,
         form: {
           taskName: '',
           num: '',
@@ -77,8 +78,7 @@ export default {
           testName: '',
           testPhone: '',
           remark: '',
-          visible: 'false',
-          ispitch: false
+          visible: 'false'
         },
         testRules: {
           testPhone: [
