@@ -28,14 +28,14 @@
           <el-radio v-model="Break" label="-1">声音打断</el-radio>
           <el-radio v-model="Break" label="-2">关键词打断</el-radio>
       </el-form-item>
-<el-form-item label="关注类型：">
-      <el-checkbox-group 
-        v-model="follows"
-        :min="0"
-        :max="3">
-        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-      </el-checkbox-group>
-</el-form-item>
+      <el-form-item label="关注类型：">
+            <el-checkbox-group 
+              v-model="follows"
+              :min="0"
+              :max="3">
+              <el-checkbox v-for="city in cities" :label="city" :key="city" :disabled="ispitch">{{city}}</el-checkbox>
+            </el-checkbox-group>
+      </el-form-item>
       <el-form-item label="任务类型：">
         <el-radio-group v-model="form.test">
           <el-radio-button :label=0>群呼任务</el-radio-button>
@@ -58,8 +58,7 @@
   </div>   
 </template>
 <script>
-  import { addTask, getTemplateListById, getSimListById } from '@/api/task'
-  // const Base64 = require('js-base64').Base64
+  import { addTask, getTemplateListById, getSimListById, isBanding } from '@/api/task'
 const cityOptions = ['A', 'B', 'C', 'D', 'E', 'F']
 export default {
     data() {
@@ -78,7 +77,8 @@ export default {
           testName: '',
           testPhone: '',
           remark: '',
-          visible: 'false'
+          visible: 'false',
+          ispitch: false
         },
         testRules: {
           testPhone: [
@@ -134,6 +134,15 @@ export default {
           this.form.simOptions = response.data.data.simpUserPage.list
         })
       },
+      validateBanding() {
+        isBanding(Request).then((response) => {
+          if (response.data.meta.code === 0) {
+            this.ispitch = false
+          } else if (response.data.meta.code === 8500) {
+            this.ispitch = true
+          }
+        })
+      },
       formatFollow() {
         if (this.follows.length === 0) {
           return ''
@@ -167,6 +176,7 @@ export default {
     },
     mounted() {
       this.getTempaltes()
+      this.validateBanding()
       // this.getSims()
     }
   }

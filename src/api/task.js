@@ -147,3 +147,10 @@ export function getTask(para) {
     data: para
   })
 }
+
+export function isBanding() {
+  return request({
+    url: '/task/isBanding',
+    method: 'post'
+  })
+}
