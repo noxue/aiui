@@ -3,7 +3,8 @@
   <el-row :gutter="10">
     <!--logo-->
     <el-col :span="9"><div class="grid-content bg-purple-first">
-        <img src="/static/logo.png">
+      <img class="logo" src="/static/logo.png">
+      <img class="wx" src="/static/wx.jpg">
     </div></el-col>
     <!--今日业绩-->
     <el-col :span="9"><div class="grid-content bg-purple-second">
@@ -415,10 +416,27 @@ export default {
 .bg-purple-first {
   color: #444;
 }
-img{
+
+.logo{
+  max-width: 60%;
+  text-align: center;
+  line-height: 100%;
+  float: left;
+  margin-top:20px; 
+  margin-left:10px; 
+}
+.wx{
+  height: 95%;
+  max-width: 35%;
+  text-align: right;
+  float: right;
+  margin-right:10px; 
+} 
+
+/* img{
   height: 45%;
   max-width: 45%;
-}
+} */
 .title{
   font-size:15px;
   color: black;
