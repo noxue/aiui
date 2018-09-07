@@ -2,13 +2,12 @@
   <div class="wechat-container">
     <el-form  class="we_form" label-position="top" :rules="loginRules" ref="loginForm" :model="loginForm">
       <el-form-item prop="username">
-        <el-input name="username" class="we_input" type="text" v-model="loginForm.username" placeholder="登陆名" />
+        <el-input name="username" class="we_input" style="background:transparent;" type="text" v-model="loginForm.username" placeholder="登陆名" />
       </el-form-item>
       <el-form-item prop="password">
         <el-input name="password" class="we_input" type="password" v-model="loginForm.password" placeholder="登陆密码" />
       </el-form-item>
-      <el-button type="primary" @click.native="login">绑定</el-button>
-      <el-button @click.native="editFormVisible = false">取消</el-button>
+      <el-button type="primary" class="we_button" @click.native="login">绑定</el-button>
     </el-form >
   </div>
 </template>
@@ -20,7 +19,7 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+        callback(new Error('请输入正确的登陆名'))
       } else {
         callback()
       }
@@ -88,11 +87,26 @@ export default {
   filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
   -moz-background-size: 100% 100%;
   background-size: 100% 100%;
+  
 }
+
+.we_input >>>.el-input__inner{
+    background-color: transparent;
+    border:none;
+    border-bottom :1px solid rgb(255, 255, 255);
+}
+
 .wechat-container .we_form {
-  margin-top: 20px;
+  width: 80%;
+  display: block;
+  margin-left:10%; 
+  margin-top:50%; 
 }
-.wechat-container .we_input {
-  width: 70%;
+
+.wechat-container .we_button{
+  display: block;
+  width:100%;
 }
+
 </style>
+
