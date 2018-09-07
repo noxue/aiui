@@ -28,7 +28,7 @@
           <el-radio v-model="Break" label="-1">声音打断</el-radio>
           <el-radio v-model="Break" label="-2">关键词打断</el-radio>
       </el-form-item>
-      <el-form-item label="关注类型：">
+      <el-form-item label="微信推送类型(需绑定微信)：">
             <el-checkbox-group 
               v-model="follows"
               :min="0"
