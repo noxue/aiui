@@ -1,7 +1,5 @@
 <template>
   <div class="wechat-container">
-    <h3 class="title">账号绑定</h3>
-    
     <el-form  class="we_form" label-position="top" :rules="loginRules" ref="loginForm" :model="loginForm">
       <el-form-item prop="username">
         <el-input name="username" class="we_input" type="text" v-model="loginForm.username" placeholder="登陆名" />
@@ -57,8 +55,11 @@ export default {
           this.$store
             .dispatch('LoginByUsername', this.loginForm)
             .then(() => {
-              const para = { openid: this.$route.query.contNo + '', username: this.loginForm.username + '' }
-              banding(para).then((response) => {
+              const para = {
+                openid: this.$route.query.contNo + '',
+                username: this.loginForm.username + ''
+              }
+              banding(para).then(response => {
                 if (response.data.meta.success === false) {
                   alert(response.data.meta.msg)
                 } else {
@@ -67,9 +68,7 @@ export default {
                 }
               })
             })
-            .catch(() => {
-
-            })
+            .catch(() => {})
         } else {
           return false
         }
@@ -77,18 +76,23 @@ export default {
     }
   }
 }
-
 </script>
 
 <style scoped>
-  .wechat-container{
-    margin: 20px;
-  }
-  .wechat-container .we_form{
-    margin-top: 20px;
-  }
-  .wechat-container .we_input{
-    width: 70%;
-  }
-
+.wechat-container {
+  width: 100%;
+	height: 100%;
+	overflow-x:hidden; 
+	overflow-y:auto;
+  background: url(/static/banding.png);
+  filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
+}
+.wechat-container .we_form {
+  margin-top: 20px;
+}
+.wechat-container .we_input {
+  width: 70%;
+}
 </style>

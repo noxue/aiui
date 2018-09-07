@@ -490,7 +490,8 @@ export default {
         status: this.task.filter.status === undefined ? '' : this.task.filter.status + ''
       }
       expExc(reqData).then(response => {
-        location.href = 'http://localhost/web/api/v1/task/' + response.data.data.task
+        // location.href = 'http://localhost/web/api/v1/task/' + response.data.data.task
+        location.href = process.env.BASE_API + 'task/' + response.data.data.task
       })
       this.listLoading = false
     },
