@@ -107,7 +107,8 @@ export default {
 .wechat-container .we_button{
   display: block;
   width:100%;
-}
-
+  color:white;
+  opacity:0.8;
+};
 </style>
 
