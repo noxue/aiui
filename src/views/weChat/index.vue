@@ -81,6 +81,7 @@ export default {
 .wechat-container {
   width: 100%;
 	height: 100%;
+  min-height:350px;
 	overflow-x:hidden; 
 	overflow-y:auto;
   background: url(/static/banding.png);
