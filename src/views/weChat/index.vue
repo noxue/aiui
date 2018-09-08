@@ -94,6 +94,7 @@ export default {
     background-color: transparent;
     border:none;
     border-bottom :1px solid rgb(255, 255, 255);
+    border-radius:0;
 }
 
 .wechat-container .we_form {
