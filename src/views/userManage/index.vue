@@ -25,20 +25,23 @@
         </el-table-column>
         <el-table-column prop="username" label="用户名" sortable>
         </el-table-column>  
-        <el-table-column prop="realName" label="真实姓名"   sortable>
+        <!-- <el-table-column prop="realName" label="真实姓名"   sortable>
         </el-table-column>
         <el-table-column prop="phone" label="电话"   sortable>
         </el-table-column>
         <el-table-column prop="email" label="邮箱"  sortable>
         </el-table-column>
         <el-table-column prop="sex" label="性别"   :formatter="formatSex" sortable>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="status" label="用户状态"   :formatter="formatStatus" sortable>
         </el-table-column>
-        <el-table-column label="操作" width="170">
+        <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
-            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+            <el-button-group>
+              <el-button size="small" type="success" @click="handleSip(scope.$index, scope.row)">线路</el-button>
+              <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button size="small" type="danger" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+            </el-button-group> 
           </template>
         </el-table-column>
       </el-table>
@@ -79,6 +82,37 @@
         <div slot="footer" class="dialog-footer">
           <el-button @click.native="editFormVisible = false">取消</el-button>
           <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
+        </div>
+      </el-dialog>
+      <!--线路分配-->
+      <el-dialog title="线路分配"  :visible.sync="sipFormVisible">
+        
+        <!-- <el-form :model="sipForm" label-width="80px" ref="sipForm">
+        </el-form> -->
+        <div style="text-align: center;">
+          <el-transfer
+          style="text-align: left; display: inline-block"
+            filterable
+            :filter-method="filterMethod"
+            filter-placeholder="请输入线路名"
+            :titles="['可选择', '已选择']"
+            v-model="value2"
+            :data="data2">
+          </el-transfer>
+        </div>
+
+        <div style="margin-top:20px;text-align: center;">
+          <el-input placeholder="请输入内容" v-model="toAssigned" :disabled="true">
+            <template slot="prepend">可分配线路数：</template>
+          </el-input>
+          <el-input type="number" v-model="midAsssigned">
+            <template slot="prepend">已分配线路数：</template>
+          </el-input>
+        </div>
+    
+        <div slot="footer" class="dialog-footer">
+          <el-button @click.native="sipFormVisible = false">取消</el-button>
+          <el-button type="primary" :disabled="isAction" @click.native="sipSubmit" :loading="sipLoading">提交</el-button>
         </div>
       </el-dialog>
       <!--新增界面-->
@@ -130,12 +164,25 @@
 
 <script>
   import { getUserList, addUser, deleteUser, editUser, roleList } from '@/api/userManage'
+  import { getAllSip, addSipUser, sipUserList, userList } from '@/api/sip'
 export default {
     data() {
       return {
+        suid: '',
+        sipList: [],
+        userList: [],
+        data2: [],
+        value2: [],
+        filterMethod(query, item) {
+          return item.pinyin.indexOf(query) > -1
+        },
         filters: {
           uid: ''
         },
+        toAssigned: 5,
+        midAsssigned: 0,
+        forAsssigned: 0,
+        isAction: true,
         users: [],
         total: 0,
         page: 1,
@@ -143,6 +190,9 @@ export default {
         sels: [], // 列表选中列
         options: [],
         value: '',
+        sipFormVisible: false, // 新增界面是否显示
+        sipLoading: false,
+
         editFormVisible: false, // 编辑界面是否显示
         editLoading: false,
         editFormRules: {
@@ -186,6 +236,19 @@ export default {
           roleId: ''
         }
       }
+    },
+    watch: {
+      midAsssigned: {
+        handler(newVal, oldVal) {
+          // this.midAsssigned = this.toAssigned + parseInt(this.forAsssigned)
+          if (newVal === '') {
+            alert(oldVal)
+          }
+          this.forAsssigned = newVal
+          this.toAssigned = this.toAssigned
+        }
+      }
+
     },
     methods: {
       // 性别显示转换
@@ -255,6 +318,26 @@ export default {
           name: '',
           description: ''
         }
+      },
+      // 显示线路分配界面
+      handleSip: function(index, row) {
+        this.sipFormVisible = true
+        this.suid = row.uid
+        const para = {
+          userid: row.uid
+        }
+        userList(para).then((response) => {
+          if (response.data.meta.success !== false) {
+            this.userList = response.data.data.userList
+            const data = []
+            this.userList.forEach((sip, index) => {
+              data.push(
+                sip.id
+              )
+            })
+            this.value2 = data
+          }
+        })
       },
       // 编辑
       editSubmit: function() {
@@ -335,40 +418,83 @@ export default {
           }
         })
       },
+      // 新增
+      sipSubmit: function() {
+        const reqDate = {
+          sip_id: this.value2 + '',
+          userid: this.suid
+        }
+        addSipUser(reqDate).then((response) => {
+          this.addLoading = false
+          // NProgress.done();
+          if (response.data.meta.success === false) {
+            this.$message.error({
+              message: response.data.meta.msg,
+              type: 'fail'
+            })
+          } else {
+            this.$message({
+              message: response.data.meta.msg,
+              type: 'success'
+            })
+          }
+          this.sipFormVisible = false
+        })
+      },
       selsChange: function(sels) {
         this.sels = sels
       },
-      // 批量删除
-      batchRemove: function() {
-        // var ids = this.sels.map(item => item.id).toString()
-        this.$confirm('确认删除选中记录吗？', '提示', {
-          type: 'warning'
-        }).then(() => {
-          this.listLoading = true
-          // NProgress.start();
-          // const para = { ids: ids }
-          // batchRemoveUser(para).then((res) => {
-          //   this.listLoading = false
-          //   // NProgress.done();
-          //   this.$message({
-          //     message: '删除成功',
-          //     type: 'success'
-          //   })
-          //   this.getUsers()
-          // })
-        }).catch(() => {
-
+      getSipList: function() {
+        const role = localStorage.getItem('role')
+        if (role.indexOf('role_admin') >= 0) {
+          getAllSip().then((response) => {
+            if (response.data.meta.success !== false) {
+              this.sipList = response.data.data.sipList
+              const data = []
+              this.sipList.forEach((sip, index) => {
+                data.push({
+                  label: sip.name,
+                  key: sip.id,
+                  pinyin: this.sipList[index].name
+                })
+              })
+              this.data2 = data
+            }
+          })
+        } else {
+          this.checkSipUser()
+        }
+      },
+      checkSipUser: function() {
+        sipUserList().then((response) => {
+          if (response.data.meta.success !== false) {
+            this.sipList = response.data.data.sipList
+            const data = []
+            this.sipList.forEach((sip, index) => {
+              data.push({
+                label: sip.name,
+                key: sip.id,
+                pinyin: this.sipList[index].name
+              })
+            })
+            this.data2 = data
+          }
         })
       }
     },
     mounted() {
       this.getUsers()
       this.getRoleList()
+      this.getSipList()
     }
   }
 
 </script>
 
 <style>
+
+.el-input {
+    width: 245px;
+  }
 
 </style>

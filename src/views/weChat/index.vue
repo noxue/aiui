@@ -81,13 +81,11 @@ export default {
 .wechat-container {
   width: 100%;
 	height: 100%;
-  min-height:350px;
 	overflow-x:hidden; 
 	overflow-y:auto;
-  background: url(/static/banding.png);
+  background: url(/static/banding.png) no-repeat center center / 100% 100% ;
   filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
-  -moz-background-size: 100% 100%;
-  background-size: 100% 100%;
+  background-size: cover;
   
 }
 
@@ -102,7 +100,7 @@ export default {
   width: 80%;
   display: block;
   margin-left:10%; 
-  margin-top:50%; 
+  margin-top:45%; 
 }
 
 .wechat-container .we_button{

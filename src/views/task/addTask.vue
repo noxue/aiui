@@ -23,6 +23,11 @@
         </el-select>
       </el-form-item> -->
       <!-- <el-form-item label="任务并发数" ><el-input v-model="form.num"></el-input></el-form-item> -->
+      <el-form-item label="选择线路：" v-if="sipVisible">
+            <el-checkbox-group v-model="sip">
+              <el-checkbox v-for="s in sips" :label="s.id" :key="s.id">{{s.name}}</el-checkbox>
+            </el-checkbox-group>
+      </el-form-item>
       <el-form-item label="是否允许打断：">
           <el-radio v-model="Break" label="0">不打断</el-radio>
           <el-radio v-model="Break" label="-1">声音打断</el-radio>
@@ -59,11 +64,16 @@
 </template>
 <script>
   import { addTask, getTemplateListById, getSimListById, isBanding } from '@/api/task'
+  import { getSipListById } from '@/api/sip'
+
 const cityOptions = ['A', 'B', 'C', 'D', 'E', 'F']
 export default {
     data() {
       return {
         follows: [],
+        sips: [],
+        sip: [],
+        sipVisible: false,
         cities: cityOptions,
         ispitch: false,
         form: {
@@ -103,7 +113,8 @@ export default {
           testPhone: this.form.testPhone + '',
           remark: this.form.remark,
           break: this.Break,
-          follows: this.formatFollow() + ''
+          follows: this.formatFollow() + '',
+          sip: this.sip + ''
         }
         addTask(reqData).then((response) => {
           // NProgress.done();
@@ -132,6 +143,14 @@ export default {
       getSims() {
         getSimListById(Request).then((response) => {
           this.form.simOptions = response.data.data.simpUserPage.list
+        })
+      },
+      getSips() {
+        getSipListById(Request).then((response) => {
+          this.sips = response.data.data.sipList
+          if (this.sips.length > 0) {
+            this.sipVisible = true
+          }
         })
       },
       validateBanding() {
@@ -177,6 +196,7 @@ export default {
     mounted() {
       this.getTempaltes()
       this.validateBanding()
+      this.getSips()
       // this.getSims()
     }
   }

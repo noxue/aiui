@@ -93,6 +93,18 @@ export const asyncRouterMap = [
   {
     path: '',
     component: Layout,
+    redirect: 'sip',
+    meta: { roles: ['role_admin'] },
+    children: [{
+      path: 'sip',
+      component: () => import('@/views/sip/index'),
+      name: 'sip',
+      meta: { title: 'sip', roles: ['role_admin', 'role_company', 'role_agent'], icon: 'peoples', noCache: true }
+    }]
+  },
+  {
+    path: '',
+    component: Layout,
     redirect: 'sim',
     meta: { roles: ['role_admin', 'role_company', 'role_agent'] },
     children: [{
