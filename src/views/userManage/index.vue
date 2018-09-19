@@ -101,11 +101,11 @@
           </el-transfer>
         </div>
 
-        <div style="margin-top:20px;text-align: center;">
+        <div class="thread" style="margin-top:20px;text-align: center;">
           <el-input placeholder="请输入内容" v-model="toAssigned" :disabled="true">
             <template slot="prepend">可分配线路数：</template>
           </el-input>
-          <el-input type="number" v-model="midAsssigned">
+          <el-input type="number" v-model="midAssigned">
             <template slot="prepend">已分配线路数：</template>
           </el-input>
         </div>
@@ -179,9 +179,9 @@ export default {
         filters: {
           uid: ''
         },
-        toAssigned: 5,
-        midAsssigned: 0,
-        forAsssigned: 0,
+        toAssigned: 0,
+        midAssigned: 0,
+        sumAss: 0,
         isAction: true,
         users: [],
         total: 0,
@@ -238,14 +238,19 @@ export default {
       }
     },
     watch: {
-      midAsssigned: {
+      midAssigned: {
         handler(newVal, oldVal) {
-          // this.midAsssigned = this.toAssigned + parseInt(this.forAsssigned)
-          if (newVal === '') {
-            alert(oldVal)
+          if (newVal === '' || newVal < 0 || newVal > this.sumAss) {
+            this.$message.error({
+              message: '请重新输入数字',
+              type: 'fail'
+            })
+            this.isAction = true
+            return oldVal
+          } else {
+            this.toAssigned = parseInt(this.sumAss) - parseInt(newVal)
+            this.isAction = false
           }
-          this.forAsssigned = newVal
-          this.toAssigned = this.toAssigned
         }
       }
 
@@ -328,6 +333,9 @@ export default {
         }
         userList(para).then((response) => {
           if (response.data.meta.success !== false) {
+            this.toAssigned = parseInt(response.data.data.userInfos[0])
+            this.midAssigned = parseInt(response.data.data.userInfos[1])
+            this.sumAss = this.toAssigned + this.midAssigned
             this.userList = response.data.data.userList
             const data = []
             this.userList.forEach((sip, index) => {
@@ -418,11 +426,13 @@ export default {
           }
         })
       },
-      // 新增
+      // 线路操作 新增/删除
       sipSubmit: function() {
         const reqDate = {
           sip_id: this.value2 + '',
-          userid: this.suid
+          userid: this.suid,
+          toAss: this.toAssigned + '',
+          forAss: this.midAssigned + ''
         }
         addSipUser(reqDate).then((response) => {
           this.addLoading = false
@@ -493,7 +503,7 @@ export default {
 
 <style>
 
-.el-input {
+.thread .el-input {
     width: 245px;
   }
 
