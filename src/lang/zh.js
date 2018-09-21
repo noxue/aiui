@@ -13,7 +13,9 @@ export default {
     taskList: '任务列表',
     addTask: '添加任务',
     userConfig: '用户配置',
-    sip: '线路列表'
+    sip: '线路管理',
+    sipIndex: '线路列表',
+    sipLog: '分配日志'
   },
   navbar: {
     logOut: '退出登录',

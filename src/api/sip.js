@@ -69,3 +69,11 @@ export function editSip(para) {
     data: para
   })
 }
+
+export function getSipLogs(para) {
+  return request({
+    url: '/sip/log/all',
+    method: 'post',
+    data: para
+  })
+}

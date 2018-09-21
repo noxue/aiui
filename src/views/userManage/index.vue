@@ -292,7 +292,6 @@ export default {
           // NProgress.start();
           const para = { uid: '' + row.uid + '' }
           deleteUser(para).then((response) => {
-            this.listLoading = false
             // NProgress.done();
             if (response.data.meta.success === false) {
               this.$message({
@@ -304,11 +303,12 @@ export default {
                 message: '删除成功',
                 type: 'success'
               })
+              this.listLoading = false
+              this.getUsers()
             }
-            this.getUsers()
           })
         }).catch(() => {
-
+  
         })
       },
       // 显示编辑界面

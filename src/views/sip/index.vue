@@ -5,13 +5,13 @@
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
         <el-form :inline="true" :model="filters" onsubmit="return false">
           <el-form-item>
-            <el-input v-model="filters.name" @keyup.enter.native="getSips" placeholder="名称"></el-input>
+            <el-input v-model="filters.name" @keyup.enter.native="getSips" placeholder="线路名"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" v-on:click="getSips">查询</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="addFormVisible = true">新增</el-button>
+            <el-button type="primary" v-if="isAdmin" @click="addFormVisible = true">新增</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -27,10 +27,10 @@
         </el-table-column>
         <el-table-column prop="remark" label="备注"  sortable>
         </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="150"  v-if="isAdmin">
           <template slot-scope="scope">
-            <el-button type="primary" v-if="isAdmin" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button type="danger" v-if="isAdmin" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+            <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button type="danger"  size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,10 +55,20 @@
           <el-form-item label="端口" prop="host">
             <el-input v-model="editForm.host" ></el-input>
           </el-form-item>
+          <el-form-item label="客户端" prop="app_id">
+            <el-select v-model="editForm.app_id" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+					</el-form-item>
           <el-form-item label="厂商" prop="firms">
             <el-input v-model="editForm.firms" ></el-input>
           </el-form-item>
-          <el-form-item label="最大并发数" prop="maxthread">
+          <el-form-item label="最大并发" prop="maxthread">
             <el-input-number v-model="editForm.maxthread" :min="1" label="描述文字"></el-input-number>
           </el-form-item>
           <el-form-item label="备注">
@@ -85,10 +95,20 @@
           <el-form-item label="端口" prop="host">
             <el-input v-model="addForm.host" ></el-input>
           </el-form-item>
+          <el-form-item label="客户端" prop="app_id">
+            <el-select v-model="addForm.app_id" placeholder="请选择客户端">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              </el-option>
+            </el-select>
+					</el-form-item>
           <el-form-item label="厂商" prop="firms">
             <el-input v-model="addForm.firms" ></el-input>
           </el-form-item>
-          <el-form-item label="最大并发数" prop="maxthread">
+          <el-form-item label="最大并发" prop="maxthread">
               <el-input-number v-model="addForm.maxthread" :min="1" label="描述文字"></el-input-number>
           </el-form-item>
           <el-form-item label="备注">
@@ -106,6 +126,7 @@
 
 <script>
   import { getSipList, addSip, deleteSip, editSip } from '@/api/sip'
+  import { getAllApp } from '@/api/gateway'
 export default {
     data() {
       return {
@@ -118,7 +139,7 @@ export default {
         page: 1,
         listLoading: false,
         sels: [], // 列表选中列
-
+        options: [],
         editFormVisible: false, // 编辑界面是否显示
         editLoading: false,
         editFormRules: {
@@ -131,6 +152,9 @@ export default {
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' }
           ],
+          app_id: [
+            { required: true, message: '请选择客户端', trigger: 'blur' }
+          ],
           host: [
             { required: true, message: '请输入地址、端口号', trigger: 'blur' }
           ]
@@ -141,6 +165,7 @@ export default {
           username: '',
           password: '',
           host: '',
+          app_id: '',
           firms: '',
           maxthread: '',
           remark: ''
@@ -158,6 +183,9 @@ export default {
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' }
           ],
+          app_id: [
+            { required: true, message: '请选择客户端', trigger: 'blur' }
+          ],
           host: [
             { required: true, message: '请输入地址、端口号', trigger: 'blur' }
           ]
@@ -168,6 +196,7 @@ export default {
           username: '',
           password: '',
           host: '',
+          app_id: '',
           firms: '',
           maxthread: '',
           remark: ''
@@ -178,6 +207,12 @@ export default {
       handleCurrentChange(val) {
         this.page = val
         this.getSips()
+      },
+      getAllApps() {
+        // NProgress.start();
+        getAllApp().then((response) => {
+          this.options = response.data.data.appList.list
+        })
       },
       // 获取用户列表
       getSips() {
@@ -222,6 +257,8 @@ export default {
       handleEdit: function(index, row) {
         this.editFormVisible = true
         this.editForm = Object.assign({}, row)
+        console.log(row)
+        this.editForm.app_id = row.appid
       },
       // 显示新增界面
       handleAdd: function() {
@@ -245,6 +282,7 @@ export default {
                 password: para.password,
                 username: para.username,
                 host: para.host,
+                app_id: para.app_id + '',
                 firms: para.firms,
                 maxThread: para.maxthread + '',
                 remark: para.remark
@@ -286,6 +324,7 @@ export default {
                 password: para.password,
                 username: para.username,
                 host: para.host,
+                app_id: para.app_id + '',
                 firms: para.firms,
                 maxThread: para.maxthread + '',
                 remark: para.remark
@@ -341,6 +380,7 @@ export default {
     mounted() {
       this.getSips()
       this.validateUser()
+      this.getAllApps()
     }
   }
 

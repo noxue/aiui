@@ -64,8 +64,8 @@
           <el-form-item label="用户" prop="userId">
             <el-input v-model="editForm.userId" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-select v-model="appName" placeholder="请选择客户端">
+          <el-form-item label="客户端">
+            <el-select v-model="appName" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.id"

@@ -91,15 +91,21 @@ export const asyncRouterMap = [
     }]
   },
   {
-    path: '',
+    path: '/sip',
     component: Layout,
-    redirect: 'sip',
-    meta: { roles: ['role_admin'] },
+    redirect: '/sip/index',
+    meta: { title: 'sip', roles: ['role_admin', 'role_company', 'role_agent'], icon: 'form' },
     children: [{
-      path: 'sip',
+      path: 'sip/index',
       component: () => import('@/views/sip/index'),
-      name: 'sip',
-      meta: { title: 'sip', roles: ['role_admin', 'role_company', 'role_agent'], icon: 'peoples', noCache: true }
+      name: 'sipIndex',
+      meta: { title: 'sip', roles: ['role_admin', 'role_company', 'role_agent'], icon: 'excel', noCache: true }
+    },
+    {
+      path: 'sipLog',
+      component: () => import('@/views/sip/sipLog'),
+      name: 'sipLog',
+      meta: { title: 'sipLog', icon: 'edit', noCache: true }
     }]
   },
   {
