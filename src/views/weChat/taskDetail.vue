@@ -112,7 +112,7 @@ export default {
         }
       })
     },
-    selectTaskUser() {
+    selectTaskUser: function() {
       const id = this.$route.query.id
       getTaskUser(id).then(response => {
         const data = response.data
@@ -125,7 +125,7 @@ export default {
         }
       })
     },
-    playSound(voice) {
+    playSound: function(voice) {
       var audio = document.getElementById('snd')
       audio.pause()
       audio.currentTime = 0
