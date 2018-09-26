@@ -39,6 +39,7 @@
     "js-base64": "^2.4.5",
     "js-cookie": "2.2.0",
     "jsonlint": "1.6.3",
+    "mediaelement": "^4.2.9",
     "mockjs": "1.0.1-beta3",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",

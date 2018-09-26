@@ -172,6 +172,11 @@
                 <el-col :span="7"><div class="grid-content bg-purple-light">
                   <span class="calledSpan">模板名称：{{templates[task.info.templateId]!==undefined?templates[task.info.templateId].name:""}}</span>
                 </div></el-col>
+                <el-col :span="24">
+                  <audio id="all-audio" 
+                  :src="allAudio"
+                   type="audio/mp3" controls="controls"></audio>
+                </el-col>
               <el-col :span="24"><div class="grid-content bg-purple">
                 <ul class="phone-list">
                   <li v-for="(item,k) in task.detail.content.nodes" :key='k'>
@@ -240,6 +245,7 @@ export default {
   },
   data() {
     return {
+      allAudio: '',
       taskFilterName: '',
       page: 1,
       tasks: [],
@@ -479,6 +485,7 @@ export default {
       }
       this.$set(this.task, 'detail', row)
       this.$set(this.task['detail'], 'content', JSON.parse(row.content))
+      this.allAudio = process.env.BASE_API + 'voice/file/wav/' + row.content.voice
     },
     exportExcel(event) {
       this.listLoading = true
@@ -831,5 +838,5 @@ span{
   margin-top:6px;
   margin-left:15px;
   text-align: center;
-}
+}  
 </style>

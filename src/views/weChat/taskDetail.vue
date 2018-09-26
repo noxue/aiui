@@ -4,11 +4,16 @@
       <span>通话详情</span>
     </div>
     <el-row :gutter="2">
+      <el-col :span="24">
+        <div class="all-audio">
+          <audio  :src="allAudio" type="audio/mp3" controls="controls"></audio>
+        </div>
+      </el-col>
       <el-col :span="24"><div >
         <span class="calledSpan">客户类型：{{userType}}</span>
       </div></el-col>
       <el-col :span="24"><div >
-        <span class="calledSpan">客户姓名：{{task.name}}</span>
+        <span class="calledSpan">客户姓名：{{taskUser.name === '' ? '无': taskUser.name }}</span>
       </div></el-col>
       <el-col :span="24"><div >
         <span class="calledSpan">客户号码：<a :href="'tel:'+taskUser.mobile+''">{{taskUser.mobile}}</a></span>
@@ -19,7 +24,6 @@
       <el-col :span="24"><div >
         <span class="calledSpan">拨打时间：{{formatDate(taskUser.calledAt)}}</span>
       </div></el-col>
-
       <div class="tip">
         <span>与客户交谈部分</span>
       </div>
@@ -63,6 +67,7 @@ import { getTemplate, getTaskUser, getTask } from '@/api/task'
 export default {
   data() {
     return {
+      allAudio: '',
       userTypes: [],
       templates: [],
       templateName: '',
@@ -115,13 +120,15 @@ export default {
     selectTaskUser: function() {
       const id = this.$route.query.id
       getTaskUser(id).then(response => {
-        const data = response.data
-        if (data.meta.success === false) {
-          this.$message.error(data.meta.msg)
+        const resData = response.data
+        console.log(response)
+        if (resData.meta.success === false) {
+          this.$message.error(resData.meta.msg)
         } else {
-          this.taskUser = data.data.taskUser
+          this.taskUser = resData.data.taskUser
           this.getTask(this.taskUser.taskId)
           this.content = JSON.parse(this.taskUser.content)
+          this.allAudio = process.env.BASE_API + 'voice/file/wav/' + this.content.voice
         }
       })
     },
@@ -277,5 +284,12 @@ span{
   margin-top:6px;
   margin-left:15px;
   text-align: center;
+}
+.all-audio{
+  width: 100%;
+  text-align: center;
+}
+.all-audio audio{
+  width: 90%;
 }
 </style>
