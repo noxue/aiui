@@ -38,8 +38,8 @@
             <el-tab-pane label="详细结果" key="list" name="list">
               <el-col :span="24" class="toolbar" style="padding: 0px;">
                 <el-form :inline="true" style="text-align:left;">
-                  <el-input v-model="task.filter.name" style="width:160px;" @keyup.enter.native="getUsersList" placeholder="姓名"></el-input>
-                  <el-select v-model="task.filter.type" style="width:160px;" placeholder="客户类型" @change="getUsersList">
+                  <el-input v-model="task.filter.name" style="width:140px;" @keyup.enter.native="getUsersList" placeholder="姓名"></el-input>
+                  <el-select v-model="task.filter.type" style="width:140px;" placeholder="客户类型" @change="getUsersList">
                     <el-option value="">所有类型</el-option>
                     <el-option
                       v-for="(item,key) in this.userTypes"
@@ -50,7 +50,7 @@
                       >
                     </el-option>
                   </el-select>
-                  <el-select v-model="task.filter.status" style="width:160px;" placeholder="任务状态" @change="getUsersList">
+                  <el-select v-model="task.filter.status" style="width:140px;" placeholder="任务状态" @change="getUsersList">
                     <el-option value="">所有状态</el-option>
                     <el-option
                       v-for="(item,i) in task.taskStatus"
@@ -59,7 +59,16 @@
                       :value="i">
                     </el-option>
                   </el-select>
-                  
+                  <el-date-picker
+                    @change="getUsersList"
+                    style="width:140px;"
+                    v-model="taskUserCalled"
+                    value-format="yyyy-MM-dd"
+                    type="date"
+                    placeholder="拨号日期">
+                  </el-date-picker>
+
+
                   <el-button-group>
                     <el-button type="primary" icon="el-icon-search" v-on:click="getUsersList"></el-button>
                     <el-button type="primary" icon="el-icon-caret-right" v-on:click="startTask"></el-button>
@@ -245,6 +254,7 @@ export default {
   },
   data() {
     return {
+      taskUserCalled: '',
       allAudio: '',
       taskFilterName: '',
       page: 1,
@@ -301,7 +311,8 @@ export default {
         name: this.task.filter.name === undefined ? '' : this.task.filter.name + '',
         type: this.task.filter.type === undefined ? '' : this.task.filter.type + '',
         share: this.task.filter.share === undefined ? '' : this.task.filter.share + '',
-        status: this.task.filter.status === undefined ? '' : this.task.filter.status + ''
+        status: this.task.filter.status === undefined ? '' : this.task.filter.status + '',
+        date: this.taskUserCalled === undefined ? '' : this.taskUserCalled + ''
       }
       NProgress.start()
       getTaskUserList(prap).then(response => {
@@ -495,7 +506,8 @@ export default {
         name: this.task.filter.name === undefined ? '' : this.task.filter.name + '',
         type: this.task.filter.type === undefined ? '' : this.task.filter.type + '',
         share: this.task.filter.share === undefined ? '' : this.task.filter.share + '',
-        status: this.task.filter.status === undefined ? '' : this.task.filter.status + ''
+        status: this.task.filter.status === undefined ? '' : this.task.filter.status + '',
+        date: this.taskUserCalled === undefined ? '' : this.taskUserCalled + ''
       }
       expExc(reqData).then(response => {
         // location.href = 'http://localhost/web/api/v1/task/' + response.data.data.task
